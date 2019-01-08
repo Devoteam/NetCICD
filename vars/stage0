@@ -1,0 +1,29 @@
+---
+netcicd:
+  children:
+    p_routers:
+      hosts:
+        PE1:
+    pe_routers:
+      hosts:
+        PE1:
+        PE3:
+    route_reflectors:
+      hosts:
+        RR1:
+    ce_routers:
+      hosts:
+        CE1:
+    ios:
+      hosts:
+        CE1:
+    iosxe:
+      hosts:
+        RR1:
+    iosxr:
+      hosts:
+        PE1:
+    nxos:
+      hosts:
+        PE3:
+...

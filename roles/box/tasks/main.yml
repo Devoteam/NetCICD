@@ -1,0 +1,39 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Define hostname
+  import_tasks: hostname.yml
+
+#- name: Setup ssh
+#  import_tasks: ssh.yml
+    
+#- name: Setup logging
+#  import_tasks: logging.yml
+
+#- name: Setup console
+#  import_tasks: console.yml
+    
+#- name: Close aux port
+#  import_tasks: aux_port.yml   
+    
+#- name: Setup time and clock
+#  import_tasks: time.yml
+    
+#- name: Setup box hardening
+#  import_tasks: hardening.yml
+    
+#- name: Setup loopback0
+#  import_tasks: lo0.yml
+    
+#- name: Setup snmp
+#  import_tasks: snmp.yml
+    
+#- name: Setup aaa
+#  import_tasks: aaa.yml
+    
+#- name: Setup banners
+#  import_tasks: banners.yml
+
+...

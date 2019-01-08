@@ -1,0 +1,49 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Define hostname
+  import_tasks: hostname.yml
+  when: ( stage is defined and stage == "0")
+    
+#- name: Setup logging
+#  import_tasks: logging.yml
+#  when: ( stage is defined and stage == "0")
+
+#- name: Setup console
+#  import_tasks: console.yml
+#  when: ( stage is defined and stage == "0")
+    
+#- name: Close aux port
+#  import_tasks: aux_port.yml
+#  when: ( stage is defined and stage == "0")
+    
+# - name: Setup ssh
+#  import_tasks: ssh.yml
+#  when: ( stage is defined and stage == "0")
+    
+#- name: Setup time and clock
+#  import_tasks: time.yml
+#  when: ( stage is defined and stage == "0")
+   
+#- name: Setup box hardening
+#  import_tasks: hardening.yml
+#  when: ( stage is defined and stage == "0")
+    
+#- name: Setup loopback0
+#  import_tasks: lo0.yml
+#  when: ( stage is defined and stage == "0")
+    
+#- name: Setup snmp
+#  import_tasks: snmp.yml
+#  when: ( stage is defined and stage == "0")
+    
+#- name: Setup aaa
+#  import_tasks: aaa.yml
+#  when: ( stage is defined and stage == "0")
+    
+- name: Setup banners
+  import_tasks: banners.yml
+  when: ( stage is defined and stage == "0")
+...

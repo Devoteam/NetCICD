@@ -1,0 +1,40 @@
+        stage('Deploying Stage 3 simulation (Forwarding) in CML') {
+            agent { 
+                node { 
+                    label 'swarm_node' 
+                } 
+            }
+            steps {
+                echo "Prepare stage 3 simulation environment"
+                echo "--------------------------------------"
+
+                checkout scm
+
+                startsim(3)
+            
+            }
+        }
+        stage('Stage 3: Configuring MPLS in CML') {
+            steps {
+                node ("stage3-" + gitCommit as String) {
+                    echo "Switching to jenkins agent: stage3-" + "${gitCommit}"
+
+                    checkout scm
+
+                    echo "Set stage 3 reachability variables"
+                    echo "--------------------------------------"
+
+                    echo "Start stage 3 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage3', playbook: 'stage3.yml', extraVars: ["stage": "3"], extras: '-vvvv'
+                }
+                node ('swarm_node') {
+                    echo "Switching to jenkins agent: swarm_node"
+
+                    echo 'Stopping CML simulation'
+                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage3-' + "${gitCommit}"
+
+                    echo 'Removing Jenkins Agent'
+                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -H "' + "${jc}" + '" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage3' + "-" + "${gitCommit}" + '/doDelete"'
+                }
+            }
+        }

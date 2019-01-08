@@ -1,0 +1,40 @@
+        stage('Deploying Stage 4 simulation (Platform) in CML') {
+            agent { 
+                node { 
+                    label 'swarm_node' 
+                } 
+            }
+            steps {
+                echo "Prepare stage 4 simulation environment"
+                echo "--------------------------------------"
+
+                checkout scm
+
+                startsim(4)
+            
+            }
+        }
+        stage('Stage 4: Configuring BGP in CML') {
+            steps {
+                node ("stage4-" + gitCommit as String) {
+                    echo "Switching to jenkins agent: stage4-" + "${gitCommit}"
+
+                    checkout scm
+
+                    echo "Set stage 4 forwarding variables"
+                    echo "--------------------------------------"
+
+                    echo "Start stage 4 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage4', playbook: 'stage4.yml', extraVars: ["stage": "4"], extras: '-vvvv'
+                }
+                node ('swarm_node') {
+                    echo "Switching to jenkins agent: swarm_node"
+
+                    echo 'Stopping CML simulation'
+                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage4-' + "${gitCommit}"
+
+                    echo 'Removing Jenkins Agent'
+                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -H "' + "${jc}" + '" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage4' + "-" + "${gitCommit}" + '/doDelete"'
+                }
+            }
+        }

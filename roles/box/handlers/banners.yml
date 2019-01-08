@@ -1,0 +1,18 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Validate banners
+  local_action: shell behave banners.feature -D node={{ inventory_hostname }} -D c_lang={{ ansible_network_os }} -D stage={{ stage }} -D lbanner={{ lookup('file', '../templates/banner_login.j2') }} mbanner={{ lookup('file', '../templates/banner_motd.j2') }} ebanner={{ lookup('file', '../templates/banner_exec.j2') }}  --no-capture -c
+  args:
+    chdir: roles/box/files/features/
+  register: test_output
+  listen: banners
+  
+- name: Print testresults
+  debug: 
+    var: test_output.stdout_lines
+  failed_when: "'Assertion Failed' in test_output.stdout"
+  listen: banners
+...

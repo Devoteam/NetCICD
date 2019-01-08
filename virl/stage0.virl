@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<topology xmlns="http://www.cisco.com/VIRL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="0.95" xsi:schemaLocation="http://www.cisco.com/VIRL https://raw.github.com/CiscoVIRL/schema/v0.95/virl.xsd">
+    <extensions>
+        <entry key="management_lxc" type="Boolean">true</entry>
+        <entry key="management_network" type="String">exclusive</entry>
+    </extensions>
+    <node name="flat-1" type="ASSET" subtype="FLAT" location="76,199">
+        <interface id="0" name="link0"/>
+    </node>
+    <node name="NetCICD" type="SIMPLE" subtype="docker-netcicd" location="76,107">
+        <extensions>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="config" type="String">#cloud-config
+hostname: NetCICD
+manage_etc_hosts: true
+write_files:
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    /sbin/ifconfig eth1 up
+    route add default gw 172.16.1.1
+    cd
+    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+    /usr/bin/java -jar /root/agent.jar -jnlpUrl jenkins_urlcomputer/jenkins_agent/slave-agent.jnlp -secret jenkins_secret -workDir "/root/jenkins_slave"
+    exit 0
+</entry>
+            <entry key="static_ip" type="String">10.255.1.2</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="RR1" type="SIMPLE" subtype="CSR1000v" location="331,342" ipv4="192.168.0.121">
+        <extensions>
+            <entry key="static_ip" type="String">10.255.1.121</entry>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="config" type="String">username cisco privilege 15 secret C!sco123
+interface GigabitEthernet1
+ ip address 10.255.1.121 255.255.255.0
+ negotiation auto
+ no shutdown
+enable secret C!sco123
+aaa new-model
+aaa session-id common
+aaa authorization exec default local
+username cisco privilege 15 secret C!sco123
+ip ssh version 2
+crypto key gen rsa mod 2048
+!
+interface GigabitEthernet3
+ ip address 172.16.6.121 255.255.255.0
+ no shutdown
+!
+</entry>
+        </extensions>
+        <interface id="1" name="GigabitEthernet3" ipv4="10.0.0.3" netPrefixLenV4="16"/>
+    </node>
+    <node name="PE1" type="SIMPLE" subtype="IOS XRv 9000" location="554,346" ipv4="192.168.0.128">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="config" type="String">hostname provedge1
+ip domain-name netcicd
+username cisco
+ group root-lr
+ group cisco-support
+ secret C!sco123
+!
+interface MgmtEth0/RP0/CPU0/0
+ description *** management ***
+ ipv4 address 10.255.1.109 255.255.255.0
+!
+interface GigabitEthernet0/0/0/0
+shutdown
+!
+interface GigabitEthernet0/0/0/1
+ description *** Container VLAN ***
+ ipv4 address 172.16.6.109 255.255.255.0
+ no shutdown
+!
+interface GigabitEthernet0/0/0/2
+ shutdown
+!
+interface GigabitEthernet0/0/0/3
+ shutdown
+!
+interface GigabitEthernet0/0/0/4
+ shutdown
+!
+netconf agent tty
+!
+netconf-yang agent
+ ssh
+!
+ssh server v2
+ssh server netconf vrf default
+telnet ipv4 server max-servers 10
+end</entry>
+            <entry key="static_ip" type="String">10.255.1.128</entry>
+        </extensions>
+        <interface id="1" name="GigabitEthernet0/0/0/1" ipv4="10.0.0.5" netPrefixLenV4="16"/>
+        <interface id="4" name="GigabitEthernet0/0/0/4"/>
+        <interface id="5" name="GigabitEthernet0/0/0/5"/>
+    </node>
+    <node name="CE1" type="SIMPLE" subtype="IOSv" location="776,341" ipv4="192.168.0.144">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="static_ip" type="String">10.255.1.144</entry>
+            <entry key="config" type="String">hostname cust1
+!
+aaa new-model
+!
+aaa session-id common
+aaa authorization exec default local
+!
+no ip icmp rate-limit unreachable
+!
+ip domain name netcicd
+!
+username cisco privilege 15 secret C!sco123
+enable secret C!sco123
+!
+ip tcp synwait-time 5
+ip ssh version 2
+crypto key gen rsa mod 2048
+! 
+interface GigabitEthernet0/0
+ ip address 10.255.1.144 255.255.255.0
+! 
+interface GigabitEthernet0/2
+  description *** Container VLAN ***
+  ip address 172.16.6.144 255.255.255.0
+line vty 0 4
+ transport input telnet ssh
+!
+!
+end
+</entry>
+        </extensions>
+        <interface id="1" name="GigabitEthernet0/2" ipv4="10.0.0.13" netPrefixLenV4="30"/>
+    </node>
+    <node name="switch" type="SIMPLE" subtype="Unmanaged Switch" location="554,228">
+        <interface id="0" name="link1"/>
+        <interface id="1" name="link2"/>
+        <interface id="2" name="link3"/>
+        <interface id="3" name="link4"/>
+        <interface id="4" name="link5"/>
+        <interface id="5" name="link6"/>
+        <interface id="6" name="link7"/>
+        <interface id="7" name="link8"/>
+    </node>
+    <node name="syslog-1" type="SIMPLE" subtype="docker-syslog" location="245,63">
+        <extensions>
+            <entry key="config" type="String">#cloud-config
+hostname: syslog-1
+manage_etc_hosts: true
+write_files:
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ifconfig eth1 down
+    exit 0
+</entry>
+            <entry key="static_ip" type="String">10.255.1.10</entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="PE3" type="SIMPLE" subtype="NX-OSv" location="676,377" ipv4="192.168.0.130">
+        <extensions>
+            <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="config" type="String">! NX-OSv Config generated on 2018-10-11 12:30
+! by autonetkit_0.24.0
+!
+version 6.2(1)
+license grace-period
+!
+hostname nx-osv-1
+vdc nx-osv-1 id 1
+  allocate interface Ethernet2/1-48
+  allocate interface Ethernet3/1-48
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 768
+  limit-resource u4route-mem minimum 96 maximum 96
+  limit-resource u6route-mem minimum 24 maximum 24
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature telnet
+feature privilege
+feature scp
+
+username admin password C!sco123 role network-admin
+username cisco password C!sco123 role network-operator
+username cisco role network-admin
+
+no password strength-check
+ip domain-lookup
+copp profile strict
+rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+
+vlan 1
+
+vrf context management
+hardware forwarding unicast trace
+
+interface Loopback0
+  description Loopback
+  ip address 192.168.0.101/32
+
+interface mgmt0
+  description OOB Management
+  ! Configured on launch
+  no ip address
+  duplex full
+  no shutdown
+  vrf member management
+line console
+line vty
+
+Ethernet 2/1
+  description *** Container VLAN ***
+  ip address 172.16.6.101/24
+  no shut
+
+interface mgmt0
+shut
+no shut
+no feature ssh
+ssh key rsa 2048
+feature ssh
+xml server max-session 8
+xml server timeout 1200</entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="static_ip" type="String">10.255.1.130</entry>
+        </extensions>
+        <interface id="0" name="Ethernet2/1"/>
+    </node>
+    <node name="flat-2" type="ASSET" subtype="FLAT" location="137,198">
+        <interface id="0" name="link0"/>
+    </node>
+    <node name="anx" type="SIMPLE" subtype="docker-anx" location="139,106">
+        <extensions>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="config" type="String">#cloud-config
+hostname: anx
+manage_etc_hosts: true
+write_files:
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    /sbin/ifconfig eth1 up
+    route add default gw 172.16.1.1
+    exit 0
+</entry>
+            <entry key="static_ip" type="String">10.255.1.3</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <node name="syslog-2" type="SIMPLE" subtype="docker-syslog" location="296,62">
+        <extensions>
+            <entry key="config" type="String">#cloud-config
+hostname: syslog-2
+manage_etc_hosts: true
+write_files:
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ifconfig eth1 down
+    exit 0
+</entry>
+            <entry key="static_ip" type="String">10.255.1.11</entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
+    <annotations>
+        <text x="579" y="206" font-size="18">Shared VLAN for testing</text>
+        <rect x="200" y="4" radius="10" width="873" height="118" fill="FFFFFF" stroke-width="3"/>
+        <text x="779" y="8" font-size="8">Docker container images for functional testing. 
+Container name refers to docker repository for configuration
+</text>
+        <rect x="35" y="35" radius="10" width="150" height="225" fill="FFFFFF" stroke-width="3"/>
+        <text x="35" y="40" text-anchor="middle" bold="true">Management nodes</text>
+    </annotations>
+    <connection dst="/virl:topology/virl:node[1]/virl:interface[1]" src="/virl:topology/virl:node[2]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[6]/virl:interface[1]" src="/virl:topology/virl:node[3]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[6]/virl:interface[3]" src="/virl:topology/virl:node[4]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[6]/virl:interface[5]" src="/virl:topology/virl:node[5]/virl:interface[1]"/>
+    <connection dst="/virl:topology/virl:node[8]/virl:interface[1]" src="/virl:topology/virl:node[6]/virl:interface[4]"/>
+    <connection dst="/virl:topology/virl:node[9]/virl:interface[1]" src="/virl:topology/virl:node[10]/virl:interface[1]"/>
+</topology>

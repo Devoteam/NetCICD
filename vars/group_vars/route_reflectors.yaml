@@ -1,0 +1,11 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+rr: true
+as: 65100
+cluster_id: 1
+rr_client_pwd: netcicd
+rr_peer_pwd: netcicd
+...

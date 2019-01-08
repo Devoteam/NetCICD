@@ -1,0 +1,40 @@
+        stage('Deploying Stage 2 simulation (Reachability) in CML') {
+            agent { 
+                node { 
+                    label 'swarm_node' 
+                } 
+            }
+            steps {
+                echo "Prepare stage 2 simulation environment"
+                echo "--------------------------------------"
+
+                checkout scm
+
+                startsim(2)
+            
+            }
+        }
+        stage('Stage 2: Configuring IGP in CML') {
+            steps {
+                node ("stage2-" + gitCommit as String) {
+                    echo "Switching to jenkins agent: stage2-" + "${gitCommit}"
+
+                    checkout scm
+
+                    echo "Set stage 2 reachability variables"
+                    echo "--------------------------------------"
+
+                    echo "Start stage 2 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage2', playbook: 'stage2.yml', extraVars: ["stage": "2"], extras: '-vvvv'
+                }
+                node ('swarm_node') {
+                    echo "Switching to jenkins agent: swarm_node"
+
+                    echo 'Stopping CML simulation'
+                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage2-' + "${gitCommit}"
+
+                    echo 'Removing Jenkins Agent'
+                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -H "' + "${jc}" + '" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage2' + "-" + "${gitCommit}" + '/doDelete"'
+                }
+            }
+        }
