@@ -30,6 +30,19 @@
 #  notify: 
 #    - banners
 
+
+####################################################################
+# MOTD banner has Ansible net_module, regardless of network_os     #
+####################################################################
+
+- name: "Set motd banner"
+  net_banner:
+    banner: motd
+    text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
+    state: present
+#  notify: 
+#    - banners
+
 ####################################################################
 # Kick off handlers                                                #
 ####################################################################

@@ -1,0 +1,75 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+####################################################################
+# Generic network inteface configuration                           #
+####################################################################
+
+- name: "Configure subinterfaces"
+  net_interface:
+    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+    description: "{{ item.description }}"
+    state: present
+    enabled: "{{ item.no_shut }}"
+  when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.node == inventory_hostname)
+  loop: "{{ subinterfaces }}"
+
+- name: "Set IP addresses"
+  net_l3_interface:
+    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+    ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.node == inventory_hostname)
+  loop: "{{ subinterfaces }}"
+#  notify: 
+#   - subinterfaces
+
+####################################################################
+# IOS CLI specific commands                                        #
+####################################################################
+
+####################################################################
+# IOSXR CLI specific commands                                      #
+####################################################################
+
+####################################################################
+# NETConf specific commands                                        #
+####################################################################
+                                                                                                                                            
+- name: "Netconf configure subinterfaces for IOSXR"                                                        
+  netconf_config:                                                                                     
+    hostkey_verify: no                                                                               
+    src: "{{ ansible_network_os }}_nc_subinterface.j2"                                                    
+  when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
+#  notify:                                                                                         
+#    - subinterfaces                                                                                    
+
+####################################################################
+# NXOS CLI specific commands                                       #
+####################################################################
+
+- name: "Configure NX-OS subinterfaces"
+  net_interface:
+    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+    description: "item.description"
+    admin_state: up
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
+  loop: "{{ subinterfaces }}"
+
+- name: "Set IP addresses"
+  net_l3_interface:
+    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+    ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
+  loop: "{{ subinterfaces }}"
+#  notify: 
+#   - subinterfaces
+
+                                                                        
+####################################################################
+# Kick off handlers                                                #
+####################################################################
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

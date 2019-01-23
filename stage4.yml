@@ -8,9 +8,5 @@
   gather_facts: false
   
   roles:
-    - box
-    - topology
-    - reachability
-    - forwarding
     - platform
 ...

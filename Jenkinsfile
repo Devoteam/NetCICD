@@ -51,6 +51,10 @@ pipeline {
 
                     checkout scm
 
+                    echo "Set stage 0 box variables"
+                    echo "--------------------------------------"
+                    sh "cd roles/box/vars/ && ln -s stage0.yml main.yml"
+
                     echo "Start stage 0 playbook"
                     ansiblePlaybook installation: 'ansible', inventory: 'vars/stage0', playbook: 'stage0.yml', extraVars: ["stage": "0"], extras: '-vvvv'
                 }
@@ -62,6 +66,51 @@ pipeline {
 
                     echo 'Removing Jenkins Agent'
                     sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -H "' + "${jc}" + '" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage0' + "-" + "${gitCommit}" + '/doDelete"'
+                }
+            }
+        }
+        stage('Deploying Stage 1 simulation (Topology) in CML') {
+            agent { 
+                node { 
+                    label 'swarm_node' 
+                } 
+            }
+            steps {
+                echo "Prepare stage 1 simulation environment"
+                echo "--------------------------------------"
+
+                checkout scm
+
+                startsim(1)
+            
+            }
+        }
+        stage('Stage 1: Configuring interfaces and links in CML') {
+            steps {
+                node ("stage1-" + gitCommit as String) {
+                    echo "Switching to jenkins agent: stage1-" + "${gitCommit}"
+
+                    checkout scm
+
+                    echo "Set stage 1 topology variables"
+                    echo "--------------------------------------"
+                    sh "cd roles/box/vars/ && ln -s stage1.yml main.yml"
+                    sh "cd roles/topology/vars/ && ln -s stage1.yml main.yml"
+
+                    echo "Start stage 0 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage1', playbook: 'stage0.yml', extraVars: ["stage": "1"]
+
+                    echo "Start stage 1 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage1', playbook: 'stage1.yml', extraVars: ["stage": "1"], extras: '-vvvv'
+                }
+                node ('swarm_node') {
+                    echo "Switching to jenkins agent: swarm_node"
+
+                    echo 'Stopping CML simulation'
+                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage1-' + "${gitCommit}"
+
+                    echo 'Removing Jenkins Agent'
+                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -H "' + "${jc}" + '" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage1' + "-" + "${gitCommit}" + '/doDelete"'
                 }
             }
         }

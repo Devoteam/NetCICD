@@ -1,0 +1,37 @@
+{# This Source Code int.descriptionForm is subject to the terms of the Mozilla Public #}
+{# License, v. 2.0. If a copy of the MPL was not distributed with this                #}
+{# file, You can obtain one at http://mozilla.org/MPL/2.0/.                           #}
+{######################################################################################}
+{# IOSXR specific commands                                                            #} 
+{######################################################################################}
+<config>
+  <interfaces xmlns="http://openconfig.net/yang/interfaces">
+{%- for int in bundles %}  
+{%- if int.node == inventory_hostname %}     
+{%- if ansible_connection == "netconf" %}       
+   <interface>
+    <name>{{ int.type }}{{ int.id }}</name>
+    <config>
+     <name>{{ int.type }}{{ int.id }}</name>
+     <type xmlns:idx="urn:ietf:params:xml:ns:yang:iana-if-type">idx:ieee8023adLag</type>
+{% if int.shutdown %}
+     <enabled>false</enabled>
+{% else %}
+     <enabled>true</enabled>
+{% endif %}
+     <description>{{ int.description }}</description>
+{#     <mtu>9216</mtu>#}
+    </config>
+    <aggregation xmlns="http://openconfig.net/yang/interface/aggregate">
+     <lacp>
+      <config>
+       <interval>SLOW</interval>
+      </config>
+     </lacp>
+    </aggregation>
+   </interface>
+{%- endif -%}
+{% endif %}
+{%- endfor %}
+  </interfaces>
+</config>

@@ -1,0 +1,7 @@
+
+\.project
+roles/box/vars/main.yml
+roles/topology/vars/main.yml
+roles/reachability/vars/main.yml
+roles/forwarding/vars/main.yml
+roles/platform/vars/main.yml

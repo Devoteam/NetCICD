@@ -1,0 +1,35 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Prepare ping subinterfaces - prevent initial timeout failure
+  net_ping:
+    dest: "{{ item.remote }}"
+  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
+  loop: "{{ subinterfaces }}"
+  listen: subinterfaces
+
+- name: ping remote generic subinterfaces
+  net_ping:
+    dest: "{{ item.remote }}"
+  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
+  loop: "{{ subinterfaces }}"
+  register: test_output
+  listen: subinterfaces
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: ping remote IOSXR subinterfaces
+  vars:
+    ansible_connection: network_cli
+  iosxr_command:
+    commands: "ping {{ item.remote }}" 
+  when: (item.node == inventory_hostname and ansible_network_os == "iosxr" and item.bundle == 0)
+  loop: "{{ subinterfaces }}"
+  register: test_output
+  listen: subinterfaces
+
+...

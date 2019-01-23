@@ -5,6 +5,9 @@
 ---
 - name: Define hostname
   import_tasks: hostname.yml
+    
+- name: Setup banners
+  import_tasks: banners.yml
 
 #- name: Setup ssh
 #  import_tasks: ssh.yml
@@ -32,8 +35,5 @@
     
 #- name: Setup aaa
 #  import_tasks: aaa.yml
-    
-#- name: Setup banners
-#  import_tasks: banners.yml
 
 ...

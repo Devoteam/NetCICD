@@ -21,8 +21,21 @@
 
                     checkout scm
 
-                    echo "Set stage 3 reachability variables"
+                    echo "Set stage 3 forwarding variables"
                     echo "--------------------------------------"
+                    sh "cd roles/box/vars/ && ln -s stage3.yml main.yml"
+                    sh "cd roles/topology/vars/ && ln -s stage3.yml main.yml"
+                    sh "cd roles/reachability/vars/ && ln -s stage3.yml main.yml"
+                    sh "cd roles/forwarding/vars/ && ln -s stage3.yml main.yml"
+
+                    echo "Start stage 0 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage3', playbook: 'stage0.yml', extraVars: ["stage": "1"]
+
+                    echo "Start stage 1 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage3', playbook: 'stage1.yml', extraVars: ["stage": "1"]
+
+                    echo "Start stage 2 playbook"
+                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage3', playbook: 'stage2.yml', extraVars: ["stage": "2"]
 
                     echo "Start stage 3 playbook"
                     ansiblePlaybook installation: 'ansible', inventory: 'vars/stage3', playbook: 'stage3.yml', extraVars: ["stage": "3"], extras: '-vvvv'

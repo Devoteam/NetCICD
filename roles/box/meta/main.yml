@@ -4,5 +4,5 @@
 
 ---
 dependencies:
-  - role: enable_virl_access
+  - role: preparation
 ...

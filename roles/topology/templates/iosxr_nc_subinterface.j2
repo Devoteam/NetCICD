@@ -1,0 +1,66 @@
+{# This Source Code int.descriptionForm is subject to the terms of the Mozilla Public #}
+{# License, v. 2.0. If a copy of the MPL was not distributed with this                #}
+{# file, You can obtain one at http://mozilla.org/MPL/2.0/.                           #}
+{######################################################################################}
+{# IOSXR specific commands                                                            #}
+{######################################################################################}
+<config>
+ <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+{% for int in subinterfaces %}
+{% if int.node == inventory_hostname %}
+{% if ansible_connection == "netconf" %}
+   <interface-configuration>
+    <active>act</active>
+    <interface-name>{{ int.type }}{{ int.id }}.{{ int.sub }}</interface-name>
+    <interface-mode-non-physical>default</interface-mode-non-physical>
+    <description>{{ int.description }}</description>
+    <ipv4-network xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg">
+     <addresses>
+      <primary>
+       <address>{{ int.ip_address }}</address>
+       <netmask>{{ int.mask }}</netmask>
+      </primary>
+     </addresses>
+    </ipv4-network>
+    <vlan-sub-configuration xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-l2-eth-infra-cfg">
+     <vlan-identifier>
+      <vlan-type>vlan-type-dot1q</vlan-type>
+      <first-tag>{{ int.sub }}</first-tag>
+     </vlan-identifier>
+    </vlan-sub-configuration>
+   </interface-configuration>
+{% endif %}
+{% endif %}
+{% endfor %}
+ </interface-configurations>
+ <interfaces xmlns="http://openconfig.net/yang/interfaces">
+{% for int in subinterfaces %}
+{% if int.node == inventory_hostname %}
+{% if ansible_connection == "netconf" %}
+   <interface>
+    <name>{{ int.type }}{{ int.id }}</name>
+    <config>
+     <name>{{ int.type }}{{ int.id }}</name>
+     <enabled>true</enabled>
+    </config>
+    <subinterfaces>
+     <subinterface>
+      <index>{{ int.sub }}</index>
+      <config>
+       <index>{{ int.sub }}</index>
+       <name>{{ int.type }}{{ int.id }}.{{ int.sub }}</name>
+       <enabled>true</enabled>
+      </config>
+      <vlan xmlns="http://openconfig.net/yang/vlan">
+       <config>
+        <vlan-id>{{ int.sub }}</vlan-id>
+       </config>
+      </vlan>
+     </subinterface>
+    </subinterfaces>
+{% endif %}
+{% endif %}
+{% endfor %}
+   </interface>
+  </interfaces>
+</config>

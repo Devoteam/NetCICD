@@ -3,10 +3,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-- name: Start of CI/CD pipeline
-  hosts: netcicd
-  gather_facts: false
-  
-  roles:
-    - topology
+- name: Setup bundles
+  import_tasks: bundles.yml
+    
+- name: Setup topology GEinterfaces
+  import_tasks: GEinterfaces.yml
+
+- name: Setup subinterfaces
+  import_tasks: subinterfaces.yml
+    
 ...

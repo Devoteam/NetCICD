@@ -1,0 +1,54 @@
+{# This Source Code int.descriptionForm is subject to the terms of the Mozilla Public #}
+{# License, v. 2.0. If a copy of the MPL was not distributed with this                #}
+{# file, You can obtain one at http://mozilla.org/MPL/2.0/.                           #}
+{######################################################################################}
+{# IOSXR specific commands                                                            #}
+{######################################################################################}
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+ <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+{% for int in interfaces %}
+{% if int.node == inventory_hostname %}
+{% if ansible_connection == "netconf" %}
+   <interface-configuration>
+   <active>act</active>
+   <interface-name>{{ int.type }}{{ int.id }}</interface-name>
+{% if int.bundle == 0 %}
+   <ipv4-network xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg">
+     <addresses>
+      <primary>
+       <address>{{ int.ip_address }}</address>
+       <netmask>{{ int.mask }}</netmask>
+      </primary>
+     </addresses>
+    </ipv4-network>
+{% else %}
+    <bundle-member xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-bundlemgr-cfg">
+     <id>
+      <bundle-id>{{ int.bundle }}</bundle-id>
+      <port-activity>active</port-activity>
+     </id>
+    </bundle-member>
+{% endif %}
+   </interface-configuration>
+{% endif %}
+{% endif %}
+{% endfor %}
+ </interface-configurations>
+ <interfaces xmlns="http://openconfig.net/yang/interfaces">
+{% for int in interfaces %}
+{% if int.node == inventory_hostname %}
+{% if ansible_connection == "netconf" %}
+{% if int.no_shut %}
+   <interface>
+    <name>{{ int.type }}{{ int.id }}</name>
+    <config>
+     <name>{{ int.type }}{{ int.id }}</name>
+     <enabled>true</enabled>
+    </config>
+   </interface>
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %}
+ </interfaces>
+</config>

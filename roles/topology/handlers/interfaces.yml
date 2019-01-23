@@ -1,0 +1,35 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Prepare ping interfaces - prevent initial timeout failure
+  net_ping:
+    dest: "{{ item.remote }}"
+  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
+  loop: "{{ interfaces }}"
+  listen: interfaces
+
+- name: ping remote generic interfaces
+  net_ping:
+    dest: "{{ item.remote }}"
+  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
+  loop: "{{ interfaces }}"
+  register: test_output
+  listen: interfaces
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: ping remote IOSXR interfaces
+  vars:
+    ansible_connection: network_cli
+  iosxr_command:
+    commands: "ping {{ item.remote }}" 
+  when: (item.node == inventory_hostname and ansible_network_os == "iosxr" and item.bundle == 0)
+  loop: "{{ interfaces }}"
+  register: test_output
+  listen: interfaces
+
+...
