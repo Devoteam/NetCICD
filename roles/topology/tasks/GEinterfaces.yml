@@ -41,7 +41,6 @@
                                                                                                                                             
 - name: "Netconf configure interfaces for IOSXR"                                                        
   netconf_config:                                                                                     
-    hostkey_verify: no                                                                               
     src: "{{ ansible_network_os }}_nc_GEinterface.j2"                                                    
   when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
   notify:                                                                                         

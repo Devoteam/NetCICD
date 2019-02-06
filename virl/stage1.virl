@@ -11,6 +11,7 @@
     <node name="NetCICD" type="SIMPLE" subtype="docker-netcicd" location="60,97">
         <extensions>
             <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="static_ip" type="String">10.255.1.2</entry>
             <entry key="config" type="String">#cloud-config&#xD;
 hostname: NetCICD&#xD;
 manage_etc_hosts: true&#xD;
@@ -24,10 +25,37 @@ write_files:&#xD;
     route add default gw 172.16.1.1&#xD;
     cd&#xD;
     ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa&#xD;
+    echo 'export GIT_URL=http://172.16.1.254/netarch/NetCICD.git' &gt;&gt; /etc/profile&#xD;
     /usr/bin/java -jar /root/agent.jar -jnlpUrl jenkins_urlcomputer/jenkins_agent/slave-agent.jnlp -secret jenkins_secret -workDir "/root/jenkins_slave"&#xD;
     exit 0&#xD;
+- path: /home/jenkins/.profile&#xD;
+  owner: jenkins:jenkins&#xD;
+  permissions: '0755'&#xD;
+  content: |-&#xD;
+    #!/bin/sh&#xD;
+    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa&#xD;
+    git config --global user.name "jenkins"&#xD;
+    git config --global user.email "jenkins@netcicd.net"&#xD;
+    git clone $GIT_URL&#xD;
+    cd ~/NetCICD&#xD;
+    git status&#xD;
+    echo '===== Starting Stage 0 playbook (box) ====='&#xD;
+    ansible-playbook -i vars/stage1 stage0.yml -e stage=1&#xD;
+    echo '===== Starting Stage 1 playbook (topology) ====='&#xD;
+    cd roles/topology/vars&#xD;
+    ln -s stage1.yml main.yml&#xD;
+    cd ~/NetCICD&#xD;
+    ansible-playbook -i vars/stage1 stage1.yml -e stage=1&#xD;
+    echo '========= Ready for modification =========='&#xD;
+    echo 'You can now:'&#xD;
+    echo ' - create a branch with git branch &lt;mybranch&gt;'&#xD;
+    echo ' - view which files you changed with git status'&#xD;
+    echo ' - stage your changed files with git add'&#xD;
+    echo ' - commit with git commit -m "&lt;commit message&gt;"'&#xD;
+    echo ' - push the changes to the git server with git push --set-upstream origin &lt;mybranch&gt;'&#xD;
+    echo ''&#xD;
+    echo '============= Have Fun! ==============='&#xD;
 </entry>
-            <entry key="static_ip" type="String">10.255.1.2</entry>
         </extensions>
         <interface id="0" name="eth1"/>
     </node>
@@ -35,6 +63,7 @@ write_files:&#xD;
         <extensions>
             <entry key="static_ip" type="String">10.255.1.121</entry>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="config" type="String">username cisco privilege 15 secret C!sco123
 interface GigabitEthernet1
  ip address 10.255.1.121 255.255.255.0
@@ -44,17 +73,16 @@ enable secret C!sco123
 aaa new-model
 aaa session-id common
 aaa authorization exec default local
-username cisco privilege 15 secret C!sco123
+ip domain-name netcicd
 ip ssh version 2
 crypto key gen rsa mod 2048
 !
 
 </entry>
-            <entry key="Auto-generate config" type="Boolean">false</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2" ipv4="10.0.0.18" netPrefixLenV4="30"/>
     </node>
-    <node name="P1" type="SIMPLE" subtype="IOS XRv 9000" location="734,370" ipv4="192.168.0.110">
+    <node name="P1" type="SIMPLE" subtype="IOS XRv 9000 XL" location="734,370" ipv4="192.168.0.110">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
@@ -105,7 +133,7 @@ end</entry>
         <interface id="8" name="GigabitEthernet0/0/0/8"/>
         <interface id="9" name="GigabitEthernet0/0/0/9"/>
     </node>
-    <node name="PE1" type="SIMPLE" subtype="IOS XRv 9000" location="532,237" ipv4="192.168.0.128">
+    <node name="PE1" type="SIMPLE" subtype="IOS XRv 9000 XL" location="532,237" ipv4="192.168.0.128">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
@@ -157,32 +185,32 @@ end</entry>
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="config" type="String">hostname cust1&#xD;
-!&#xD;
-aaa new-model&#xD;
-!&#xD;
-aaa session-id common&#xD;
-aaa authorization exec default local&#xD;
-!&#xD;
-no ip icmp rate-limit unreachable&#xD;
-!&#xD;
-ip domain name netcicd&#xD;
-!&#xD;
-username cisco privilege 15 secret C!sco123&#xD;
-enable secret C!sco123&#xD;
-!&#xD;
-ip tcp synwait-time 5&#xD;
-ip ssh version 2&#xD;
-crypto key gen rsa mod 2048&#xD;
-! &#xD;
-interface GigabitEthernet0/0&#xD;
- ip address 10.255.1.144 255.255.255.0&#xD;
-!&#xD;
-line vty 0 4&#xD;
- transport input telnet ssh&#xD;
-!&#xD;
-!&#xD;
-end&#xD;
+            <entry key="config" type="String">hostname cust1
+!
+aaa new-model
+!
+aaa session-id common
+aaa authorization exec default local
+!
+no ip icmp rate-limit unreachable
+!
+ip domain name netcicd
+!
+username cisco privilege 15 secret C!sco123
+enable secret C!sco123
+!
+ip tcp synwait-time 5
+ip ssh version 2
+crypto key gen rsa mod 2048
+! 
+interface GigabitEthernet0/0
+ ip address 10.255.1.144 255.255.255.0
+!
+line vty 0 4
+ transport input telnet ssh
+!
+!
+end
 </entry>
             <entry key="static_ip" type="String">10.255.1.144</entry>
         </extensions>
@@ -269,39 +297,39 @@ xml server timeout 1200</entry>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="static_ip" type="String">10.255.1.146</entry>
-            <entry key="config" type="String">hostname cust1&#xD;
-!&#xD;
-aaa new-model&#xD;
-!&#xD;
-aaa session-id common&#xD;
-aaa authorization exec default local&#xD;
-!&#xD;
-no ip icmp rate-limit unreachable&#xD;
-!&#xD;
-ip domain name netcicd&#xD;
-!&#xD;
-username cisco privilege 15 secret C!sco123&#xD;
-enable secret C!sco123&#xD;
-!&#xD;
-ip tcp synwait-time 5&#xD;
-ip ssh version 2&#xD;
-crypto key gen rsa mod 2048&#xD;
-! &#xD;
-interface GigabitEthernet0/0&#xD;
- ip address 10.255.1.146 255.255.255.0&#xD;
-! &#xD;
-line vty 0 4&#xD;
- transport input telnet ssh&#xD;
-!&#xD;
-!&#xD;
-end&#xD;
+            <entry key="config" type="String">hostname cust1
+!
+aaa new-model
+!
+aaa session-id common
+aaa authorization exec default local
+!
+no ip icmp rate-limit unreachable
+!
+ip domain name netcicd
+!
+username cisco privilege 15 secret C!sco123
+enable secret C!sco123
+!
+ip tcp synwait-time 5
+ip ssh version 2
+crypto key gen rsa mod 2048
+! 
+interface GigabitEthernet0/0
+ ip address 10.255.1.146 255.255.255.0
+! 
+line vty 0 4
+ transport input telnet ssh
+!
+!
+end
 </entry>
         </extensions>
         <interface id="0" name="GigabitEthernet0/1" netPrefixLenV4="30"/>
     </node>
-    <node name="anx" type="SIMPLE" subtype="docker-anx" location="128,97">
+    <node name="anx" type="SIMPLE" subtype="docker-anx" location="128,97" vmFlavor="ANX [8a544731-0bc2-45a0-891f-0eb61e164f22]">
         <extensions>
-            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="static_ip" type="String">10.255.1.3</entry>
             <entry key="config" type="String">#cloud-config&#xD;
 hostname: anx&#xD;
 manage_etc_hosts: true&#xD;
@@ -314,17 +342,37 @@ write_files:&#xD;
     /sbin/ifconfig eth1 up&#xD;
     route add default gw 172.16.1.1&#xD;
     exit 0&#xD;
+&#xD;
 </entry>
-            <entry key="static_ip" type="String">10.255.1.3</entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
         </extensions>
         <interface id="0" name="eth1"/>
     </node>
     <node name="flat-2" type="ASSET" subtype="FLAT" location="128,190">
         <interface id="0" name="link0"/>
     </node>
+    <node name="syslog-1" type="SIMPLE" subtype="docker-syslog" location="472,73">
+        <extensions>
+            <entry key="config" type="String">#cloud-config
+hostname: syslog-1
+manage_etc_hosts: true
+write_files:
+- path: /etc/rc.local
+  owner: root:root
+  permissions: '0755'
+  content: |-
+    #!/bin/sh
+    ifconfig eth1 down
+    exit 0
+</entry>
+            <entry key="static_ip" type="String">10.255.1.10</entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+        </extensions>
+        <interface id="0" name="eth1"/>
+    </node>
     <annotations>
         <rect x="25" y="25" radius="10" width="150" height="225" fill="FFFFFF" stroke-width="3"/>
-        <text x="26" y="30" text-anchor="middle" bold="true">Management nodes</text>
+        <text x="33" y="32" bold="true">Management nodes</text>
         <rect x="668" y="328" radius="10" width="323" height="290" fill="FFFFFF" stroke-width="3"/>
         <text x="802" y="454" font-size="18" text-anchor="middle" bold="true">Core</text>
         <rect x="1029" y="168" radius="10" width="197" height="605" fill="FFFF80" stroke-width="3"/>
@@ -335,6 +383,10 @@ write_files:&#xD;
         <text x="783" y="221" font-size="18" text-anchor="middle" bold="true">IOSXR</text>
         <text x="490" y="453" font-size="18" text-anchor="middle" bold="true">Site 1</text>
         <text x="1097" y="450" font-size="18" text-anchor="middle" bold="true">Site 2</text>
+        <rect x="427" y="14" radius="10" width="799" height="118" fill="FFFFFF" stroke-width="3"/>
+        <text x="933" y="19" font-size="8">Docker container images for functional testing. 
+Container name refers to docker repository for configuration
+</text>
     </annotations>
     <connection dst="/virl:topology/virl:node[1]/virl:interface[1]" src="/virl:topology/virl:node[2]/virl:interface[1]"/>
     <connection dst="/virl:topology/virl:node[4]/virl:interface[1]" src="/virl:topology/virl:node[3]/virl:interface[1]"/>

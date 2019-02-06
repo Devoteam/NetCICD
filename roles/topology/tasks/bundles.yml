@@ -6,43 +6,13 @@
 # Classic IOS specific commands                                    #
 ####################################################################
 
-- name: "IOS configure bundles"
-  cli_config:
-    config: "{{ lookup('template', 'ios_bundle.j2') }}"
-    commit: yes
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - bundles
-
-- name: "Make sure new bundles are enabled"
-  net_interface:
-    name: "{{ item.type }}{{ item.id }}"
-    enabled: true
-  when: (item.node == inventory_hostname and ansible_network_os is defined and ansible_network_os == "ios")
-  loop: "{{ bundles }}"
-
 ####################################################################
 # IOSXR CLI specific commands                                      #
 ####################################################################
 
-- name: "IOSXR configure bundles"
-  iosxr_config:
-    src: "iosxr_bundle.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - bundles
-
 ####################################################################
 # NXOS CLI specific commands                                       #
 ####################################################################
-
-- name: "NX-OS configure bundles"
-  nxos_config:
-    src: "nxos_bundle.j2"
-    save_when: modified
-  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - bundles
 
 ####################################################################
 # Netconf specific commands                                        #
@@ -50,7 +20,6 @@
 
 - name: "Netconf configure bundles for IOSXR"                                                        
   netconf_config:                                                                                     
-    hostkey_verify: no 
     src: "iosxr_nc_bundle.j2"                                                    
   when: (ansible_connection is defined and ansible_connection == "netconf" and ansible_network_os == "iosxr" )                             
 #  notify:                                                                                         

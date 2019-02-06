@@ -12,4 +12,5 @@ time_offset: 1
 rescue: C!sco123
 ansible_user: cisco
 ansible_ssh_pass: C!sco123
+ansible_connection_timeout: 30
 ...

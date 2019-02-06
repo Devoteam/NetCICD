@@ -10,23 +10,38 @@
     <node name="NetCICD" type="SIMPLE" subtype="docker-netcicd" location="76,107">
         <extensions>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="config" type="String">#cloud-config
-hostname: NetCICD
-manage_etc_hosts: true
-write_files:
-- path: /etc/rc.local
-  owner: root:root
-  permissions: '0755'
-  content: |-
-    #!/bin/sh
-    /sbin/ifconfig eth1 up
-    route add default gw 172.16.1.1
-    cd
-    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
-    /usr/bin/java -jar /root/agent.jar -jnlpUrl jenkins_urlcomputer/jenkins_agent/slave-agent.jnlp -secret jenkins_secret -workDir "/root/jenkins_slave"
-    exit 0
-</entry>
             <entry key="static_ip" type="String">10.255.1.2</entry>
+            <entry key="config" type="String">#cloud-config&#xD;
+hostname: NetCICD&#xD;
+manage_etc_hosts: true&#xD;
+write_files:&#xD;
+- path: /etc/rc.local&#xD;
+  owner: root:root&#xD;
+  permissions: '0755'&#xD;
+  content: |-&#xD;
+    #!/bin/sh&#xD;
+    /sbin/ifconfig eth1 up&#xD;
+    route add default gw 172.16.1.1&#xD;
+    cd&#xD;
+    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa&#xD;
+    echo 'export VIRL=0' &gt;&gt; /etc/profile&#xD;
+    echo 'export GIT_URL=http://172.16.1.254/netarch/NetCICD.git' &gt;&gt; /etc/profile&#xD;
+    /usr/bin/java -jar /root/agent.jar -jnlpUrl jenkins_urlcomputer/jenkins_agent/slave-agent.jnlp -secret jenkins_secret -workDir "/root/jenkins_slave"&#xD;
+    exit 0&#xD;
+- path: /home/jenkins/&#xD;.profile&#xD;
+
+  owner: jenkins:jenkins&#xD;
+  permissions: '0755'&#xD;
+  content: |-&#xD;
+    #!/bin/sh&#xD;
+    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa&#xD;
+    git config --global user.name "jenkins"&#xD;
+    git config --global user.email "jenkins@netcicd.net"&#xD;
+    git clone $GIT_URL&#xD;
+    cd NetCICD&#xD;
+    git status&#xD;
+    echo '===== Starting Stage 0 playbook (box) ====='&#xD;
+    ansible-playbook -i vars/stage$VIRL stage0.yml -e stage=$VIRL</entry>
         </extensions>
         <interface id="0" name="eth1"/>
     </node>
@@ -35,28 +50,28 @@ write_files:
             <entry key="static_ip" type="String">10.255.1.121</entry>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="config" type="String">username cisco privilege 15 secret C!sco123
-interface GigabitEthernet1
- ip address 10.255.1.121 255.255.255.0
- negotiation auto
- no shutdown
-enable secret C!sco123
-aaa new-model
-aaa session-id common
-aaa authorization exec default local
-username cisco privilege 15 secret C!sco123
-ip ssh version 2
-crypto key gen rsa mod 2048
-!
-interface GigabitEthernet3
- ip address 172.16.6.121 255.255.255.0
- no shutdown
-!
+            <entry key="config" type="String">username cisco privilege 15 secret C!sco123&#xD;
+interface GigabitEthernet1&#xD;
+ ip address 10.255.1.121 255.255.255.0&#xD;
+ negotiation auto&#xD;
+ no shutdown&#xD;
+enable secret C!sco123&#xD;
+aaa new-model&#xD;
+aaa session-id common&#xD;
+aaa authorization exec default local&#xD;
+ip domain-name netcicd&#xD;
+ip ssh version 2&#xD;
+crypto key gen rsa mod 2048&#xD;
+!&#xD;
+interface GigabitEthernet3&#xD;
+ ip address 172.16.6.121 255.255.255.0&#xD;
+ no shutdown&#xD;
+!&#xD;
 </entry>
         </extensions>
         <interface id="1" name="GigabitEthernet3" ipv4="10.0.0.3" netPrefixLenV4="16"/>
     </node>
-    <node name="PE1" type="SIMPLE" subtype="IOS XRv 9000" location="554,346" ipv4="192.168.0.128">
+    <node name="PE1" type="SIMPLE" subtype="IOS XRv 9000 XL" location="554,346" ipv4="192.168.0.128">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>

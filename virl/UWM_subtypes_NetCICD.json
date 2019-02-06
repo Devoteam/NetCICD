@@ -2,12 +2,14 @@
   "dynamic-subtypes": [
     {
       "plugin_base": "docker", 
-      "hw_vcpus": 1, 
-      "deprecated_use": "", 
+      "hw_vcpus": 2, 
       "plugin_desc": "Docker based Netconf explorer", 
+      "deprecated_use": "", 
+      "hw_ram": 4000, 
       "plugin_name": "docker-anx", 
       "hw_vm_extra": "", 
       "baseline_image": "docker-anx", 
+      "interface_range": 2, 
       "hw_disk_bus": "ide"
     }, 
     {
@@ -24,15 +26,6 @@
       "plugin_base": "docker", 
       "hw_vcpus": 1, 
       "deprecated_use": "", 
-      "plugin_name": "docker-snmp", 
-      "hw_vm_extra": "", 
-      "baseline_image": "docker-snmp", 
-      "hw_disk_bus": "ide"
-    }, 
-    {
-      "plugin_base": "docker", 
-      "hw_vcpus": 1, 
-      "deprecated_use": "", 
       "plugin_desc": "Docker container host node with syslog server", 
       "plugin_name": "docker-syslog", 
       "hw_vm_extra": "", 
@@ -40,14 +33,14 @@
       "hw_disk_bus": "ide"
     }, 
     {
-      "plugin_base": "docker", 
-      "hw_vcpus": 1, 
+      "plugin_base": "IOS XRv 9000", 
+      "plugin_desc": "Cisco IOS XRv 9000 router with extra memory", 
       "deprecated_use": "", 
-      "plugin_desc": "Docker container host node with TACACS server", 
-      "plugin_name": "docker-tacacs", 
-      "hw_vm_extra": "", 
-      "baseline_image": "docker-tacacs", 
-      "hw_disk_bus": "ide"
+      "hw_ram": 16384, 
+      "plugin_name": "IOS XRv 9000 XL", 
+      "cli_serial": 0, 
+      "baseline_image": "", 
+      "baseline_flavor": ""
     }
   ]
 }

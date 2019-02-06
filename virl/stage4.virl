@@ -10,6 +10,7 @@
     <node name="NetCICD" type="SIMPLE" subtype="docker-netcicd" location="61,106">
         <extensions>
             <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="static_ip" type="String">10.255.1.2</entry>
             <entry key="config" type="String">#cloud-config&#xD;
 hostname: NetCICD&#xD;
 manage_etc_hosts: true&#xD;
@@ -23,10 +24,11 @@ write_files:&#xD;
     route add default gw 172.16.1.1&#xD;
     cd&#xD;
     ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa&#xD;
+    echo 'export VIRL=4' &gt;&gt; /etc/profile&#xD;
+    echo 'export GIT_URL=http://172.16.1.254/netarch/NetCICD.git' &gt;&gt; /etc/profile&#xD;
     /usr/bin/java -jar /root/agent.jar -jnlpUrl jenkins_urlcomputer/jenkins_agent/slave-agent.jnlp -secret jenkins_secret -workDir "/root/jenkins_slave"&#xD;
     exit 0&#xD;
 </entry>
-            <entry key="static_ip" type="String">10.255.1.2</entry>
         </extensions>
         <interface id="0" name="eth1"/>
     </node>
@@ -34,6 +36,7 @@ write_files:&#xD;
         <extensions>
             <entry key="static_ip" type="String">10.255.1.121</entry>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
             <entry key="config" type="String">username cisco privilege 15 secret C!sco123&#xD;
 interface GigabitEthernet1&#xD;
  ip address 10.255.1.121 255.255.255.0&#xD;
@@ -43,17 +46,16 @@ enable secret C!sco123&#xD;
 aaa new-model&#xD;
 aaa session-id common&#xD;
 aaa authorization exec default local&#xD;
-username cisco privilege 15 secret C!sco123&#xD;
+ip domain-name netcicd&#xD;
 ip ssh version 2&#xD;
 crypto key gen rsa mod 2048&#xD;
 !&#xD;
 &#xD;
 </entry>
-            <entry key="Auto-generate config" type="Boolean">false</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2" ipv4="10.0.0.18" netPrefixLenV4="30"/>
     </node>
-    <node name="P1" type="SIMPLE" subtype="IOS XRv 9000" location="734,370" ipv4="192.168.0.110">
+    <node name="P1" type="SIMPLE" subtype="IOS XRv 9000 XL" location="734,370" ipv4="192.168.0.110">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
@@ -104,7 +106,7 @@ end</entry>
         <interface id="8" name="GigabitEthernet0/0/0/8"/>
         <interface id="9" name="GigabitEthernet0/0/0/9"/>
     </node>
-    <node name="PE1" type="SIMPLE" subtype="IOS XRv" location="532,237" ipv4="192.168.0.128">
+    <node name="PE1" type="SIMPLE" subtype="IOS XRv 9000 XL" location="532,237" ipv4="192.168.0.128">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
@@ -352,28 +354,26 @@ end&#xD;
     <node name="RR2" type="SIMPLE" subtype="CSR1000v" location="864,511" ipv4="192.168.0.122">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
+            <entry key="Auto-generate config" type="Boolean">false</entry>
+            <entry key="static_ip" type="String">10.255.1.122</entry>
             <entry key="config" type="String">username cisco privilege 15 secret C!sco123&#xD;
 interface GigabitEthernet1&#xD;
- ip address 10.255.1.121 255.255.255.0&#xD;
+ ip address 10.255.1.122 255.255.255.0&#xD;
  negotiation auto&#xD;
  no shutdown&#xD;
 enable secret C!sco123&#xD;
 aaa new-model&#xD;
 aaa session-id common&#xD;
 aaa authorization exec default local&#xD;
-username cisco privilege 15 secret C!sco123&#xD;
+ip domain-name netcicd&#xD;
 ip ssh version 2&#xD;
 crypto key gen rsa mod 2048&#xD;
-!&#xD;
-&#xD;
-</entry>
-            <entry key="Auto-generate config" type="Boolean">false</entry>
-            <entry key="static_ip" type="String">10.255.1.122</entry>
+!</entry>
         </extensions>
         <interface id="0" name="GigabitEthernet2"/>
         <interface id="1" name="GigabitEthernet3" netPrefixLenV4="30"/>
     </node>
-    <node name="P2" type="SIMPLE" subtype="IOS XRv 9000" location="934,370" ipv4="192.168.0.111">
+    <node name="P2" type="SIMPLE" subtype="IOS XRv 9000 XL" location="934,370" ipv4="192.168.0.111">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>
@@ -474,7 +474,7 @@ end</entry>
         <interface id="8" name="GigabitEthernet0/0/0/8"/>
         <interface id="9" name="GigabitEthernet0/0/0/9"/>
     </node>
-    <node name="PE2" type="SIMPLE" subtype="IOS XRv 9000" location="1132,237" ipv4="192.168.0.129">
+    <node name="PE2" type="SIMPLE" subtype="IOS XRv 9000 XL" location="1132,237" ipv4="192.168.0.129">
         <extensions>
             <entry key="AutoNetkit.mgmt_ip" type="string"></entry>
             <entry key="Auto-generate config" type="Boolean">false</entry>

@@ -6,14 +6,14 @@
 - name: Prepare ping interfaces - prevent initial timeout failure
   net_ping:
     dest: "{{ item.remote }}"
-  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
+  when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.bundle == 0)
   loop: "{{ interfaces }}"
   listen: interfaces
 
 - name: ping remote generic interfaces
   net_ping:
     dest: "{{ item.remote }}"
-  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
+  when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.bundle == 0)
   loop: "{{ interfaces }}"
   register: test_output
   listen: interfaces
@@ -27,7 +27,7 @@
     ansible_connection: network_cli
   iosxr_command:
     commands: "ping {{ item.remote }}" 
-  when: (item.node == inventory_hostname and ansible_network_os == "iosxr" and item.bundle == 0)
+  when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os == "iosxr" and item.bundle == 0)
   loop: "{{ interfaces }}"
   register: test_output
   listen: interfaces

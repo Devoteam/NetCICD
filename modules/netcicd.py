@@ -20,7 +20,7 @@ def run_ansible_command(context, node_string, command, stage, module):
     test_result = ans_result[0]
 
     if ans_result[1]:
-        assert False, "\nCommand: " + " ".join(ansible_command_string) + "\n" + "Ansible Error: " + ans_result[1]
+        assert False, "\nCommand: " + " ".join(ansible_command_string) + "\n" + "Ansible Error: " + str(ans_result[1])
 
     return test_result
 
@@ -55,7 +55,7 @@ def run_ios_command(context, node_string, command, stage, module):
     test_result = ans_result[0]
 
     if ans_result[1]:
-        assert False, "\nCommand: " + " ".join(ansible_command_string) + "\n" + "Ansible Error: " + ans_result[1]
+        assert False, "\nCommand: " + " ".join(ansible_command_string) + "\n" + "Ansible Error: " + str(ans_result[1])
 
     return test_result
 

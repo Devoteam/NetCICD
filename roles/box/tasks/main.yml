@@ -9,9 +9,6 @@
 - name: Setup banners
   import_tasks: banners.yml
 
-#- name: Setup ssh
-#  import_tasks: ssh.yml
-    
 #- name: Setup logging
 #  import_tasks: logging.yml
 
