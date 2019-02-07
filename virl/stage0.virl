@@ -41,7 +41,20 @@ write_files:&#xD;
     cd NetCICD&#xD;
     git status&#xD;
     echo '===== Starting Stage 0 playbook (box) ====='&#xD;
-    ansible-playbook -i vars/stage$VIRL stage0.yml -e stage=$VIRL</entry>
+    cd roles/box/vars&#xD;
+    ln -s stage0.yml main.yml&#xD;
+    cd ~/NetCICD&#xD;
+    ansible-playbook -i vars/stage0 stage0.yml -e stage=0&#xD;
+    echo '========= Ready for modification =========='&#xD;
+    echo 'You can now:'&#xD;
+    echo ' - create a branch with git branch &lt;mybranch&gt;'&#xD;
+    echo ' - view which files you changed with git status'&#xD;
+    echo ' - stage your changed files with git add'&#xD;
+    echo ' - commit with git commit -m "&lt;commit message&gt;"'&#xD;
+    echo ' - push the changes to the git server with git push --set-upstream origin &lt;mybranch&gt;'&#xD;
+    echo ''&#xD;
+    echo '============= Have Fun! ==============='&#xD;
+</entry>
         </extensions>
         <interface id="0" name="eth1"/>
     </node>

@@ -40,6 +40,9 @@ write_files:&#xD;
     cd ~/NetCICD&#xD;
     git status&#xD;
     echo '===== Starting Stage 0 playbook (box) ====='&#xD;
+    cd roles/box/vars&#xD;
+    ln -s stage1.yml main.yml&#xD;
+    cd ~/NetCICD&#xD;
     ansible-playbook -i vars/stage1 stage0.yml -e stage=1&#xD;
     echo '===== Starting Stage 1 playbook (topology) ====='&#xD;
     cd roles/topology/vars&#xD;
@@ -214,7 +217,7 @@ end
 </entry>
             <entry key="static_ip" type="String">10.255.1.144</entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1" netPrefixLenV4="30"/>
+        <interface id="1" name="GigabitEthernet0/2" netPrefixLenV4="30"/>
     </node>
     <node name="PE3" type="SIMPLE" subtype="NX-OSv" location="528,712" ipv4="192.168.0.130">
         <extensions>
@@ -325,7 +328,7 @@ line vty 0 4
 end
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1" netPrefixLenV4="30"/>
+        <interface id="1" name="GigabitEthernet0/2" netPrefixLenV4="30"/>
     </node>
     <node name="anx" type="SIMPLE" subtype="docker-anx" location="128,97" vmFlavor="ANX [8a544731-0bc2-45a0-891f-0eb61e164f22]">
         <extensions>

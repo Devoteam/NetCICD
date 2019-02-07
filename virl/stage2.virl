@@ -28,6 +28,41 @@ write_files:&#xD;
     echo 'export GIT_URL=http://172.16.1.254/netarch/NetCICD.git' &gt;&gt; /etc/profile&#xD;
     /usr/bin/java -jar /root/agent.jar -jnlpUrl jenkins_urlcomputer/jenkins_agent/slave-agent.jnlp -secret jenkins_secret -workDir "/root/jenkins_slave"&#xD;
     exit 0&#xD;
+- path: /home/jenkins/.profile&#xD;
+  owner: jenkins:jenkins&#xD;
+  permissions: '0755'&#xD;
+  content: |-&#xD;
+    #!/bin/sh&#xD;
+    ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa&#xD;
+    git config --global user.name "jenkins"&#xD;
+    git config --global user.email "jenkins@netcicd.net"&#xD;
+    git clone $GIT_URL&#xD;
+    cd ~/NetCICD&#xD;
+    git status&#xD;
+    echo '===== Starting Stage 0 playbook (box) ====='&#xD;
+    cd roles/box/vars&#xD;
+    ln -s stage2.yml main.yml&#xD;
+    cd ~/NetCICD&#xD;
+    ansible-playbook -i vars/stage2 stage0.yml -e stage=2&#xD;
+    echo '===== Starting Stage 1 playbook (topology) ====='&#xD;
+    cd roles/topology/vars&#xD;
+    ln -s stage2.yml main.yml&#xD;
+    cd ~/NetCICD&#xD;
+    ansible-playbook -i vars/stage2 stage1.yml -e stage=2&#xD;
+    echo '===== Starting Stage 2 playbook (topology) ====='&#xD;
+    cd roles/reachability/vars&#xD;
+    ln -s stage2.yml main.yml&#xD;
+    cd ~/NetCICD&#xD;
+    ansible-playbook -i vars/stage2 stage2.yml -e stage=2&#xD;
+    echo '========= Ready for modification =========='&#xD;
+    echo 'You can now:'&#xD;
+    echo ' - create a branch with git branch &lt;mybranch&gt;'&#xD;
+    echo ' - view which files you changed with git status'&#xD;
+    echo ' - stage your changed files with git add'&#xD;
+    echo ' - commit with git commit -m "&lt;commit message&gt;"'&#xD;
+    echo ' - push the changes to the git server with git push --set-upstream origin &lt;mybranch&gt;'&#xD;
+    echo ''&#xD;
+    echo '============= Have Fun! ==============='&#xD;
 </entry>
         </extensions>
         <interface id="0" name="eth1"/>
@@ -187,7 +222,7 @@ line vty 0 4&#xD;
 end&#xD;
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1" netPrefixLenV4="30"/>
+        <interface id="1" name="GigabitEthernet0/2" netPrefixLenV4="30"/>
     </node>
     <node name="PE3" type="SIMPLE" subtype="NX-OSv" location="528,712" ipv4="192.168.0.130">
         <extensions>
@@ -349,7 +384,7 @@ line vty 0 4&#xD;
 end&#xD;
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1" netPrefixLenV4="30"/>
+        <interface id="1" name="GigabitEthernet0/2" netPrefixLenV4="30"/>
     </node>
     <node name="RR2" type="SIMPLE" subtype="CSR1000v" location="864,511" ipv4="192.168.0.122">
         <extensions>
@@ -631,7 +666,7 @@ end&#xD;
 </entry>
             <entry key="static_ip" type="String">10.255.1.145</entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1" netPrefixLenV4="30"/>
+        <interface id="1" name="GigabitEthernet0/2" netPrefixLenV4="30"/>
     </node>
     <node name="CE4" type="SIMPLE" subtype="IOSv" location="1336,865" ipv4="192.168.0.147">
         <extensions>
@@ -666,7 +701,7 @@ line vty 0 4&#xD;
 end&#xD;
 </entry>
         </extensions>
-        <interface id="0" name="GigabitEthernet0/1" netPrefixLenV4="30"/>
+        <interface id="1" name="GigabitEthernet0/2" netPrefixLenV4="30"/>
     </node>
     <node name="anx" type="SIMPLE" subtype="docker-anx" location="138,103">
         <extensions>
