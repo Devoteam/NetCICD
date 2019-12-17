@@ -2,6 +2,7 @@ FROM ciscotestautomation/pyats:latest-alpine
 
 ENV GROOVY_VERSION 2.5.8
 ENV GROOVY_HOME "/usr/share/groovy"
+ENV JAVA_HOME "/usr"
 
 RUN apk add --update \
     openjdk8 \
@@ -43,6 +44,8 @@ Host *\n\
 
 RUN echo "export PATH=$PATH:/usr/share/groovy/bin" >> /etc/profile
 RUN echo "export JAVA_HOME=/usr" >> /etc/profile
+ 
+RUN /usr/share/groovy/bin/grape install org.codehaus.groovy.modules.http-builder http-builder 0.7.2
 RUN adduser -D jenkins && (echo "jenkins:jenkins" | chpasswd) && (echo "root:root" | chpasswd)
 COPY rawPopulator.groovy /home/jenkins/
 COPY agent.jar /home/jenkins/
