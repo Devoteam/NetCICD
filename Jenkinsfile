@@ -14,7 +14,7 @@ pipeline {
         stage('Prepare Jenkins...') {
             agent { 
                 node { 
-                    label 'swarm_node' 
+                    label 'jenkins_node' 
                 } 
             }
             steps {
@@ -31,7 +31,7 @@ pipeline {
         stage('Deploying Stage 0 simulation (Box) in CML') {
             agent { 
                 node { 
-                    label 'swarm_node' 
+                    label 'jenkins_node' 
                 } 
             }
             steps {
@@ -58,8 +58,8 @@ pipeline {
                     echo "Start stage 0 playbook"
                     ansiblePlaybook installation: 'ansible', inventory: 'vars/stage0', playbook: 'stage0.yml', extraVars: ["stage": "0"], extras: '-vvvv'
                 }
-                node ('swarm_node') {
-                    echo "Switching to jenkins agent: swarm_node"
+                node ('jenkins_node') {
+                    echo "Switching to jenkins agent: jenkins_node"
 
                     echo 'Stopping CML simulation'
                     sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage0-' + "${gitCommit}"
@@ -72,7 +72,7 @@ pipeline {
         stage('Deploying Stage 1 simulation (Topology) in CML') {
             agent { 
                 node { 
-                    label 'swarm_node' 
+                    label 'jenkins_node' 
                 } 
             }
             steps {
@@ -103,8 +103,8 @@ pipeline {
                     echo "Start stage 1 playbook"
                     ansiblePlaybook installation: 'ansible', inventory: 'vars/stage1', playbook: 'stage1.yml', extraVars: ["stage": "1"], extras: '-vvvv'
                 }
-                node ('swarm_node') {
-                    echo "Switching to jenkins agent: swarm_node"
+                node ('jenkins_node') {
+                    echo "Switching to jenkins agent: jenkins_node"
 
                     echo 'Stopping CML simulation'
                     sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage1-' + "${gitCommit}"
