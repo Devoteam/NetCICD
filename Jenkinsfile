@@ -8,7 +8,6 @@ pipeline {
     environment {
         JENKINS_CRED = credentials('Jenkins-SIM')
         CML_CRED = credentials('CML-SIM-CRED')
-        CML_URL = credentials('CML-URL')
     }
     stages {
         stage('Prepare Jenkins...') {
@@ -20,11 +19,9 @@ pipeline {
             steps {
                 echo 'Collecting variables'
                 echo '--------------------'
-                echo "${CML_URL}"
+                echo "${env.CML_URL}"
                 script { 
                     gitCommit = sh(returnStdout: true, script: 'git rev-parse --short  HEAD').trim()
-                    jc = sh(returnStdout: true, script: 'curl -u ' + "${JENKINS_CRED}" + ' \'' + "${env.JENKINS_URL}" + 'crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)\'').trim()
-                    JenkinsCrumb = jc.substring(14)
                 }
             }
         }
@@ -62,10 +59,10 @@ pipeline {
                     echo "Switching to jenkins agent: jenkins_node"
 
                     echo 'Stopping CML simulation'
-                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage0-' + "${gitCommit}"
+                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}"  + '/simengine/rest/stop/stage0-' + "${gitCommit}"
 
                     echo 'Removing Jenkins Agent'
-                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -H "' + "${jc}" + '" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage0' + "-" + "${gitCommit}" + '/doDelete"'
+                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage0' + "-" + "${gitCommit}" + '/doDelete"'
                 }
             }
         }
@@ -107,10 +104,10 @@ pipeline {
                     echo "Switching to jenkins agent: jenkins_node"
 
                     echo 'Stopping CML simulation'
-                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}"  + '/simengine/rest/stop/stage1-' + "${gitCommit}"
+                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}"  + '/simengine/rest/stop/stage1-' + "${gitCommit}"
 
                     echo 'Removing Jenkins Agent'
-                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -H "' + "${jc}" + '" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage1' + "-" + "${gitCommit}" + '/doDelete"'
+                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage1' + "-" + "${gitCommit}" + '/doDelete"'
                 }
             }
         }
@@ -140,7 +137,7 @@ pipeline {
 
 def startsim(stage) {
     echo 'Creating Jenkins build node for commit: ' + "${gitCommit}"
-    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -H "'+ "${jc}" + '" -X POST -d \'json={"name":+"stage' + "${stage}" + "-" + "${gitCommit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+stage'  + "${stage}" + "-"+ "${gitCommit}" + '",+"numExecutors":+"1",+"remoteFS":+"/root",+"labelString":+"slave' + "${stage}" + "-"+ "${gitCommit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave",+"Jenkins-Crumb":+"'+ "${JenkinsCrumb}" + '"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="stage' + "${stage}" + "-" + "${gitCommit}" + '"&type=hudson.slaves.DumbSlave"'
+    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -X POST -d \'json={"name":+"stage' + "${stage}" + "-" + "${gitCommit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+stage'  + "${stage}" + "-"+ "${gitCommit}" + '",+"numExecutors":+"1",+"remoteFS":+"/root",+"labelString":+"slave' + "${stage}" + "-"+ "${gitCommit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="stage' + "${stage}" + "-" + "${gitCommit}" + '"&type=hudson.slaves.DumbSlave"'
   
     echo 'Retrieving Agent Secret'
     script {
@@ -158,13 +155,13 @@ def startsim(stage) {
     sh "sed -i 's/jenkins_agent/stage" + "${stage}" + "-" + "${gitCommit}" + "/g' virl/stage" + "${stage}" + ".virl"
 
     echo 'Starting CML simulation for stage ' + "${stage}"
-    sh 'curl -X POST -u ' + "${CML_CRED}" + ' --header "Content-Type:text/xml;charset=UTF-8" --data-binary @virl/stage' + "${stage}" + '.virl ' + "${CML_URL}" + '/simengine/rest/launch?session=stage' + "${stage}" + '-' + "${gitCommit}"
+    sh 'curl -X POST -u ' + "${CML_CRED}" + ' --header "Content-Type:text/xml;charset=UTF-8" --data-binary @virl/stage' + "${stage}" + '.virl ' + "${env.CML_URL}" + '/simengine/rest/launch?session=stage' + "${stage}" + '-' + "${gitCommit}"
 
     timeout(time: 30, unit: "MINUTES") {
         script {
             waitUntil {
                 sleep 60
-                cml_state_json = sh(returnStdout: true, script: 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${CML_URL}" + '/simengine/rest/nodes/stage' + "${stage}" + '-' + "${gitCommit}").trim()
+                cml_state_json = sh(returnStdout: true, script: 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}" + '/simengine/rest/nodes/stage' + "${stage}" + '-' + "${gitCommit}").trim()
                 def c_state = readJSON text: "${cml_state_json}"
                 cml_state = c_state["stage" + "${stage}" + "-"+"${gitCommit}"]
                 //echo "${cml_state}"
