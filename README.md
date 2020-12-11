@@ -1,4 +1,4 @@
-[![DepShield Badge](https://depshield.sonatype.org/badges/Devoteam/NetCICD/depshield.svg)](https://depshield.github.io)
+DepShield: [![DepShield Badge](https://depshield.sonatype.org/badges/Devoteam/NetCICD/depshield.svg)](https://depshield.github.io)
 
 # NetCICD #
 ## About ##
