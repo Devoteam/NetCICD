@@ -1,3 +1,5 @@
+[![DepShield Badge](https://depshield.sonatype.org/badges/Devoteam/NetCICD/depshield.svg)](https://depshield.github.io)
+
 # NetCICD #
 ## About ##
 NetCICD is an Ansible based toolset to facilitate continuous (…) for infrastructure. In the infrastructure realm, Continuous Development (CI/CD) is not yet common practice. This is partly caused by lack of familiarity with the CI/CD paradigm and the complexity of setting up such an environment. 
