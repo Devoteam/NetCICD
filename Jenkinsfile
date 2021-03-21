@@ -119,26 +119,26 @@ def startsim(stage,build,commit) {
     echo 'Starting CML simulation for stage ' + "${stage}"
     //sh 'curl -X POST -u ' + "${CML_CRED}" + ' --header "Content-Type:text/xml;charset=UTF-8" --data-binary @virl/stage' + "${stage}" + '.virl ' + "${env.CML_URL}" + '/simengine/rest/launch?session=stage' + "${stage}" + '-' + "${gitCommit}"
 
-    timeout(time: 30, unit: "MINUTES") {
-        script {
-            waitUntil {
-                sleep 60
-                cml_state_json = sh(returnStdout: true, script: 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}" + '/simengine/rest/nodes/stage' + "${stage}" + '-' + "${commit}").trim()
-                def c_state = readJSON text: "${cml_state_json}"
-                cml_state = c_state["stage" + "${stage}" + "-"+"${commit}"]
-                //echo "${cml_state}"
-                cs = cml_state.collect {it.value.reachable}
-                echo "Node reachability: " + "${cs}"
-                test =  cs.every {element -> element == true}
-                echo "Simulation ready? " + "${test}"
-                if (test) {
-                    return true
-                } else {
-                    return false
-                }
-            }
-        }
-    }
+    // timeout(time: 30, unit: "MINUTES") {
+    //     script {
+    //         waitUntil {
+    //             sleep 60
+    //             cml_state_json = sh(returnStdout: true, script: 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}" + '/simengine/rest/nodes/stage' + "${stage}" + '-' + "${commit}").trim()
+    //             def c_state = readJSON text: "${cml_state_json}"
+    //             cml_state = c_state["stage" + "${stage}" + "-"+"${commit}"]
+    //             //echo "${cml_state}"
+    //             cs = cml_state.collect {it.value.reachable}
+    //             echo "Node reachability: " + "${cs}"
+    //             test =  cs.every {element -> element == true}
+    //             echo "Simulation ready? " + "${test}"
+    //             if (test) {
+    //                 return true
+    //             } else {
+    //                 return false
+    //             }
+    //         }
+    //     }
+    // }
     return null
 }
 
