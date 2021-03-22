@@ -33,7 +33,7 @@ pipeline {
                     echo 'Starting CML simulation'
                     startsim(${STAGE}, ${env.BUILD_NUMBER}, ${GIT_COMMIT[0..7]}, ${thisSecret})
                 }
-                node ("Stage: " + ${STAGE} + "-" + ${GIT_COMMIT[0..7] as String) {
+                node ("Stage: " + ${STAGE} + "-" + ${GIT_COMMIT[0..7]} as String) {
                     echo "Switching to jenkins agent: ${STAGE}-${GIT_COMMIT[0..7]}"
                     
                     checkout scm
@@ -76,18 +76,18 @@ pipeline {
     }
     post {
         success {
-            echo "Stage ${STAGE}, build number ${env.BUILD_NUMBER}, commit: ${GIT_COMMIT} was successful."
+            echo "Stage ${STAGE}, build number ${env.BUILD_NUMBER}, commit: ${GIT_COMMIT[0..7]} was successful."
             //mail to: 'architect@infraautomator.example.com',
             // Evaluation between double quotes needs done to be here to see the value
-            //    subject: "Stage ${STAGE} successful ${env.BUILD_NUMBER} for commit: ${GIT_COMMIT}",
-            //    body: "Build is on branch ${env.JOB_NAME} for commit: ${GIT_COMMIT} "
+            //    subject: "Stage ${STAGE} successful ${env.BUILD_NUMBER} for commit: ${GIT_COMMIT[0..7]}",
+            //    body: "Build is on branch ${env.JOB_NAME} for commit: ${GIT_COMMIT[0..7]} "
         }
         unsuccessful {
-            echo "Build number ${env.BUILD_NUMBER}, commit: ${GIT_COMMIT} failed."
+            echo "Build number ${env.BUILD_NUMBER}, commit: ${GIT_COMMIT[0..7]} failed."
             // Evaluation between double quotes needs done to be here to see the value
             //    mail to: 'architect@infraautomator.example.com',
-            //    subject: "Stage ${STAGE} failed ${env.BUILD_NUMBER} for commit: ${GIT_COMMIT}",
-            //    body: "Build is on branch ${env.JOB_NAME} for commit: ${GIT_COMMIT} "
+            //    subject: "Stage ${STAGE} failed ${env.BUILD_NUMBER} for commit: ${GIT_COMMIT[0..7]}",
+            //    body: "Build is on branch ${env.JOB_NAME} for commit: ${GIT_COMMIT[0..7]} "
         }
         changed {
             // Evaluation between double quotes needs done to be here to see the value
