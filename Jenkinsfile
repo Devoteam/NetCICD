@@ -2,8 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import groovy.json.JsonSlurper
+
 def this_stage = "None"
 def gitCommit = ""
+def cml_token = "12345"
+def lab_id = "1"
 
 pipeline {
     agent none
@@ -30,13 +34,24 @@ pipeline {
                         }
                         //sh 'printenv'
                         echo "CML can be found on: ${env.CML_URL}"
+                        
+                        // Collect CML token first
+                        script {
+                            cml_token = sh(returnStdout: true, script: 'curl -k -X POST "https://192.168.32.148/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
+                        }
+                        
                         echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
                         echo 'Creating Jenkins Agent'
                         script {
                             thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
                         }
                         echo 'Starting CML simulation'
-                        startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}")
+                        script {
+                            lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
+                        }
+                        
+                        echo "Lab is ${lab_id}"
+                        
                     }
                 }
                 stage ('Preparing playbook') {
@@ -55,7 +70,7 @@ pipeline {
                     //    label ${this_stage} + "-" + ${gitCommit} as String
                     //}
                     steps {
-                        echo "Start stage ${this_stage} playbook"
+                        echo "Start stage ${this_stage} playbook on lab ${lab_id}"
                         //ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-${this_stage}', playbook: 'stage-${this_stage}.yml', extraVars: ["stage": ${this_stage}], extras: '-vvvv'
                     }
 
@@ -63,8 +78,8 @@ pipeline {
                 stage ('Cleaning up') {
                     steps {
                         echo "Switched to jenkins agent: master"
-                        echo 'Stopping CML simulation'
-                        stopsim("${this_stage}","${env.BUILD_tag}","${gitCommit}")   
+                        echo "Stopping CML simulation on lab ${lab_id}"
+                        stopsim("${this_stage}", "${env.BUILD_tag}", "${gitCommit}", "${lab_id}", "${cml_token}")   
                         echo 'Removing Jenkins Agent'
                         stopagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
                     }
@@ -125,10 +140,25 @@ def stopagent(stage, build, commit) {
     return null
 }
 
-def startsim(stage, build, commit, secret) {
+def startsim(stage, build, commit, secret, token) {
+    def thislab = ""
     echo "Starting CML simulation for build ${build}, stage ${stage}"
-    //echo "Agent secret: ${secret}"
-    //sh 'curl -X POST -u ' + "${CML_CRED}" + ' --header "Content-Type:text/xml;charset=UTF-8" --data-binary @virl/stage' + "${stage}" + '.virl ' + "${env.CML_URL}" + '/simengine/rest/launch?session=stage' + "${stage}" + '-' + "${gitCommit}"
+    echo "Agent secret: ${secret}"
+    // Insert the agent_secret into the yaml file
+
+    //we need to collect the lab_id in order to be able to stop the lab.
+    script {
+        response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=stage-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/NetCICD-' + "${stage}" + '.yaml').trim()
+        echo "${response}"
+        def jsonSlurper = new JsonSlurper()
+        def lab = jsonSlurper.parseText("${response}")
+        thislab = "${lab.id}"
+    }
+    echo "The lab stage-${stage}-${commit} imported with id ${thislab}. Starting the simulation."
+    script {
+        response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${thislab}" + '/start" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()
+        echo "Lab started ${response}"
+    }
 
     // timeout(time: 30, unit: "MINUTES") {
     //     script {
@@ -150,12 +180,36 @@ def startsim(stage, build, commit, secret) {
     //         }
     //     }
     // }
-    return null
+    return "${thislab}"
 }
 
-def stopsim(stage, build, commit) {
+def stopsim(stage, build, commit, lab, token) {
     echo "Stopping CML simulation for build ${build}, stage ${stage}"
-    //sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}"  + '/simengine/rest/stop/stage1-' + "${gitCommit}"
-
+    script {
+        response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/stop" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()        
+        echo "${response}" 
+        waitUntil {
+            if (sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/check_if_converged" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"')) {
+                 return true
+                 } else {
+                     return false
+                 }
+        }
+        echo "Lab stopped, wiping lab."
+        response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/wipe" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()        
+        echo "${response}" 
+        waitUntil {
+            if (sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/check_if_converged" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"')) {
+                 return true
+                 } else {
+                     return false
+                 }
+        }
+        echo "Lab wiped."
+        response = sh(returnStdout: true, script: 'curl -k -X DELETE "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()
+        echo "${response}" 
+        echo "Lab deleted"        
+    }
+     
     return null
 }
