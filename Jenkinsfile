@@ -39,6 +39,27 @@ pipeline {
                         startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}")
                     }
                 }
+                stage ('Preparing playbook') {
+                    //agent {
+                    //    label ${this_stage} + "-" + ${gitCommit} as String
+                    //}
+                    steps {
+                        echo "Switched to jenkins agent: stage-${this_stage}-${gitCommit}"
+                        checkout scm
+                        echo "Set stage ${this_stage} variables"
+                        //sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                    }
+                }
+                stage('Running playbook') {
+                    //agent {
+                    //    label ${this_stage} + "-" + ${gitCommit} as String
+                    //}
+                    steps {
+                        echo "Start stage ${this_stage} playbook"
+                        //ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-${this_stage}', playbook: 'stage-${this_stage}.yml', extraVars: ["stage": ${this_stage}], extras: '-vvvv'
+                    }
+
+                }
                 stage ('Cleaning up') {
                     steps {
                         echo "Switched to jenkins agent: master"
