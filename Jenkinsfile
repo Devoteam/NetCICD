@@ -29,7 +29,7 @@ pipeline {
                 stage ('Collecting variables') {
                     steps {             
                         script {
-                            this_stage = "Box"
+                            this_stage = "box"
                             gitCommit = "${env.GIT_COMMIT[0..7]}"
                         }
                         // Collect CML token first
