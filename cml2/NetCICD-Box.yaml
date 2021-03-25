@@ -14,10 +14,11 @@ nodes:
       # this is a shell script which will be sourced at boot
       # if you change the hostname then you need to add a
       # /etc/hosts entry as well
-      hostname NetCICD_agent
+      hostname jenkins_agent
       # like this:
       echo "127.0.0.1   NetCICD_agent" >>/etc/hosts
       echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
+       
       apk update
       apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip
             sudo chmod o+w /etc/hosts
@@ -48,6 +49,11 @@ nodes:
       pip3 install --upgrade pip
       pip3 install --upgrade cffi ncclient
       pip3 install ansible
+      su cisco
+      cd /home/cisco
+      wget http://jenkins:8080/jnlpJars/agent.jar
+      echo jenkins_secret > secret-file
+      java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/root"
     image_definition: alpine-3-12-base
     tags: []
     interfaces:

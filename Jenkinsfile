@@ -56,7 +56,7 @@ pipeline {
                         echo "Switched to jenkins agent: stage-${this_stage}-${gitCommit}"
                         checkout scm
                         echo "Set stage ${this_stage} variables"
-                        //sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                        sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
                     }
                 }
                 stage('Running playbook') {
@@ -138,8 +138,14 @@ def startsim(stage, build, commit, secret, token) {
     def lab = ""
     echo "Starting CML simulation for build ${build}, stage ${stage}"
     echo "Agent secret: ${secret}"
-    // Insert the agent_secret into the yaml file
 
+    // Insert the agent_secret into the yaml file
+    echo "Inserting agent secret in agent configuration"
+    sh "sed -i 's/jenkins_secret/" + "${secret}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
+   
+    echo "Inserting agent name in agent configuration"
+    sh "sed -i 's/jenkins_agent/stage" + "${stage}" + "-" + "${commit}" + "/g' virl/stage-" + "${stage}" + ".yaml"
+    
     //we need to collect the lab_id in order to be able to stop the lab.
     script {
         response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=stage-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/NetCICD-' + "${stage}" + '.yaml').trim()
