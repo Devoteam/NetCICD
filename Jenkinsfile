@@ -56,7 +56,7 @@ pipeline {
                         echo "Switched to jenkins agent: stage-${this_stage}-${gitCommit}"
                         checkout scm
                         echo "Set stage ${this_stage} variables"
-                        //sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                        sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
                     }
                 }
                 stage('Running playbook') {
