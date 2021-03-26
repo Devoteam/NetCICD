@@ -46,14 +46,12 @@ nodes:
             export GROOVY_VERSION=2.5.8
             export GROOVY_HOME="/usr/share/groovy"
 
-      pip3 install --upgrade pip
-      pip3 install --upgrade cffi ncclient
-      pip3 install ansible
-      su cisco
       cd /home/cisco
       wget http://jenkins:8080/jnlpJars/agent.jar
+      chown cisco:cisco agent.jar
       echo jenkins_secret > secret-file
-      java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/root"
+      chown cisco:cisco secret-file
+      java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/cisco"
     image_definition: alpine-3-12-base
     tags: []
     interfaces:
