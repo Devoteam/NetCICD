@@ -51,7 +51,7 @@ nodes:
       chown cisco:cisco agent.jar
       echo jenkins_secret > secret-file
       chown cisco:cisco secret-file
-      java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/cisco"
+      java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/cisco" &
     image_definition: alpine-3-12-base
     tags: []
     interfaces:

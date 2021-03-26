@@ -2,12 +2,13 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import groovy.json.JsonSlurper
+import groovy.json.JsonSlurper 
 
 def this_stage = "None"
 def gitCommit = ""
 def cml_token = "12345"
 def lab_id = "1"
+def agentName = ""
 
 pipeline {
     agent none
@@ -46,11 +47,15 @@ pipeline {
                             lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
                         }
                         echo "Lab ${lab_id} is operational."
+                        script {
+                            agentName = "stage-${this_stage}-${gitCommit}"
+                        }
+                        echo "The next stage agent is: ${agentName}"
                     }
                 }
                 stage ('Preparing playbook') {
                     agent {
-                        label "stage-" + ${this_stage} + "-" + ${gitCommit} as String
+                        label agentName
                     }
                     steps {
                         echo "Switched to jenkins agent: stage-${this_stage}-${gitCommit}"
@@ -61,11 +66,11 @@ pipeline {
                 }
                 stage('Running playbook') {
                     agent {
-                        label "stage-" + ${this_stage} + "-" + ${gitCommit} as String
+                        label agentName
                     }
                     steps {
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
-                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-${this_stage}', playbook: 'stage-${this_stage}.yml', extraVars: ["stage": ${this_stage}], extras: '-vvvv'
+                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-"${this_stage}"', playbook: 'stage-"${this_stage}".yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
                     }
 
                 }
