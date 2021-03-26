@@ -2,172 +2,186 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import groovy.json.JsonSlurper 
+
+def this_stage = "None"
+def gitCommit = ""
+def cml_token = "12345"
+def lab_id = "1"
+def agentName = ""
+
 pipeline {
     agent none
-    
+
     environment {
-        JENKINS_CRED = credentials('Jenkins-SIM')
+        JENKINS_CRED = credentials('jenkins-jenkins')
         CML_CRED = credentials('CML-SIM-CRED')
     }
+
     stages {
-        stage('Prepare Jenkins...') {
+        stage('stage: Box. Device local configuration...') {
             agent { 
                 node { 
-                    label 'jenkins_node' 
+                    label 'master' 
                 } 
             }
-            steps {
-                echo 'Collecting variables'
-                echo '--------------------'
-                echo "${env.CML_URL}"
-                script { 
-                    gitCommit = sh(returnStdout: true, script: 'git rev-parse --short  HEAD').trim()
+
+            stages {
+                stage ('Collecting variables') {
+                    steps {             
+                        script {
+                            this_stage = "box"
+                            gitCommit = "${env.GIT_COMMIT[0..7]}"
+                        }
+                        // Collect CML token first
+                        script {
+                            cml_token = sh(returnStdout: true, script: 'curl -k -X POST "https://192.168.32.148/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
+                        }                       
+                        echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
+                        echo 'Creating Jenkins Agent'
+                        script {
+                            thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
+                        }
+                        echo 'Starting CML simulation'
+                        script {
+                            lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
+                        }
+                        echo "Lab ${lab_id} is operational."
+                        script {
+                            agentName = "stage-${this_stage}-${gitCommit}"
+                        }
+                        echo "The next stage agent is: ${agentName}"
+                    }
+                }
+                stage ('Preparing playbook') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        echo "Switched to jenkins agent: stage-${this_stage}-${gitCommit}"
+                        checkout scm
+                        echo "Set stage ${this_stage} variables"
+                        sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                    }
+                }
+                stage('Running playbook') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'stage-box.yml', extraVars: ["stage": "1"], extras: '-vvvv'
+                    }
+
+                }
+                stage ('Cleaning up') {
+                    steps {
+                        echo "Switched to jenkins agent: master"
+                        echo "Stopping CML simulation on lab ${lab_id}"
+                        stopsim("${this_stage}", "${env.BUILD_tag}", "${gitCommit}", "${lab_id}", "${cml_token}")   
+                        echo 'Removing Jenkins Agent'
+                        stopagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
+                    }
                 }
             }
         }
-        stage('Deploying Stage 0 simulation (Box) in CML') {
-            agent { 
-                node { 
-                    label 'jenkins_node' 
-                } 
-            }
-            steps {
-                echo "Prepare stage 0 simulation environment"
-                echo "--------------------------------------"
+        // stage('stage: Topology. Device interconnection configuration on OSI L2...') {
 
-                checkout scm
+        // }
+        // stage('stage: Reachability. Device interconnection configuration on OSI L3...') {
 
-                startsim(0)
-            
-            }
-        }
-        stage('Stage 0: Deploying and testing Box in CML') {
-            steps {
-                node ("stage0-" + gitCommit as String) {
-                    echo "Switching to jenkins agent: stage0-" + "${gitCommit}"
+        // }
+        // stage('stage: Forwarding. MPLS/SR configuration...') {
 
-                    checkout scm
+        // }
+        // stage('stage: Platform. MPLS/VPN platform configuration...') {
 
-                    echo "Set stage 0 box variables"
-                    echo "--------------------------------------"
-                    sh "cd roles/box/vars/ && ln -s stage0.yml main.yml"
+        // }
+        // stage('stage: User domain. Customer VRF configuration...') {
 
-                    echo "Start stage 0 playbook"
-                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage0', playbook: 'stage0.yml', extraVars: ["stage": "0"], extras: '-vvvv'
-                }
-                node ('jenkins_node') {
-                    echo "Switching to jenkins agent: jenkins_node"
-
-                    echo 'Stopping CML simulation'
-                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}"  + '/simengine/rest/stop/stage0-' + "${gitCommit}"
-
-                    echo 'Removing Jenkins Agent'
-                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage0' + "-" + "${gitCommit}" + '/doDelete"'
-                }
-            }
-        }
-        stage('Deploying Stage 1 simulation (Topology) in CML') {
-            agent { 
-                node { 
-                    label 'jenkins_node' 
-                } 
-            }
-            steps {
-                echo "Prepare stage 1 simulation environment"
-                echo "--------------------------------------"
-
-                checkout scm
-
-                startsim(1)
-            
-            }
-        }
-        stage('Stage 1: Configuring interfaces and links in CML') {
-            steps {
-                node ("stage1-" + gitCommit as String) {
-                    echo "Switching to jenkins agent: stage1-" + "${gitCommit}"
-
-                    checkout scm
-
-                    echo "Set stage 1 topology variables"
-                    echo "--------------------------------------"
-                    sh "cd roles/box/vars/ && ln -s stage1.yml main.yml"
-                    sh "cd roles/topology/vars/ && ln -s stage1.yml main.yml"
-
-                    echo "Start stage 0 playbook"
-                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage1', playbook: 'stage0.yml', extraVars: ["stage": "1"]
-
-                    echo "Start stage 1 playbook"
-                    ansiblePlaybook installation: 'ansible', inventory: 'vars/stage1', playbook: 'stage1.yml', extraVars: ["stage": "1"], extras: '-vvvv'
-                }
-                node ('jenkins_node') {
-                    echo "Switching to jenkins agent: jenkins_node"
-
-                    echo 'Stopping CML simulation'
-                    sh 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}"  + '/simengine/rest/stop/stage1-' + "${gitCommit}"
-
-                    echo 'Removing Jenkins Agent'
-                    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage1' + "-" + "${gitCommit}" + '/doDelete"'
-                }
-            }
-        }
-     }
+        // }
+    }
     post {
         success {
-            echo 'I succeeded!'
-            //mail to: 'architects@example.com',
-            //    subject: "Success for Pipeline: ${gitCommit}",
-            //    body: "Success for ${env.BUILD_URL}"
+            echo "Build ${env.BUILD_tag}, commit: ${gitCommit} was successful."
+            //mail to: 'architect@infraautomator.example.com',
+            //subject: "Build ${env.BUILD_tag}, commit: ${gitCommit} was successful.",
+            //body: "Build is on branch ${env.JOB_NAME}"
         }
-        failure {
-            echo 'You are not a Jedi yet....I failed :('
-            //    mail to: 'architects@example.com',
-            //    subject: "Failed Pipeline: ${gitCommit}",
-            //    body: "Something is wrong with ${env.BUILD_URL}"
+        unsuccessful {
+            echo "Build ${env.BUILD_tag}, commit: ${gitCommit} failed."
+            //mail to: 'architect@infraautomator.example.com',
+            //subject: "Build ${env.BUILD_tag}, commit: ${gitCommit} was successful.",
+            //body: "Build is on branch ${env.JOB_NAME}"
         }
         changed {
-            echo 'Things were different before...'
-        }
-        cleanup {
-            echo 'Cleaning up....'
+            echo "${env.JOB_NAME} finished differently in the last build..."
         }
     }
 }
 
+def startagent(stage, build, commit) {
+    echo "Creating Jenkins build node placeholder for stage: ${stage}, build: ${build} (commit:  ${commit})"
+    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -X POST -d \'json={"name":+"stage' + "${stage}" + "-" + "${commit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+stage-'  + "${stage}" + "-"+ "${commit}" + '",+"numExecutors":+"1",+"remoteFS":+"/home/cisco",+"labelString":+"slave' + "${stage}" + "-"+ "${commit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="stage-' + "${stage}" + "-" + "${commit}" + '"&type=hudson.slaves.DumbSlave"'
 
-def startsim(stage) {
-    echo 'Creating Jenkins build node for commit: ' + "${gitCommit}"
-    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -X POST -d \'json={"name":+"stage' + "${stage}" + "-" + "${gitCommit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+stage'  + "${stage}" + "-"+ "${gitCommit}" + '",+"numExecutors":+"1",+"remoteFS":+"/root",+"labelString":+"slave' + "${stage}" + "-"+ "${gitCommit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="stage' + "${stage}" + "-" + "${gitCommit}" + '"&type=hudson.slaves.DumbSlave"'
-  
     echo 'Retrieving Agent Secret'
     script {
-        agentSecret = jenkins.model.Jenkins.getInstance().getComputer("stage" + "${stage}" + "-" + "$gitCommit").getJnlpMac()
+        agentSecret = jenkins.model.Jenkins.getInstance().getComputer("stage-" + "${stage}" + "-" + "$commit").getJnlpMac()
     }
-    echo "secret = " + "${agentSecret}"
 
-    echo "Inserting jenkins url in docker jumphost configuration"
-    sh "sed -i 's%jenkins_url%" + "${env.JENKINS_URL}" + "%g' virl/stage" + "${stage}" + ".virl"
+    return "${agentSecret}"
+}
 
-    echo "Inserting agent secret in docker jumphost configuration"
-    sh "sed -i 's/jenkins_secret/" + "${agentSecret}" + "/g' virl/stage" + "${stage}" + ".virl"
+def stopagent(stage, build, commit) {
+    echo "Deleting Jenkins build node placeholder for stage: ${stage}, build: ${build} (commit:  ${commit})"
+    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage-' + "${stage}" + "-" + "${commit}" + '/doDelete"'
+    
+    return null
+}
+
+def startsim(stage, build, commit, secret, token) {
+    def lab = ""
+    echo "Starting CML simulation for build ${build}, stage ${stage}"
+    echo "Agent secret: ${secret}"
+
+    // Insert the agent_secret into the yaml file
+    echo "Inserting agent secret in agent configuration"
+    sh "sed -i 's/jenkins_secret/" + "${secret}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
    
-    echo "Configuring Jenkins agent to use"
-    sh "sed -i 's/jenkins_agent/stage" + "${stage}" + "-" + "${gitCommit}" + "/g' virl/stage" + "${stage}" + ".virl"
-
-    echo 'Starting CML simulation for stage ' + "${stage}"
-    sh 'curl -X POST -u ' + "${CML_CRED}" + ' --header "Content-Type:text/xml;charset=UTF-8" --data-binary @virl/stage' + "${stage}" + '.virl ' + "${env.CML_URL}" + '/simengine/rest/launch?session=stage' + "${stage}" + '-' + "${gitCommit}"
+    echo "Inserting agent name in agent configuration"
+    sh "sed -i 's/jenkins_agent/stage-" + "${stage}" + "-" + "${commit}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
+    
+    //we need to collect the lab_id in order to be able to stop the lab.
+    script {
+        response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=stage-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/stage-' + "${stage}" + '.yaml').trim()
+        def jsonSlurper = new JsonSlurper()
+        def alllab = jsonSlurper.parseText("${response}")
+        lab = "${alllab.id}"
+    }
+    echo "The lab stage-${stage}-${commit} imported with id ${lab}. Starting the simulation."
+    script {
+        response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/start" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()
+        echo "Lab started ${response}"
+    }
+    waitUntil {
+        if (sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/check_if_converged" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"')) {
+        return true
+        } else {
+        return false
+        }
+    }
 
     timeout(time: 30, unit: "MINUTES") {
         script {
             waitUntil {
                 sleep 60
-                cml_state_json = sh(returnStdout: true, script: 'curl -X GET -u ' + "${CML_CRED}" + ' ' + "${env.CML_URL}" + '/simengine/rest/nodes/stage' + "${stage}" + '-' + "${gitCommit}").trim()
-                def c_state = readJSON text: "${cml_state_json}"
-                cml_state = c_state["stage" + "${stage}" + "-"+"${gitCommit}"]
-                //echo "${cml_state}"
-                cs = cml_state.collect {it.value.reachable}
-                echo "Node reachability: " + "${cs}"
-                test =  cs.every {element -> element == true}
+                cml_state_json = sh(returnStdout: true, script: 'curl -k -X GET "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/lab_element_state" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()
+                def jsonSlurper = new JsonSlurper()
+                def cstate = jsonSlurper.parseText("${cml_state_json}").nodes
+                echo "${cstate}"
+                cs = cstate.collect {it.value}
+                echo "Node status: " + "${cs}"
+                def test = cs.every {element -> element == "BOOTED"}
                 echo "Simulation ready? " + "${test}"
                 if (test) {
                     return true
@@ -177,5 +191,36 @@ def startsim(stage) {
             }
         }
     }
+    return "${lab}"
+}
+
+def stopsim(stage, build, commit, lab, token) {
+    echo "Stopping CML simulation for build ${build}, stage ${stage}"
+    script {
+        response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/stop" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()        
+        echo "${response}" 
+        waitUntil {
+            if (sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/check_if_converged" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"')) {
+                 return true
+                 } else {
+                     return false
+                 }
+        }
+        echo "Lab stopped, wiping lab."
+        response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/wipe" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()        
+        echo "${response}" 
+        waitUntil {
+            if (sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/check_if_converged" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"')) {
+                 return true
+                 } else {
+                     return false
+                 }
+        }
+        echo "Lab wiped."
+        response = sh(returnStdout: true, script: 'curl -k -X DELETE "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()
+        echo "${response}" 
+        echo "Lab deleted"        
+    }
+     
     return null
 }

@@ -1,0 +1,259 @@
+lab:
+  description: LAB specifically created for NetCICD Box testing
+  notes: ''
+  timestamp: 1611948996.4444916
+  title: NetCICD Box
+  version: 0.0.4
+nodes:
+  - id: n0
+    label: NetCICD_agent
+    node_definition: alpine
+    x: -500
+    y: -100
+    configuration: |-
+      # this is a shell script which will be sourced at boot
+      # if you change the hostname then you need to add a
+      # /etc/hosts entry as well
+      hostname jenkins_agent
+      # like this:
+      echo "127.0.0.1   NetCICD_agent" >>/etc/hosts
+      echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
+       
+      apk update
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip ansible
+            sudo chmod o+w /etc/hosts
+            if grep -q "gitea" /etc/hosts; then
+                echo " Gitea exists in /etc/hosts"
+            else
+                echo " Add Gitea to /etc/hosts"
+                sudo echo "172.16.11.3   gitea" >> /etc/hosts
+            fi
+
+            if grep -q "jenkins" /etc/hosts; then
+                echo " Jenkins exists in /etc/hosts"
+            else
+                echo " Add Jenkins to /etc/hosts"
+                sudo echo "172.16.11.8   jenkins" >> /etc/hosts
+            fi
+
+            if grep -q "nexus" /etc/hosts; then
+                echo " Nexus exists in /etc/hosts"
+            else
+                echo " Add Nexus to /etc/hosts"
+                sudo echo "172.16.11.9   nexus" >> /etc/hosts
+            fi
+
+            export GROOVY_VERSION=2.5.8
+            export GROOVY_HOME="/usr/share/groovy"
+
+      cd /home/cisco
+      wget http://jenkins:8080/jnlpJars/agent.jar
+      chown cisco:cisco agent.jar
+      echo jenkins_secret > secret-file
+      chown cisco:cisco secret-file
+      java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/cisco" &
+    image_definition: alpine-3-12-base
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: eth0
+        type: physical
+      - id: i1
+        slot: 1
+        label: eth1
+        type: physical
+      - id: i2
+        slot: 2
+        label: eth2
+        type: physical
+      - id: i3
+        slot: 3
+        label: eth3
+        type: physical
+  - id: n1
+    label: ext-conn-0
+    node_definition: external_connector
+    x: -500
+    y: -200
+    configuration: virbr0
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port
+        type: physical
+  - id: n2
+    label: iosv-0
+    node_definition: iosv
+    x: -650
+    y: 0
+    configuration: ''
+    image_definition: iosv-159-3
+    tags: []
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        slot: 0
+        label: GigabitEthernet0/0
+        type: physical
+      - id: i2
+        slot: 1
+        label: GigabitEthernet0/1
+        type: physical
+      - id: i3
+        slot: 2
+        label: GigabitEthernet0/2
+        type: physical
+      - id: i4
+        slot: 3
+        label: GigabitEthernet0/3
+        type: physical
+  - id: n3
+    label: xrv-0
+    node_definition: iosxrv
+    x: -500
+    y: 100
+    configuration: ''
+    image_definition: iosxrv-6-3-1
+    tags: []
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        slot: 0
+        label: MgmtEth0/0/CPU0/0
+        type: physical
+      - id: i2
+        slot: 1
+        label: GigabitEthernet0/0/0/0
+        type: physical
+      - id: i3
+        slot: 2
+        label: GigabitEthernet0/0/0/1
+        type: physical
+      - id: i4
+        slot: 3
+        label: GigabitEthernet0/0/0/2
+        type: physical
+  - id: n5
+    label: unmanaged-switch-0
+    node_definition: unmanaged_switch
+    x: -500
+    y: 0
+    configuration: ''
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port0
+        type: physical
+      - id: i1
+        slot: 1
+        label: port1
+        type: physical
+      - id: i2
+        slot: 2
+        label: port2
+        type: physical
+      - id: i3
+        slot: 3
+        label: port3
+        type: physical
+      - id: i4
+        slot: 4
+        label: port4
+        type: physical
+      - id: i5
+        slot: 5
+        label: port5
+        type: physical
+      - id: i6
+        slot: 6
+        label: port6
+        type: physical
+      - id: i7
+        slot: 7
+        label: port7
+        type: physical
+  - id: n8
+    label: coreos-0
+    node_definition: coreos
+    x: -400
+    y: -100
+    configuration: |-
+      #cloud-config
+      users:
+      - gecos: "user configured for console login via cisco/cisco"
+        groups:
+        - sudo
+        - docker
+        - wheel
+        name: cisco
+        # password hash is "cisco"
+        # see https://coreos.com/os/docs/latest/clc-examples.html#generating-a-password-hash
+        # for methods to create your own password hash
+        passwd: "$1$ZmGq.4za$8JZnpj4SkcF9v3AJQaOX//"
+        # this key will be added to the user "cisco"
+        ssh_authorized_keys:
+        - your-ssh-pubkey-line-for-user-cisco-goes-here
+      # this key will be added to the user "core"
+      ssh_authorized_keys:
+      - your-ssh-pubkey-line-for-user-core-goes-here
+    image_definition: coreos-2135-4-0
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: eth0
+        type: physical
+      - id: i1
+        slot: 1
+        label: eth1
+        type: physical
+  - id: n6
+    label: ext-conn-1
+    node_definition: external_connector
+    x: -400
+    y: -200
+    configuration: virbr0
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port
+        type: physical
+links:
+  - id: l0
+    i1: i0
+    n1: n1
+    i2: i0
+    n2: n0
+  - id: l1
+    i1: i1
+    n1: n2
+    i2: i0
+    n2: n5
+  - id: l3
+    i1: i1
+    n1: n3
+    i2: i2
+    n2: n5
+  - id: l4
+    i1: i3
+    n1: n5
+    i2: i1
+    n2: n0
+  - id: l5
+    i1: i4
+    n1: n5
+    i2: i0
+    n2: n8
+  - id: l6
+    i1: i1
+    n1: n8
+    i2: i0
+    n2: n6
