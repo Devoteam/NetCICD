@@ -70,7 +70,7 @@ pipeline {
                     }
                     steps {
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
-                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-"${this_stage}"', playbook: 'stage-"${this_stage}".yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'stage-box.yml', extraVars: ["stage": "1"], extras: '-vvvv'
                     }
 
                 }
@@ -154,7 +154,6 @@ def startsim(stage, build, commit, secret, token) {
     //we need to collect the lab_id in order to be able to stop the lab.
     script {
         response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=stage-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/stage-' + "${stage}" + '.yaml').trim()
-        echo "${response}"
         def jsonSlurper = new JsonSlurper()
         def alllab = jsonSlurper.parseText("${response}")
         lab = "${alllab.id}"
