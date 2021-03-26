@@ -20,7 +20,7 @@ nodes:
       echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
        
       apk update
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip ansible
             sudo chmod o+w /etc/hosts
             if grep -q "gitea" /etc/hosts; then
                 echo " Gitea exists in /etc/hosts"
