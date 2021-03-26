@@ -144,7 +144,7 @@ def startsim(stage, build, commit, secret, token) {
     sh "sed -i 's/jenkins_secret/" + "${secret}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
    
     echo "Inserting agent name in agent configuration"
-    sh "sed -i 's/jenkins_agent/stage" + "${stage}" + "-" + "${commit}" + "/g' virl/stage-" + "${stage}" + ".yaml"
+    sh "sed -i 's/jenkins_agent/stage" + "${stage}" + "-" + "${commit}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
     
     //we need to collect the lab_id in order to be able to stop the lab.
     script {
