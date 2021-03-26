@@ -49,9 +49,9 @@ pipeline {
                     }
                 }
                 stage ('Preparing playbook') {
-                    //agent {
-                    //    label ${this_stage} + "-" + ${gitCommit} as String
-                    //}
+                    agent {
+                        label "stage-" + ${this_stage} + "-" + ${gitCommit} as String
+                    }
                     steps {
                         echo "Switched to jenkins agent: stage-${this_stage}-${gitCommit}"
                         checkout scm
@@ -60,12 +60,12 @@ pipeline {
                     }
                 }
                 stage('Running playbook') {
-                    //agent {
-                    //    label ${this_stage} + "-" + ${gitCommit} as String
-                    //}
+                    agent {
+                        label "stage-" + ${this_stage} + "-" + ${gitCommit} as String
+                    }
                     steps {
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
-                        //ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-${this_stage}', playbook: 'stage-${this_stage}.yml', extraVars: ["stage": ${this_stage}], extras: '-vvvv'
+                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-${this_stage}', playbook: 'stage-${this_stage}.yml', extraVars: ["stage": ${this_stage}], extras: '-vvvv'
                     }
 
                 }
@@ -144,11 +144,11 @@ def startsim(stage, build, commit, secret, token) {
     sh "sed -i 's/jenkins_secret/" + "${secret}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
    
     echo "Inserting agent name in agent configuration"
-    sh "sed -i 's/jenkins_agent/stage" + "${stage}" + "-" + "${commit}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
+    sh "sed -i 's/jenkins_agent/stage-" + "${stage}" + "-" + "${commit}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
     
     //we need to collect the lab_id in order to be able to stop the lab.
     script {
-        response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=stage-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/NetCICD-' + "${stage}" + '.yaml').trim()
+        response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=stage-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/stage-' + "${stage}" + '.yaml').trim()
         echo "${response}"
         def jsonSlurper = new JsonSlurper()
         def alllab = jsonSlurper.parseText("${response}")
