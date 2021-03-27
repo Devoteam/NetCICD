@@ -70,9 +70,17 @@ pipeline {
                     }
                     steps {
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
-                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'stage-box.yml', extraVars: ["stage": "1"], extras: '-vvvv'
+                        //ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'stage-box.yml', extraVars: ["stage": "1"], extras: '-vvvv'
                     }
-
+                }
+                stage ('Testing') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        echo "Testing stage ${this_stage}" 
+                        //robot outputPath: '.', logFileName: 'log.html', outputFileName: 'output.xml', reportFileName: 'report.hml', passThreshold: 100, unstableThreshold: 75.0
+                    }
                 }
                 stage ('Cleaning up') {
                     steps {
@@ -81,6 +89,7 @@ pipeline {
                         stopsim("${this_stage}", "${env.BUILD_tag}", "${gitCommit}", "${lab_id}", "${cml_token}")   
                         echo 'Removing Jenkins Agent'
                         stopagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
+                        deleteDir() /* clean up our workspace */
                     }
                 }
             }
@@ -102,6 +111,11 @@ pipeline {
         // }
     }
     post {
+        always {
+            echo "Archiving artifacts"
+            //archiveArtifacts artifacts: '**/*', fingerprint: true
+            //junit 'build/reports/**/*.xml'
+        }
         success {
             echo "Build ${env.BUILD_tag}, commit: ${gitCommit} was successful."
             //mail to: 'architect@infraautomator.example.com',
