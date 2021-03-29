@@ -79,7 +79,9 @@ pipeline {
                     }
                     steps {
                         echo "Testing stage ${this_stage}" 
-                        //robot outputPath: '.', logFileName: 'log.html', outputFileName: 'output.xml', reportFileName: 'report.hml', passThreshold: 100, unstableThreshold: 75.0
+                        //robot outputPath: '.', logFileName: '${this_stage}_log.html', outputFileName: '${this_stage}.xml', reportFileName: '${this_stage}_report.hml', passThreshold: 100, unstableThreshold: 75.0
+                        //archiveArtifacts artifacts: '**/*', fingerprint: true
+                        //junit 'build/reports/**/*.xml'
                     }
                 }
                 stage ('Cleaning up') {

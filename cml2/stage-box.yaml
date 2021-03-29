@@ -14,13 +14,12 @@ nodes:
       # this is a shell script which will be sourced at boot
       # if you change the hostname then you need to add a
       # /etc/hosts entry as well
-      hostname jenkins_agent
+      hostname NetCICD_agent
       # like this:
       echo "127.0.0.1   NetCICD_agent" >>/etc/hosts
       echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
-       
       apk update
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip ansible
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip
             sudo chmod o+w /etc/hosts
             if grep -q "gitea" /etc/hosts; then
                 echo " Gitea exists in /etc/hosts"
@@ -45,13 +44,11 @@ nodes:
 
             export GROOVY_VERSION=2.5.8
             export GROOVY_HOME="/usr/share/groovy"
-
-      cd /home/cisco
-      wget http://jenkins:8080/jnlpJars/agent.jar
-      chown cisco:cisco agent.jar
-      echo jenkins_secret > secret-file
-      chown cisco:cisco secret-file
-      java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/cisco" &
+            cd /home/cisco
+            wget http://jenkins:8080/jnlpJars/agent.jar
+            chown cisco:cisco agent.jar
+            echo jenkins_secret > secret-file
+            chown cisco:cisco secret-file
     image_definition: alpine-3-12-base
     tags: []
     interfaces:
@@ -88,7 +85,56 @@ nodes:
     node_definition: iosv
     x: -650
     y: 0
-    configuration: ''
+    configuration: |-
+      aaa new-model
+      !
+      aaa session-id common
+      aaa authorization exec default local
+      !
+      no ip icmp rate-limit unreachable
+      !
+      ip domain name netcicd
+      !
+      hostname cust1
+      username cisco privilege 15 secret C!sco123
+      enable secret C!sco123
+      !
+      ip tcp synwait-time 5
+      ip ssh version 2
+      crypto key gen rsa mod 2048
+      !
+      interface GigabitEthernet0/0
+       ip address 10.255.1.144 255.255.255.0
+       no shutdown
+       duplex auto
+       speed auto
+       media-type rj45
+      !
+      interface GigabitEthernet0/1
+       no ip address
+       shutdown
+       duplex auto
+       speed auto
+       media-type rj45
+      !
+      interface GigabitEthernet0/2
+       no ip address
+       shutdown
+       duplex auto
+       speed auto
+       media-type rj45
+      !
+      interface GigabitEthernet0/3
+       no ip address
+       shutdown
+       duplex auto
+       speed auto
+       media-type rj45
+      !
+      line vty 0 4
+       transport input telnet ssh
+      !
+      end
     image_definition: iosv-159-3
     tags: []
     interfaces:
@@ -116,7 +162,52 @@ nodes:
     node_definition: iosxrv
     x: -500
     y: 100
-    configuration: ''
+    configuration: |2-
+
+      Wed Mar 24 19:26:04.536 UTC
+      Building configuration...
+      !! IOS XR Configuration 6.3.1
+      !! Last configuration change at Wed Mar 24 19:26:02 2021 by cisco
+      !
+      hostname provedge2
+      ip domain-name netcicd
+      username cisco
+       group root-lr
+       group cisco-support
+       secret C!sco123
+      !
+      line console
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      line default
+       exec-timeout 0 0
+       absolute-timeout 0
+       session-timeout 0
+      !
+      interface MgmtEth0/0/CPU0/0
+       ipv4 address 10.255.1.109 255.255.255.0
+      !
+      interface GigabitEthernet0/0/0/0
+       shutdown
+      !
+      interface GigabitEthernet0/0/0/1
+       shutdown
+      !
+      interface GigabitEthernet0/0/0/2
+       shutdown
+      !
+      !
+      netconf agent tty
+      !
+      netconf-yang agent
+       ssh
+      !
+      ssh server v2
+      ssh server netconf vrf default
+      telnet ipv4 server max-servers 10
+      end
     image_definition: iosxrv-6-3-1
     tags: []
     interfaces:
@@ -226,6 +317,126 @@ nodes:
         slot: 0
         label: port
         type: physical
+  - id: n7
+    label: nxos-0
+    node_definition: nxosv
+    x: -350
+    y: 0
+    configuration: |-
+      hostname nx-osv-1
+      vdc nx-osv-1 id 1
+        allocate interface Ethernet2/1-48
+        allocate interface Ethernet3/1-48
+        limit-resource vlan minimum 16 maximum 4094
+        limit-resource vrf minimum 2 maximum 4096
+        limit-resource port-channel minimum 0 maximum 768
+        limit-resource u4route-mem minimum 96 maximum 96
+        limit-resource u6route-mem minimum 24 maximum 24
+        limit-resource m4route-mem minimum 58 maximum 58
+        limit-resource m6route-mem minimum 8 maximum 8
+
+      feature telnet
+      feature privilege
+      feature scp
+      feature ssh
+
+      username admin password C!sco123 role network-admin
+      username cisco password C!sco123 role network-operator
+      username cisco role network-admin
+
+      no password strength-check
+      ip domain-lookup
+      copp profile strict
+      rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+      rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+      rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+      rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+      rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+
+
+      vlan 1
+
+      vrf context management
+      hardware forwarding unicast trace
+
+      interface Loopback0
+        description Loopback
+        ip address 192.168.0.130/32
+      !
+      interface mgmt0
+        description OOB Management
+        ip address 10.255.1.130 255.255.255.0
+        no shut
+      !
+      ssh key rsa 2048
+      !
+      xml server max-session 8
+      xml server timeout 1200
+      !
+    image_definition: nxosv-7-3-0
+    tags: []
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        slot: 0
+        label: mgmt0
+        type: physical
+      - id: i2
+        slot: 1
+        label: Ethernet2/1
+        type: physical
+      - id: i3
+        slot: 2
+        label: Ethernet2/2
+        type: physical
+      - id: i4
+        slot: 3
+        label: Ethernet2/3
+        type: physical
+  - id: n9
+    label: csr1000v-0
+    node_definition: csr1000v
+    x: -650
+    y: 100
+    configuration: |-
+      username cisco privilege 15 secret C!sco123
+      !
+      interface GigabitEthernet1
+       ip address 10.255.1.121 255.255.255.0
+       negotiation auto
+       no shutdown
+      enable secret C!sco123
+      aaa new-model
+      aaa session-id common
+      aaa authorization exec default local
+      ip domain-name netcicd
+      ip ssh version 2
+      crypto key gen rsa mod 2048
+      !
+    image_definition: csr1000v-170301a
+    tags: []
+    interfaces:
+      - id: i0
+        label: Loopback0
+        type: loopback
+      - id: i1
+        slot: 0
+        label: GigabitEthernet1
+        type: physical
+      - id: i2
+        slot: 1
+        label: GigabitEthernet2
+        type: physical
+      - id: i3
+        slot: 2
+        label: GigabitEthernet3
+        type: physical
+      - id: i4
+        slot: 3
+        label: GigabitEthernet4
+        type: physical
 links:
   - id: l0
     i1: i0
@@ -257,3 +468,13 @@ links:
     n1: n8
     i2: i0
     n2: n6
+  - id: l2
+    i1: i1
+    n1: n7
+    i2: i1
+    n2: n5
+  - id: l7
+    i1: i1
+    n1: n9
+    i2: i5
+    n2: n5
