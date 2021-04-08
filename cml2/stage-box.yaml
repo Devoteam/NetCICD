@@ -68,7 +68,7 @@ else
   echo "NetCICD Toolbox not installed. Skipping jenkins agent start." >>/home/cisco/install-log.txt
 fi
 
-# INstalling .profile script to prepare for Ansible playbook run
+# Installing .profile script to prepare for Ansible playbook run
 if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-box.profile; then
   echo "NetCICD Toolbox installed. Retrieved stage-box.profile from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
 else
