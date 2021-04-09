@@ -2,17 +2,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   
-- name: Get ssh user pubkey for user cisco
+- name: Get ssh user pubkey for user 
   local_action: shell ssh-keygen -E MD5 -lf ~/.ssh/id_rsa.pub | awk '{ print $2}' | cut -n -c 5- | sed 's/://g'
-  register: cisco_pubkey
+  register: np_pubkey
   
-- name: Add ssh user key for user cisco
+- name: Add ssh user key for user 
   vars:
     ansible_connection: network_cli
   ios_config:
     authorize: yes
     lines:
-      - key-hash ssh-rsa "{{ cisco_pubkey.stdout_lines[0] }}"
+      - key-hash ssh-rsa "{{ np_pubkey.stdout_lines[0] }}"
     parents:
       - ip ssh pubkey-chain
-      - username cisco
+      - username netcicd-pipeline

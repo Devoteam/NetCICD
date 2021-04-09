@@ -4,14 +4,14 @@
 
 ---
 - name: Copy pubkey to the router
-  local_action: shell sshpass -p {{ ansible_ssh_pass }} scp -q ~/.ssh/id_rsa.pub cisco@{{ ansible_host }}:id_rsa.pub
+  local_action: shell sshpass -p {{ ansible_ssh_pass }} scp -q ~/.ssh/id_rsa.pub netcicd-pipeline@{{ ansible_host }}:id_rsa.pub
 
 - name: Import SSH key to nx-os node
   vars:
     ansible_connection: network_cli
   nxos_config:
     lines:
-      - username cisco sshkey file bootflash:id_rsa.pub
+      - username netcicd-pipeline sshkey file bootflash:id_rsa.pub
       - show user-account
   
 - name: Disable scp server
