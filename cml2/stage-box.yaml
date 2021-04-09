@@ -53,7 +53,9 @@ nodes:
 
       # Installing required packages
       apk update
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko
+      apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing py3-ncclient
+      pip install ncclient
 
       # Preparing interface to lab
       echo "auto eth1" >> /etc/network/interfaces
