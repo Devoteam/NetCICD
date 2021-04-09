@@ -1,11 +1,11 @@
  #!/bin/sh
 ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
-git config --global user.name "cisco"
-git config --global user.email "cisco@infraautomator.example.net"
-git clone $GIT_URLNetCICD
+git config --global user.name "netcicd-pipeline"
+git config --global user.email "netcicd-pipeline@infraautomator.example.net"
+git clone ${GIT_URL}NetCICD.git
 cd NetCICD
 git status
-echo '===== Starting Stage 0 playbook (box) ====='
+echo '===== Starting Stage Box playbook ====='
 cd roles/box/vars
 ln -s stage-box.yml main.yml
 cd ~/NetCICD
