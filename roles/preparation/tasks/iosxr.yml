@@ -24,11 +24,11 @@
     command:
       - sh crypto key my rsa
 
-- name: Generate base64 ssh user pubkey for user cisco
+- name: Generate base64 ssh user pubkey for user 
   local_action: shell cut -d" " -f2 ~/.ssh/id_rsa.pub | base64 -d > ~/.ssh/id_rsa_pub.b64
 
 - name: Copy b64 pubkey to the router
-  local_action: shell sshpass -p {{ ansible_ssh_pass }} scp -q ~/.ssh/id_rsa_pub.b64 cisco@{{ ansible_host }}:/disk0:/id_rsa_pub.b64
+  local_action: shell sshpass -p {{ ansible_ssh_pass }} scp -q ~/.ssh/id_rsa_pub.b64 netcicd-pipeline@{{ ansible_host }}:/disk0:/id_rsa_pub.b64
 
 - name: Import SSH key to IOSXR node
   vars:
