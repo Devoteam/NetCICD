@@ -1,4 +1,4 @@
- #!/bin/sh
+#!/bin/sh
 ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
 git config --global user.name "netcicd-pipeline"
 git config --global user.email "netcicd-pipeline@infraautomator.example.net"
