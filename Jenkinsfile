@@ -35,7 +35,7 @@ pipeline {
                         }
                         // Collect CML token first
                         script {
-                            cml_token = sh(returnStdout: true, script: 'curl -k -X POST "https://192.168.32.148/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
+                            cml_token = sh(returnStdout: true, script: 'curl -k -X POST "https://cml/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
                         }                       
                         echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
                         echo 'Creating Jenkins Agent'
