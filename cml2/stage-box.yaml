@@ -117,6 +117,7 @@ nodes:
         echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
         wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.profile
       fi
+      mkdir /home/cisco/.ssh
       ssh-keygen -t rsa -N "" -f /home/cisco/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com
       mv stage-box.profile .profile
     image_definition: alpine-3-12-base
