@@ -70,7 +70,7 @@ pipeline {
                     }
                     steps {
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
-                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'stage-box.yml', extraVars: ["stage": "1"], extras: '-vvvv'
+                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'stage-box.yml', extraVars: ["stage": "box"], extras: '-vvvv'
                     }
                 }
                 stage ('Testing') {
