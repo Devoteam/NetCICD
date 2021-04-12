@@ -46,15 +46,16 @@ nodes:
         echo "NetCICD Toolbox installed. Setting APK repositories to Nexus." >>/home/cisco/install-log.txt
         echo "http://nexus:8081/repository/apk-main-proxy/" > /etc/apk/repositories
         echo "http://nexus:8081/repository/apk-community-proxy/" >> /etc/apk/repositories
+        echo "http://nexus:8081/repository/apk-testing-proxy/" >> /etc/apk/repositories
       else
         echo "NetCICD Toolbox not installed. Setting APK repository to Nexus." >>/home/cisco/install-log.txt
         echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
+        echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
       fi
 
       # Installing required packages
       apk update
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko
-      apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing py3-ncclient
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient
       pip install ncclient
 
       # Preparing interface to lab
