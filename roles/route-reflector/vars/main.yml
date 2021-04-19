@@ -10,7 +10,7 @@ snmp:
  - { snmp_ip: <ip address> }
  
 logging:
- - { logging_ip: 10.255.1.1 }
+ - { logging_ip: <ip address> }
  
 radius:
  - { radius_ip: <ip address> }
