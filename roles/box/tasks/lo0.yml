@@ -11,7 +11,7 @@
     authorize: yes
     lines: 
       - "description *** router global table loopback address ***"
-      - "ip address 192.168.0.{{ id }} 255.255.255.255"
+      - "ip address {{ lo0 }} 255.255.255.255"
       - no ip redirects
       - no ip unreachables
     parents: ['interface Loopback0']
