@@ -37,7 +37,7 @@
     authorize: yes
     lines: 
       - "description *** router global table loopback address ***"
-      - "ip address 192.168.0.{{ id }} 255.255.255.255"
+      - "ip address {{ lo0 }} 255.255.255.255"
       - no ip redirects
       - no ip unreachables
     parents: ['interface Loopback0']
@@ -62,7 +62,7 @@
   nxos_config:
     lines:
       - "description *** router global table loopback address ***"
-      - "ip address 192.168.0.{{ id }} 255.255.255.255"
+      - "ip address {{ lo0 }} 255.255.255.255"
       - no ip redirects
       - no ip unreachables
     parents: ['interface Loopback0']
@@ -86,7 +86,7 @@
 
 - name: "NC create global table loopback address in no-shut state"
   netconf_config:
-    src: "{{ ansible_network_os }}_nc_hostname.j2"
+    src: "{{ ansible_network_os }}_nc_loopback.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
   notify: 
     - nclo0
