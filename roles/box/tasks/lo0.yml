@@ -16,7 +16,7 @@
       - no ip unreachables
     parents: ['interface Loopback0']
   register: ioslo
-  when:  (cli is defined and cli == "ios")
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - lo0
 
@@ -42,7 +42,7 @@
       - no ip unreachables
     parents: ['interface Loopback0']
   register: iosxrlo
-  when:  (cli is defined and cli == "iosxr")
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - logging
 
