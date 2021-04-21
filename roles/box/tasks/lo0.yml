@@ -26,7 +26,7 @@
     lines:
       - no shut
     parents: ['interface Loopback0']
-  when: ioslo | changed
+  when: ioslo.changed
 
 ####################################################################
 # IOSXR specific commands                                          #
@@ -52,7 +52,7 @@
     lines:
       - no shut
     parents: ['interface Loopback0']
-  when: iosxrlo | changed
+  when: iosxrlo.changed
 
 ####################################################################
 # NXOS specific commands                                           #
@@ -77,7 +77,7 @@
     lines:
       - no shut
     parents: ['interface Loopback0']
-  when: nxoslo | changed
+  when: nxoslo.changed
 
 
 ####################################################################
