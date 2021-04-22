@@ -1,0 +1,4 @@
+{% for rad in radius %}
+radius-server host {{rad.radius_ip}} auth-port 1645 acct-port 1646 
+radius-server key 7 {{rad.radius_key}}
+{% endfor %}

@@ -1,0 +1,18 @@
+username rescue privilege 2 secret {{rescue}}
+aaa new-model
+aaa authentication login no-login none
+aaa authentication login admins group radius local
+aaa authentication login console local
+aaa authorization console
+aaa authorization exec no-author none
+aaa authorization exec admins group radius local
+aaa authorization exec console local
+aaa authorization network default group radius local
+aaa accounting send stop-record authentication failure
+aaa accounting update newinfo
+aaa accounting exec default start-stop group radius
+aaa accounting connection default start-stop group radius
+aaa accounting system default start-stop group radius
+aaa accounting resource default start-stop-failure group radius
+aaa session-id common
+ip radius source-interface Loopback0

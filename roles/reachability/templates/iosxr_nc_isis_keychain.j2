@@ -1,0 +1,43 @@
+{# This Source Code int.descriptionForm is subject to the terms of the Mozilla Public #}
+{# License, v. 2.0. If a copy of the MPL was not distributed with this                #}
+{# file, You can obtain one at http://mozilla.org/MPL/2.0/.                           #}
+{######################################################################################}
+{# IOSXR specific commands                                                            #}
+{######################################################################################}
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">  
+  <keychains xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-lib-keychain-cfg">
+   <keychain>
+    <chain-name>ISIS-KEYCHAIN</chain-name>
+    <keies>
+{% for key in isis_keychain %}
+     <key>
+      <key-id>{{ key.id }}</key-id>
+      <accept-lifetime>
+       <start-hour>{{ key.a_sta_hr }}</start-hour>
+       <start-minutes>{{ key.a_sta_min }}</start-minutes>
+       <start-seconds>{{ key.a_sta_sec }}</start-seconds>
+       <start-date>{{ key.a_sta_dt }}</start-date>
+       <start-month>{{ key.a_sta_mon }}</start-month>
+       <start-year>{{ key.a_sta_yr }}</start-year>
+       <infinite-flag>{{ key.a_inf }}</infinite-flag>
+      </accept-lifetime>
+      <send-lifetime>
+       <start-hour>{{ key.s_sta_hr }}</start-hour>
+       <start-minutes>{{ key.s_sta_min }}</start-minutes>
+       <start-seconds>{{ key.s_sta_sec }}</start-seconds>
+       <start-date>{{ key.s_sta_dt }}</start-date>
+       <start-month>{{ key.s_sta_mon }}</start-month>
+       <start-year>{{ key.s_sta_yr }}</start-year>
+       <infinite-flag>{{ key.s_inf }}</infinite-flag>
+      </send-lifetime>
+      <cryptographic-algorithm>alg-hmac-md5-16</cryptographic-algorithm>
+     </key>
+{% endfor %}
+    </keies>
+    <accept-tolerance>
+     <infinite>true</infinite>
+    </accept-tolerance>
+   </keychain>
+  </keychains>
+</config>
+

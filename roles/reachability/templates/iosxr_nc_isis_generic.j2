@@ -1,0 +1,89 @@
+{# This Source Code int.descriptionForm is subject to the terms of the Mozilla Public #}
+{# License, v. 2.0. If a copy of the MPL was not distributed with this                #}
+{# file, You can obtain one at http://mozilla.org/MPL/2.0/.                           #}
+{######################################################################################}
+{# IOSXR specific commands                                                            #}
+{######################################################################################}
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0"> 
+
+{% for net in isis_nets %}
+{% if net.node == inventory_hostname %}
+
+{####################################################################}
+{# IOSXR specific commands                                          #}
+{####################################################################}
+
+  <isis xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-clns-isis-cfg">
+   <instances>
+    <instance>
+     <instance-name>{{ net.instance_name }}</instance-name>
+     <running/>
+     <is-type>level2</is-type>
+     <nets>
+      <net>
+       <net-name>{{ net.net }}</net-name>
+      </net>
+     </nets>
+     <nsr/>
+     <nsf>
+      <flavor>cisco-proprietary-nsf</flavor>
+     </nsf>
+     <log-adjacency-changes/>
+     <lsp-generation-intervals>
+      <lsp-generation-interval>
+       <level>not-set</level>
+       <maximum-wait>1000</maximum-wait>
+       <initial-wait>1</initial-wait>
+       <secondary-wait>100</secondary-wait>
+      </lsp-generation-interval>
+     </lsp-generation-intervals>
+     <lsp-refresh-intervals>
+      <lsp-refresh-interval>
+       <level>not-set</level>
+       <interval>65000</interval>
+      </lsp-refresh-interval>
+     </lsp-refresh-intervals>
+     <lsp-lifetimes>
+      <lsp-lifetime>
+       <level>not-set</level>
+       <lifetime>65535</lifetime>
+      </lsp-lifetime>
+     </lsp-lifetimes>
+     <ignore-lsp-errors>true</ignore-lsp-errors>
+     <afs>
+      <af>
+       <af-name>ipv4</af-name>
+       <saf-name>unicast</saf-name>
+       <af-data>
+        <metric-styles>
+         <metric-style>
+          <level>level2</level>
+          <style>new-metric-style</style>
+          <transition-state>disabled</transition-state>
+         </metric-style>
+        </metric-styles>
+        <ispf>
+         <states>
+          <state>
+           <level>level2</level>
+           <state>enabled</state>
+          </state>
+         </states>
+        </ispf>
+        <spf-intervals>
+         <spf-interval>
+          <level>not-set</level>
+          <maximum-wait>1000</maximum-wait>
+          <initial-wait>1</initial-wait>
+          <secondary-wait>100</secondary-wait>
+         </spf-interval>
+        </spf-intervals>
+       </af-data>
+      </af>
+     </afs>
+    </instance>
+   </instances>
+  </isis>
+{% endif %}
+{% endfor %}
+</config>

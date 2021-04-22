@@ -1,0 +1,16 @@
+router isis {{ item.isis_instance_name }}
+ set-overload-bit on-startup wait-for-bgp
+ is-type level-2-only
+ net {{ item.net }}
+ nsr
+ nsf cisco
+ log adjacency changes
+ lsp-gen-interval maximum-wait 1000 initial-wait 1 secondary-wait 100
+ lsp-refresh-interval 65000
+ max-lsp-lifetime 65535
+ ignore-lsp-errors disable
+!
+ address-family ipv4 unicast
+  metric-style wide level 2
+  spf-interval maximum-wait 1000 initial-wait 1 secondary-wait 100
+  ispf level 2

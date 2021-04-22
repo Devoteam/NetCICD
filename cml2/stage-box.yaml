@@ -7,7 +7,7 @@ lab:
 nodes:
   - id: n0
     label: NetCICD_agent
-    node_definition: alpine
+    node_definition: desktop
     x: -500
     y: -100
     configuration: |-
@@ -55,7 +55,12 @@ nodes:
 
       # Installing required packages
       apk update
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker
+      addgroup cisco docker
+      rc-update add docker boot
+      service docker start
+      sudo chmod 666 /var/run/docker.sock
+      docker pull netarch/netcicd:anx
       pip install ncclient
 
       # Preparing interface to lab
@@ -122,7 +127,7 @@ nodes:
       chown cisco:cisco /home/cisco/.ssh/*
       ssh-keygen -t rsa -N "" -f /home/cisco/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com
       # mv stage-box.profile .profile
-    image_definition: alpine-3-12-base
+    image_definition: desktop-3-12-xfce
     tags: []
     interfaces:
       - id: i0
