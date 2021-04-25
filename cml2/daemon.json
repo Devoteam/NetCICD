@@ -1,0 +1,5 @@
+{
+    "insecure-registries" : ["nexus:8181"],
+    "registry-mirrors": ["http://nexus:8181"]
+}
+  

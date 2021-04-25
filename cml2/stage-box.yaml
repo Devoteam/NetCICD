@@ -53,6 +53,14 @@ nodes:
         echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
       fi
 
+      # Setting Docker repo to proxy host to enable curated packages
+      if $(wget http://nexus:8081); then
+        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/daemon.json
+        mv daemon.json /etc/docker/
+        chmod 644 /etc/docker/daemon.json
+        chown root:root /etc/docker/daemon.json
+      fi
+
       # Installing required packages
       apk update
       apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker
@@ -88,7 +96,12 @@ nodes:
       chown cisco:cisco /home/cisco/.ansible.cfg
 
       # set vars
-      echo 'export GIT_URL=http://gitea:3000/infraautomator/' >> /etc/profile
+      if wget ${GIT_URL}; then
+        echo 'export GIT_URL=http://gitea:3000/infraautomator/' >> /etc/profile
+      else
+        echo 'export GIT_URL=https://github.com/Devoteam/' >> /etc/profile
+      fi
+      
       echo "export JAVA_HOME=/usr" >> /etc/profile
 
       # Configuring rsyslog host for testing log configuration on devices
