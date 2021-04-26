@@ -1,8 +1,8 @@
 lab:
   description: LAB specifically created for NetCICD Box testing
   notes: ''
-  timestamp: 1617990887.6205542
-  title: NetCICD Box
+  timestamp: 1619408255.058225
+  title: NetCICD Stage Box
   version: 0.0.4
 nodes:
   - id: n0
@@ -53,22 +53,22 @@ nodes:
         echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
       fi
 
-      # Setting Docker repo to proxy host to enable curated packages
-      if $(wget http://nexus:8081); then
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/daemon.json
-        mv daemon.json /etc/docker/
-        chmod 644 /etc/docker/daemon.json
-        chown root:root /etc/docker/daemon.json
-      fi
-
       # Installing required packages
       apk update
       apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker
       addgroup cisco docker
       rc-update add docker boot
-      service docker start
+
+      # Setting Docker repo to proxy host to enable curated packages
+      wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/daemon.json
+      sudo mkdir /etc/docker
+      sudo mv daemon.json /etc/docker/daemon.json
+      sudo chmod 644 /etc/docker/daemon.json
+      sudo chown root:root /etc/docker/daemon.json
+
+      sudo service docker restart
       sudo chmod 666 /var/run/docker.sock
-      docker pull netarch/netcicd:anx
+
       pip install ncclient
 
       # Preparing interface to lab
@@ -101,7 +101,7 @@ nodes:
       else
         echo 'export GIT_URL=https://github.com/Devoteam/' >> /etc/profile
       fi
-      
+
       echo "export JAVA_HOME=/usr" >> /etc/profile
 
       # Configuring rsyslog host for testing log configuration on devices
