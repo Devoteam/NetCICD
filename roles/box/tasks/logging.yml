@@ -60,14 +60,14 @@
 # Netconf specific commands                                        #
 ####################################################################
 
-- name: "Configure logging"
+- name: "Netconf configure logging"
   netconf_config:
-    src: "{{ netconf }}_nc_logging.j2"
+    src: "{{ ansible_network_os }}_nc_logging.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 
 - name: "Configure log servers"
   netconf_config:
-    src: "{{ netconf }}_nc_log_servers.j2"
+    src: "{{ ansible_network_os }}_nc_log_servers.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - logging
