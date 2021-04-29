@@ -27,7 +27,9 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 (c) Mark Sibering
 
 ## Installation ##
-Installation should be done by installing the [NetCICD Developer Toolbox](https://github.com/Devoteam/NetCICD-developer-toolbox). This repo can be found in the Gitea environment under the organisation Devoteam. 
+Installation should be done by installing the [NetCICD Developer Toolbox](https://github.com/Devoteam/NetCICD-developer-toolbox). This repo can be found in the Gitea environment under the organisation Infraautomator. 
 ## Environment ##
-NetCICD is developed on a Ubuntu 20.04 laptop with CML Personal edition version 2.1. (Work for migrating NetCICD from VIRL 1.5 to CML2.1 is currently being done). For more information see the wiki attached to this repo.
+NetCICD is developed on a Ubuntu 20.04.1 Desktop laptop with CML Personal edition version 2.1. 
+
+For more information see the wiki attached to this repo.
 
