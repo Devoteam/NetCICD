@@ -44,7 +44,7 @@
   register: iosxrlo
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - logging
+#    - xrlo0
 
 - name: "IOSXR No shut on global table loopback address"
   iosxr_config:
@@ -69,7 +69,7 @@
   register: nxoslo
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - hostname
+#    - nxlo0
 
 - name: "NXOS No shut on global table loopback address"
   nxos_config:
@@ -88,8 +88,8 @@
   netconf_config:
     src: "{{ ansible_network_os }}_nc_loopback.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
-  notify: 
-    - nclo0
+#  notify: 
+#    - nclo0
     
 ####################################################################
 # Kick off handlers for unit testing                               #
