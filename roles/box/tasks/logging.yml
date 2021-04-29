@@ -1,0 +1,80 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: "IOS Configure log servers"
+  ios_config:
+    authorize: yes
+    src: "ios_log_servers.j2"
+  with_items: "{{ logging }}"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - logging
+
+- name: "IOS Configure logging"
+  ios_config:
+    authorize: yes
+    src: "ios_logging.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - logging
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: "IOSXR Configure log servers"
+  iosxr_config:
+    authorize: yes
+    src: "iosxr_log_servers.j2"
+  with_items: "{{ logging }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - logging
+
+- name: "IOSXR Configure logging"
+  iosxr_config:
+    authorize: yes
+    src: "iosxr_logging.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - logging
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: "NX-OS Configure log servers"
+  nxos_config:
+    lines: hostname {{ inventory_hostname }}
+    save_when: modified
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - hostname
+
+####################################################################
+# Netconf specific commands                                        #
+####################################################################
+
+- name: "Configure logging"
+  netconf_config:
+    src: "{{ netconf }}_nc_logging.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+
+- name: "Configure log servers"
+  netconf_config:
+    src: "{{ netconf }}_nc_log_servers.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - logging
+    
+####################################################################
+# Kick off handlers for unit testing                               #
+####################################################################
+    
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

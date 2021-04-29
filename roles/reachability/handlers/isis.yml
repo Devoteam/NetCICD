@@ -1,0 +1,20 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Generate PyATS testbed file
+  vars:
+    testbed_hosts: "{{ groups['p_routers'] }}"
+  template: src=testbed.j2 dest=~/NetCICD/roles/reachability/files/testbed.yml
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr")
+  listen: reachability_isis
+
+# For sake of the demo, the number of neighbors is fixed at 1, no auth. Will be dynamic in next commit
+  
+- name: Start PyATS test of IS-IS neighbor count
+  local_action: shell robot --variable testbed:testbed.yml isis_neighbours.robot
+  args:
+    chdir: roles/reachability/files
+  listen: reachability_isis
+...

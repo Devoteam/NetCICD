@@ -1,0 +1,25 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+{% for int in interfaces%}
+{% if item.node == ansible_host %}
+{% if ansible_network_os =="ios" %}
+
+####################################################################
+# IOS specific commands                                            #
+####################################################################
+
+interface {{ int.type }}{{ int.id }}
+dampening
+"description *** {{ int.description }} ***"
+"ip address {{ int.ip }} {{ int.mask}}"
+no ip redirects
+no ip unreachables
+no ip proxy-arp
+ip router isis 
+negotiation auto
+
+{% endif %}
+{% endif %}
+{% endfor %} 

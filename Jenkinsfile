@@ -69,6 +69,8 @@ pipeline {
                         label agentName
                     }
                     steps {
+                        echo "Prepare lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'prepare.yml', extraVars: ["stage": "box"], extras: '-vvvv'
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
                         ansiblePlaybook installation: 'ansible', inventory: 'vars/stage-box', playbook: 'stage-box.yml', extraVars: ["stage": "box"], extras: '-vvvv'
                     }

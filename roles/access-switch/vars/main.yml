@@ -1,0 +1,22 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Configure box local 
+  include_vars: box.yml
+    
+#- name: Setup topology
+#  include_vars: topology.yml
+    
+#- name: Setup reachability
+#  include_vars: reachability.yml
+
+#- name: Setup forwarding
+#  include_vars: forwarding.yml
+
+#- name: Setup platform
+#  include_vars: platform.yml
+    
+#- name: Setup user_domain
+#  include_vars: user_domain.yml   

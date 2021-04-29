@@ -1,0 +1,19 @@
+devices:
+{% for host in testbed_hosts %}
+{% if hostvars[ host ]['ansible_network_os'] == "iosxr" %}
+ {{ host }}:
+   type: router
+   os: iosxr
+   tacacs:
+     username: "{{ ansible_user }}"
+   passwords:
+     tacacs: "{{ ansible_ssh_pass }}"
+   connections:
+     defaults:
+       class: unicon.Unicon
+     cli:
+       protocol: ssh
+       ip: "{{ hostvars[ host ]['ansible_host'] }}"
+       port: 22
+{% endif %}
+{% endfor %}

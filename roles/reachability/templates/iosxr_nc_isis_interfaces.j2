@@ -1,0 +1,78 @@
+{# This Source Code int.descriptionForm is subject to the terms of the Mozilla Public #}
+{# License, v. 2.0. If a copy of the MPL was not distributed with this                #}
+{# file, You can obtain one at http://mozilla.org/MPL/2.0/.                           #}
+{######################################################################################}
+{# IOSXR specific commands                                                            #}
+{######################################################################################}
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+
+{% for net in isis_nets %}
+{% if net.node == inventory_hostname %}
+
+{####################################################################}
+{# IOSXR specific commands                                          #}
+{####################################################################}
+
+  <isis xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-clns-isis-cfg">
+   <instances>
+    <instance>
+     <instance-name>{{ net.instance_name }}</instance-name>
+     <running/>
+     <interfaces>
+{% for int in isis_interfaces %}
+{% if int.node == inventory_hostname %}
+      <interface>
+{% if int.sub == 0 %}
+       <interface-name>{{ int.type }}{{ int.id }}</interface-name>
+{% else %}
+       <interface-name>{{ int.type }}{{ int.id }}.{{ int.sub }}</interface-name>
+{% endif %}
+       <running/>
+       <circuit-type>level2</circuit-type>
+       <bfd>
+        <interval>15</interval>
+        <detection-multiplier>3</detection-multiplier>
+        <enable-ipv4>true</enable-ipv4>
+       </bfd>
+       <point-to-point/>
+       <hello-paddings>
+        <hello-padding>
+         <level>not-set</level>
+         <padding-type>never</padding-type>
+        </hello-padding>
+       </hello-paddings>
+{% if int.key_chain != "" %}
+       <hello-passwords>
+        <hello-password>
+         <level>not-set</level>
+         <algorithm>keychain</algorithm>
+         <failure-mode>drop</failure-mode>
+         <password>{{ int.key_chain }}</password>
+        </hello-password>
+       </hello-passwords>
+{% endif %}
+       <interface-afs>
+        <interface-af>
+         <af-name>ipv4</af-name>
+         <saf-name>unicast</saf-name>
+         <interface-af-data>
+          <running/>
+          <metrics>
+           <metric>
+            <level>level2</level>
+            <metric>100</metric>
+           </metric>
+          </metrics>
+         </interface-af-data>
+        </interface-af>
+       </interface-afs>
+      </interface>
+{% endif %}
+{% endfor %}
+     </interfaces>
+    </instance>
+   </instances>
+  </isis>
+{% endif %}
+{% endfor %}
+</config>

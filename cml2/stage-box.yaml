@@ -1,13 +1,13 @@
 lab:
   description: LAB specifically created for NetCICD Box testing
   notes: ''
-  timestamp: 1617990887.6205542
-  title: NetCICD Box
+  timestamp: 1619408255.058225
+  title: NetCICD Stage Box
   version: 0.0.4
 nodes:
   - id: n0
     label: NetCICD_agent
-    node_definition: alpine
+    node_definition: desktop
     x: -500
     y: -100
     configuration: |-
@@ -48,24 +48,49 @@ nodes:
         echo "http://nexus:8081/repository/apk-community-proxy/" >> /etc/apk/repositories
         echo "http://nexus:8081/repository/apk-testing-proxy/" >> /etc/apk/repositories
       else
-        echo "NetCICD Toolbox not installed. Setting APK repository to Nexus." >>/home/cisco/install-log.txt
+        echo "NetCICD Toolbox not installed." >>/home/cisco/install-log.txt
         echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
         echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
       fi
 
+      # Configuring rsyslog host for testing log configuration on devices
+      cd /etc
+      rm rsyslog.conf
+      if wget http://gitea:3000/NetCICD/raw/branch/master/Docker/Syslog/rsyslog.conf; then
+        echo "NetCICD Toolbox installed. Retrieved rsyslog.conf from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
+      else
+        echo "NetCICD Toolbox not installed. Retrieving rsyslog.conf from github." >>/home/cisco/install-log.txt
+        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/Docker/Syslog/rsyslog.conf
+      fi
+      rc-service rsyslog restart >>/home/cisco/install-log.txt
+
       # Installing required packages
-      apk update
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient
+      apk update >>/home/cisco/install-log.txt
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker
+      addgroup cisco docker >>/home/cisco/install-log.txt
+      rc-update add docker boot >>/home/cisco/install-log.txt
+
+      # Setting Docker repo to proxy host to enable curated packages
+      echo "Installing docker daemon.json." >>/home/cisco/install-log.txt
+      wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/daemon.json
+      sudo mkdir /etc/docker
+      sudo mv daemon.json /etc/docker/daemon.json
+      sudo chmod 644 /etc/docker/daemon.json
+      sudo chown root:root /etc/docker/daemon.json
+
+      echo "Installing ncclient." >>/home/cisco/install-log.txt
       pip install ncclient
 
       # Preparing interface to lab
+      echo "Installing additional eth interface" >>/home/cisco/install-log.txt
       echo "auto eth1" >> /etc/network/interfaces
       echo "iface eth1 inet static" >> /etc/network/interfaces
       echo "        address 10.255.1.1" >> /etc/network/interfaces
       echo "        netmask 255.255.255.0" >> /etc/network/interfaces
       /etc/init.d/networking restart
 
-
+      ip r  >>/home/cisco/install-log.txt
+      
       # Preparing ssh
       echo -e """\
       \n\
@@ -78,24 +103,28 @@ nodes:
       """ >> /etc/ssh/ssh_config
 
       # Prepare Ansible
+      echo "Preparing Ansible setup." >>/home/cisco/install-log.txt
       echo "[defaults]" > /home/cisco/.ansible.cfg
       echo "host_key_checking = False" >> /home/cisco/.ansible.cfg
+      echo "nocows = True" >> /home/cisco/.ansible.cfg
+      echo "" >> /home/cisco/.ansible.cfg
+      echo "# Installs collections into /home/cisco/.ansible/ansible_collections/namespace/collection_name" >> /home/cisco/.ansible.cfg
+      echo "collections_paths = /home/cisco/.ansible/" >> /home/cisco/.ansible.cfg
+      echo "" >> /home/cisco/.ansible.cfg
+      echo "# Installs roles into /home/cisco/.ansible/roles/namespace.rolename" >> /home/cisco/.ansible.cfg
+      echo "roles_path = /home/cisco/.ansible/roles" >> /home/cisco/.ansible.cfg
       chown cisco:cisco /home/cisco/.ansible.cfg
 
       # set vars
-      echo 'export GIT_URL=http://gitea:3000/infraautomator/' >> /etc/profile
-      echo "export JAVA_HOME=/usr" >> /etc/profile
-
-      # Configuring rsyslog host for testing log configuration on devices
-      cd /etc
-      rm rsyslog.conf
-      if wget ${GIT_URL}/NetCICD/raw/branch/master/Docker/Syslog/rsyslog.conf; then
-        echo "NetCICD Toolbox installed. Retrieved rsyslog.conf from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
+      if wget ${GIT_URL}; then
+        echo "Setting git to Gitea." >>/home/cisco/install-log.txt
+        echo 'export GIT_URL=http://gitea:3000/infraautomator/' >> /etc/profile
       else
-        echo "NetCICD Toolbox not installed. Retrieving rsyslog.conf from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/Docker/Syslog/rsyslog.conf
+        echo "Setting git to Github." >>/home/cisco/install-log.txt
+        echo 'export GIT_URL=https://github.com/Devoteam/' >> /etc/profile
       fi
-      rc-service rsyslog restart
+
+      echo "export JAVA_HOME=/usr" >> /etc/profile
 
       # Preparing Jenkins connection
       cd /home/cisco
@@ -107,7 +136,7 @@ nodes:
         chown cisco:cisco secret-file
         sudo -H -u cisco java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/cisco" &
       else
-        echo "NetCICD Toolbox not installed. Skipping jenkins agent start." >>/home/cisco/install-log.txt
+        echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/cisco/install-log.txt
       fi
 
       # Installing .profile script to prepare for Ansible playbook run
@@ -117,12 +146,20 @@ nodes:
         echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
         wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.profile
       fi
+
+      echo "Creating SSH keys." >>/home/cisco/install-log.txt
       mkdir /home/cisco/.ssh
       chown cisco:cisco /home/cisco/.ssh
       chown cisco:cisco /home/cisco/.ssh/*
-      ssh-keygen -t rsa -N "" -f /home/cisco/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com
-      # mv stage-box.profile .profile
-    image_definition: alpine-3-12-base
+      ssh-keygen -t rsa -N "" -f /home/cisco/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/cisco/install-log.txt
+      mv stage-box.profile .profile
+
+      echo "Starting Docker." >>/home/cisco/install-log.txt
+      sudo service docker start  >>/home/cisco/install-log.txt
+      sudo chmod 666 /var/run/docker.sock
+    image_definition: desktop-3-12-xfce
+    ram: 4096
+    cpus: 2
     tags: []
     interfaces:
       - id: i0

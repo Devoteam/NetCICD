@@ -1,0 +1,17 @@
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+  <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+    <interface-configuration>
+      <active>act</active>
+      <interface-name>Loopback0</interface-name>
+      <description>The local Loopback</description>
+      <ipv4-network xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ipv4-io-cfg">
+      <addresses>
+        <primary>
+        <address>{{ lo0 }}</address>
+        <netmask>255.255.255.255</netmask>
+        </primary>
+      </addresses>
+      </ipv4-network>
+    </interface-configuration>
+  </interface-configurations>
+</config>

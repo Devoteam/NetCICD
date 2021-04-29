@@ -1,0 +1,87 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+####################################################################
+# Netconf specific commands                                        #
+#                                                                  #
+# matches IOSXR, IOSXE and NXOS                                    #
+# Disable for security                                             #
+#                                                                  #
+####################################################################
+
+- name: "Netconf add ssh key"
+  netconf_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "{{ netconf }}_nc_sshkey.j2"
+  when: netconf is defined
+
+####################################################################
+# IOSXR specific additions                                         #  
+#                                                                  #
+# be aware, in IOSXR, transports may be allowed by default.        #
+# Disable for security                                             #
+#                                                                  #
+####################################################################
+
+- name: "IOSXR CLI disable outbound transport and disable incoming telnet transport"
+  iosxr_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    lines:
+      - no transport input telnet
+      - transport output none
+  when: (cli is defined and cli == "iosxr")
+  notify: 
+    - sshsettings
+
+####################################################################
+# IOSXE specific addition                                          #
+#                                                                  #
+# be aware, in IOSXE, transports may be allowed by default.        #
+# Disable for security                                             #
+#                                                                  #
+####################################################################
+
+- name: "IOSXE CLI disable outbound transport and disable incoming telnet transport"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    lines:
+      - no transport input telnet
+      - transport output none
+  when: (cli is defined and cli == "iosxe")
+  notify: 
+    - sshsettings
+
+####################################################################
+# Classic IOS specific commands                                    #
+#                                                                  #
+# be aware, in IOSXE, transports may be allowed by default.        #
+# Disable for security                                             #
+#                                                                  #
+####################################################################
+
+- name: "IOS add ssh key"
+  ios_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "ios_cli_sshkey.j2"
+  when: (cli is defined and cli == "ios")
+
+- name: "Classic IOS CLI disable outbound transport and disable incoming telnet transport"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    lines:
+      - no transport input telnet
+      - transport output none
+  when: (cli is defined and cli == "ios")
+  notify: 
+    - sshsettings
+        
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

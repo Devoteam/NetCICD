@@ -1,0 +1,37 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+####################################################################
+# IOSXR CLI specific commands                                      #
+####################################################################
+
+####################################################################
+# NXOS CLI specific commands                                       #
+####################################################################
+
+####################################################################
+# Netconf specific commands for IOSXR                              #
+####################################################################
+
+- name: "Netconf configure IS-IS for IOSXR"
+  netconf_config:                                                                                     
+    src: "iosxr_nc_isis_generic.j2"                                                    
+  when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
+
+- name: "Netconf configure IS-IS interfaces for IOSXR"
+  netconf_config:                                                                                     
+    src: "iosxr_nc_isis_interfaces.j2"                                                    
+  when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
+  notify: 
+    - reachability_isis
+    
+####################################################################
+# Kick off handlers                                                #
+####################################################################
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

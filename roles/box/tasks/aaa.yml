@@ -1,0 +1,48 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+####################################################################
+# IOSXR Netconf specific commands                                  #
+####################################################################
+
+- name: "RADIUS based AAA"
+  netconf_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "{{ netconf }}_nc_aaa.j2"
+  when: netconf is defined
+  notify: 
+    - aaa
+
+- name: "Add RADIUS servers"
+  netconf_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "{{ netconf }}_nc_aaa_RADIUS_servers.j2"
+  when: netconf is defined
+  notify: 
+    - aaa
+
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: "RADIUS based AAA"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    src: "ios_aaa.j2"
+  when:  (ansible_network_os is defined and ansible_network_os == "ios")
+  
+- name: "Add RADIUS servers"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    src: "ios_aaa_RADIUS_servers.j2"
+  when:  (ansible_network_os is defined and ansible_network_os == "ios")
+    
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

@@ -1,0 +1,51 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+{% for int in interfaces%}
+{% if item.node == ansible_host %}
+
+####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+{% if ansible_network_os =="ios" %}
+
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+    <host-names xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-cfg">
+      <host-name>{{ inventory_hostname }}</host-name>
+    </host-names>
+</config>
+
+{% endif %}
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+{% if ansible_network_os =="iosxr" %}
+
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+    <host-names xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-cfg">
+      <host-name>{{ inventory_hostname }}</host-name>
+    </host-names>
+</config>
+
+{% endif %}
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+{% if ansible_network_os =="nxos" %}
+
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+    <host-names xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-shellutil-cfg">
+      <host-name>{{ inventory_hostname }}</host-name>
+    </host-names>
+</config>
+
+{% endif %}
+
+{% endif %}
+{% endfor %}

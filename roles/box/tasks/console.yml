@@ -6,48 +6,66 @@
 # Classic IOS specific commands                                    #
 ####################################################################
 
-- name: "IOS set hostname"
+- name: "IOS configure console"
   ios_config:
     authorize: yes
-    lines: hostname {{ inventory_hostname }}
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    lines:
+      - password {{ console_pass }}
+      - authorization exec console
+      - logging synchronous
+      - login authentication console
+      - stopbits 1
+    parents: ['line con 0']
+    when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - hostname
+#    - console
 
 ####################################################################
 # IOSXR specific commands                                          #
 ####################################################################
 
-- name: "IOSXR set hostname"
+- name: "IOSXR configure console"
   iosxr_config:
     authorize: yes
-    lines: hostname {{ inventory_hostname }}
+    lines:
+      - password {{ console_pass }}
+      - authorization exec console
+      - logging synchronous
+      - login authentication console
+      - stopbits 1
+    parents: ['line con 0']
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - hostname
+#    - console
 
 ####################################################################
 # NXOS specific commands                                           #
 ####################################################################
 
-- name: "NX-OS set hostname"
-  nxos_command:
-    lines: hostname {{ inventory_hostname }}
+- name: "NX-OS configure console"
+  nxos_config:
+    lines:
+      - password {{ console_pass }}
+      - authorization exec console
+      - logging synchronous
+      - login authentication console
+      - stopbits 1
+    parents: ['line con 0']
     save_when: modified
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - hostname
+#    - console
 
 ####################################################################
 # Netconf specific commands                                        #
 ####################################################################
 
-- name: "Netconf set hostname"
+- name: "Netconf configure console"
   netconf_config:
-    xml: "{{ lookup('file', 'templates/{{ ansible_network_os }}_nc_hostname.j2') }}"
+    src: "{{ ansible_network_os }}_nc_console.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - hostname
+#    - console
     
 ####################################################################
 # Kick off handlers for unit testing                               #

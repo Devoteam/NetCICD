@@ -1,0 +1,22 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Configure box local 
+  import_tasks: box.yml
+    
+#- name: Setup topology
+#  import_tasks: topology.yml
+    
+#- name: Setup reachability
+#  import_tasks: reachability.yml
+
+#- name: Setup forwarding
+#  import_tasks: forwarding.yml
+
+#- name: Setup platform
+#  import_tasks: platform.yml
+    
+#- name: Setup user_domain
+#  import_tasks: user_domain.yml   

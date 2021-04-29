@@ -1,0 +1,94 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+####################################################################
+# Netconf specific commands                                        #
+####################################################################
+
+- name: "NC Disable unused services"
+  netconf_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "{{ netconf }}_nc_noservices.j2"
+  when: netconf is defined
+  notify: 
+    - hardening
+
+- name: "NC Disable source routing"
+  netconf_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "{{ netconf }}_nc_nosourcerouting.j2"
+  when: netconf is defined
+  notify: 
+    - hardening
+
+- name: "NC Disable http/https servers"
+  netconf_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "{{ netconf }}_nc_noweb.j2"
+  when: netconf is defined
+  notify: 
+    - hardening
+
+- name: "NC Disable CDP globally"
+  netconf_config:
+    host: "{{ ansible_host }}"
+    username: "{{ creds['username'] }}"
+    password: "{{ creds['password'] }}"
+    src: "{{ netconf }}_nc_nocdp.j2"
+  when: netconf is defined
+  notify: 
+    - hardening
+
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: "IOS Disable unused services"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    src: "hardening_ios.j2"
+  when:  (cli is defined and cli == "ios")
+  notify: 
+    - hardening
+
+- name: "IOS Disable source routing"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    lines:
+      - no ip source-route
+  when:  (cli is defined and cli == "ios")
+  notify: 
+    - hardening
+
+- name: "IOS Disable http/https servers"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    lines:
+      - no ip http server
+      - no ip http secure-server
+  when:  (cli is defined and cli == "ios")
+  notify: 
+    - hardening
+
+- name: "IOS Disable CDP globally"
+  ios_config:
+    provider: "{{ provider }}"
+    authorize: yes
+    lines:
+      - no cdp run
+  when:  (cli is defined and cli == "ios")
+  notify: 
+    - hardening
+    
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers

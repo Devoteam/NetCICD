@@ -8,9 +8,12 @@
     
 - name: Setup banners
   import_tasks: banners.yml
+    
+- name: Setup loopback0
+  import_tasks: lo0.yml
 
-#- name: Setup logging
-#  import_tasks: logging.yml
+- name: Setup logging
+  import_tasks: logging.yml
 
 #- name: Setup console
 #  import_tasks: console.yml
@@ -24,13 +27,13 @@
 #- name: Setup box hardening
 #  import_tasks: hardening.yml
     
-#- name: Setup loopback0
-#  import_tasks: lo0.yml
-    
 #- name: Setup snmp
 #  import_tasks: snmp.yml
     
 #- name: Setup aaa
+#  import_tasks: aaa.yml
+    
+#- name: Setup tftp interface
 #  import_tasks: aaa.yml
 
 ...
