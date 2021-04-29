@@ -53,6 +53,17 @@ nodes:
         echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
       fi
 
+      # Configuring rsyslog host for testing log configuration on devices
+      cd /etc
+      rm rsyslog.conf
+      if wget ${GIT_URL}/NetCICD/raw/branch/master/Docker/Syslog/rsyslog.conf; then
+        echo "NetCICD Toolbox installed. Retrieved rsyslog.conf from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
+      else
+        echo "NetCICD Toolbox not installed. Retrieving rsyslog.conf from github." >>/home/cisco/install-log.txt
+        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/Docker/Syslog/rsyslog.conf
+      fi
+      rc-service rsyslog restart
+
       # Installing required packages
       apk update
       apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker
@@ -65,9 +76,6 @@ nodes:
       sudo mv daemon.json /etc/docker/daemon.json
       sudo chmod 644 /etc/docker/daemon.json
       sudo chown root:root /etc/docker/daemon.json
-
-      sudo service docker restart
-      sudo chmod 666 /var/run/docker.sock
 
       pip install ncclient
 
@@ -104,17 +112,6 @@ nodes:
 
       echo "export JAVA_HOME=/usr" >> /etc/profile
 
-      # Configuring rsyslog host for testing log configuration on devices
-      cd /etc
-      rm rsyslog.conf
-      if wget ${GIT_URL}/NetCICD/raw/branch/master/Docker/Syslog/rsyslog.conf; then
-        echo "NetCICD Toolbox installed. Retrieved rsyslog.conf from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
-      else
-        echo "NetCICD Toolbox not installed. Retrieving rsyslog.conf from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/Docker/Syslog/rsyslog.conf
-      fi
-      rc-service rsyslog restart
-
       # Preparing Jenkins connection
       cd /home/cisco
       if wget http://jenkins:8080/jnlpJars/agent.jar; then
@@ -139,7 +136,11 @@ nodes:
       chown cisco:cisco /home/cisco/.ssh
       chown cisco:cisco /home/cisco/.ssh/*
       ssh-keygen -t rsa -N "" -f /home/cisco/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com
-      # mv stage-box.profile .profile
+      mv stage-box.profile .profile
+
+      sudo service docker start
+      sudo chmod 666 /var/run/docker.sock
+
     image_definition: desktop-3-12-xfce
     tags: []
     interfaces:
