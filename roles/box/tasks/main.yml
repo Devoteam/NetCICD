@@ -9,11 +9,11 @@
 - name: Setup banners
   import_tasks: banners.yml
     
-#- name: Setup loopback0
-#  import_tasks: lo0.yml
+- name: Setup loopback0
+  import_tasks: lo0.yml
 
-#- name: Setup logging
-#  import_tasks: logging.yml
+- name: Setup logging
+  import_tasks: logging.yml
 
 #- name: Setup console
 #  import_tasks: console.yml
