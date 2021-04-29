@@ -152,7 +152,6 @@ nodes:
       chown cisco:cisco /home/cisco/.ssh
       chown cisco:cisco /home/cisco/.ssh/*
       ssh-keygen -t rsa -N "" -f /home/cisco/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/cisco/install-log.txt
-      mv stage-box.profile .profile
 
       echo "Starting Docker." >>/home/cisco/install-log.txt
       sudo service docker start  >>/home/cisco/install-log.txt
