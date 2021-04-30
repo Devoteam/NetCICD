@@ -1,3 +1,9 @@
 <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
-
+  <clock xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-infra-clock-cfg">
+   <time-zone>
+    <time-zone-name>{{ timezone }}</time-zone-name>
+    <hour-offset>{{ time_offset }}</hour-offset>
+    <minute-offset>0</minute-offset>
+   </time-zone>
+  </clock>
 /config>

@@ -143,7 +143,7 @@
 
 - name: "NC Set clock and timezone"
   netconf_config:
-    src: "{{ ansible_network_os }}_nc_clock.j2"
+    src: "{{ ansible_network_os }}_nc_clock_timezone.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nc_time
