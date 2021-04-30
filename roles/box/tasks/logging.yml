@@ -65,7 +65,7 @@
     src: "{{ ansible_network_os }}_nc_logging.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 
-- name: "Configure log servers"
+- name: "Netconf configure log servers"
   netconf_config:
     src: "{{ ansible_network_os }}_nc_log_servers.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
