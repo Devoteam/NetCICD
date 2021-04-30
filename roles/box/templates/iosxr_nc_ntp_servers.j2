@@ -1,2 +1,21 @@
 <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
-/config>
+  <ntp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-cfg">
+   <peer-vrfs>
+    <peer-vrf>
+     <vrf-name>default</vrf-name>
+     <peer-ipv4s>
+      <peer-ipv4>
+       <address-ipv4>{{ item.ntp_ip }}</address-ipv4>
+       <peer-type-ipv4>
+        <peer-type>server</peer-type>
+        <authentication-key>{{ ntp_key_id }}</authentication-key>
+{% if item.prefer == "prefer" %}
+        <preferred-peer/>
+{% endif %}
+       </peer-type-ipv4>
+      </peer-ipv4>
+     </peer-ipv4s>
+    </peer-vrf>
+   </peer-vrfs>
+  </ntp>
+</config>

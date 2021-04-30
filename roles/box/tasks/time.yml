@@ -172,6 +172,7 @@
 - name: "NC Configure ntp servers"
   netconf_config:
     src: "{{ ansible_network_os }}_nc_ntp_servers.j2"
+  with_items: "{{ ntp }}"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nc_time
