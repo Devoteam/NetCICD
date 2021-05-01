@@ -1,3 +1,72 @@
 <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <snmp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-agent-cfg">
+   <administration>
+    <default-communities>
+     <default-community>
+      <community-name>{{ ro_community }}</community-name>
+      <priviledge>read-only</priviledge>
+      <v4acl-type>ipv4</v4acl-type>
+      <v4-access-list>snmp_read</v4-access-list>
+     </default-community>
+     <default-community>
+      <community-name>{{ rw_community }}</community-name>
+      <priviledge>read-write</priviledge>
+      <v4acl-type>ipv4</v4acl-type>
+      <v4-access-list>snmp_write</v4-access-list>
+     </default-community>
+    </default-communities>
+   </administration>
+   <notification>
+    <ntp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-cfg">
+     <enable/>
+    </ntp>
+    <config-copy xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-confcopymib-cfg">
+     <completion/>
+    </config-copy>
+    <snmp>
+     <link-up xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-ifmib-cfg"/>
+     <link-down xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-ifmib-cfg"/>
+     <cold-start/>
+     <warm-start/>
+     <authentication/>
+    </snmp>
+    <flash xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-flashmib-cfg">
+     <removal/>
+     <insertion/>
+    </flash>
+    <config-man xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-config-mibs-cfg">
+     <enable/>
+    </config-man>
+    <entity xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-entitymib-cfg">
+     <enable/>
+    </entity>
+    <sensor xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-ciscosensormib-cfg">
+     <enable/>
+    </sensor>
+    <syslog xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-syslogmib-cfg">
+     <enable/>
+    </syslog>
+    <system xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-systemmib-cfg">
+     <enable/>
+    </system>
+     <fru-control xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-frucontrolmib-cfg">
+     <enable/>
+    </fru-control>
+    <entity-state xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-entstatemib-cfg">
+     <oper-status/>
+     <switchover/>
+    </entity-state>
+    <entity-redundancy xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-ceredundancymib-cfg">
+     <enable/>
+     <status/>
+     <switchover/>
+    </entity-redundancy>
+   </notification>
+   <system>
+    <contact>{{ snmp_contact }}</contact>
+    <location>{{ snmp_location }}</location>
+   </system>
+   <trap-source>Loopback0</trap-source>
+  </snmp>
 
 </config>

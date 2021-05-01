@@ -3,20 +3,20 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-- name: Define hostname
-  import_tasks: hostname.yml
+#- name: Define hostname
+#  import_tasks: hostname.yml
     
-- name: Setup banners
-  import_tasks: banners.yml
+#- name: Setup banners
+#  import_tasks: banners.yml
     
-- name: Setup loopback0
-  import_tasks: lo0.yml
+#- name: Setup loopback0
+#  import_tasks: lo0.yml
 
-- name: Setup logging
-  import_tasks: logging.yml
+#- name: Setup logging
+#  import_tasks: logging.yml
     
-- name: Setup time and clock
-  import_tasks: time.yml
+#- name: Setup time and clock
+#  import_tasks: time.yml
     
 - name: Setup snmp
   import_tasks: snmp.yml
