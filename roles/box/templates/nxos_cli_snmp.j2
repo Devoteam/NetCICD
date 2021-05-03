@@ -8,11 +8,11 @@ snmp-server enable traps link linkdown
 snmp-server enable traps link linkup
 snmp-server community {{ ro_community }} RO
 ip access-list snmp_read
- permit ip {{ mgt_subnet }} {{ mgt_mask }}
+ permit ip {{ mgt_subnet }} {{ mgt_mask }} any
  deny ip any any log
 snmp-server community {{ ro_community }} use-ipv4acl snmp_read
 snmp-server community {{ rw_community }} RW
 ip access-list snmp_write
- permit ip {{ mgt_subnet }} {{ mgt_mask }}
+ permit ip {{ mgt_subnet }} {{ mgt_mask }} any
  deny ip any any log
 snmp-server community {{ rw_community }} use-ipv4acl snmp_write
