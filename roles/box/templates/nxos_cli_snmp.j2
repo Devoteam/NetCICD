@@ -3,7 +3,9 @@ snmp-server source-interface informs loopback 0
 snmp-server location somewhere
 snmp-server contact someone
 snmp-server system-shutdown
-snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps snmp authentication
+snmp-server enable traps linkdown
+snmp-server enable traps linkup
 snmp-server community {{ ro_community }} RO 10
 snmp-server community {{ rw_community }} RW 11
 access-list 10 permit {{ mgt_subnet }} {{ mgt_mask }}
