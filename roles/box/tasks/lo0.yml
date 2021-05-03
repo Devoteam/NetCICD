@@ -47,6 +47,7 @@
 - name: "NX-OS Configure loopback"
   nxos_config:
     src: "{{ ansible_network_os }}_cli_lo0.j2"
+    save_when: modified
   register: nxoslo
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
@@ -56,6 +57,7 @@
   nxos_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_lo0_no_shut.j2"
+    save_when: modified
   when: nxoslo.changed
 
 

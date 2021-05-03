@@ -143,28 +143,35 @@
 
 - name: "NC Set clock and timezone"
   netconf_config:
-    src: "{{ netconf }}_nc_clock.j2"
+    src: "{{ ansible_network_os }}_nc_clock.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nc_time
 
 - name: "NC Set summertime"
   netconf_config:
-    src: "{{ netconf }}_nc_summertime.j2"
+    src: "{{ ansible_network_os }}_nc_summertime.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nc_time
 
 - name: "NC Configure ntp"
   netconf_config:
-    src: "{{ netconf }}_nc_ntp.j2"
+    src: "{{ ansible_network_os }}_nc_ntp.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nc_time
 
 - name: "NC Configure ntp key"
   netconf_config:
-    src: "{{ netconf }}_nc_ntpkey.j2"
+    src: "{{ ansible_network_os }}_nc_ntp_key.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_time
+
+- name: "NC Configure ntp servers"
+  netconf_config:
+    src: "{{ ansible_network_os }}_nc_ntp_servers.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nc_time
