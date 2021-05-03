@@ -8,7 +8,8 @@ ntp:
  - { ntp_ip: 10.255.1.10, prefer: }
 
 snmp:
- - { snmp_ip: <ip address> }
+ - { snmp_ip: 10.255.1.1, community: readonly }
+ - { snmp_ip: 10.255.1.10, community: myread }
  
 logging:
  - { logging_ip: 10.255.1.1 }
