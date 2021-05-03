@@ -18,8 +18,8 @@
 - name: Setup time and clock
   import_tasks: time.yml
     
-#- name: Setup snmp
-#  import_tasks: snmp.yml
+- name: Setup snmp
+  import_tasks: snmp.yml
     
 #- name: Setup aaa
 #  import_tasks: aaa.yml
