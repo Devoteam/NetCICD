@@ -1,0 +1,11 @@
+snmp-server source-interface Loopback0
+snmp-server location somewhere
+snmp-server contact someone
+snmp-server system-shutdown
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server community {{ ro_community }} RO 10
+snmp-server community {{ rw_community }} RW 11
+access-list 10 permit {{ mgt_subnet }} {{ mgt_mask }}
+access-list 10 deny any log
+access-list 11 permit {{ mgt_subnet }} {{ mgt_mask }}
+access-list 11 deny any log
