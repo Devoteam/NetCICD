@@ -22,18 +22,18 @@
 #  notify:
 #    - ios_time
 
-- name: "IOS Configure ntp"
-  ios_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_ntp.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - ios_time
-
 - name: "IOS Configure ntp key"
   ios_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_ntp_key.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - ios_time
+
+- name: "IOS Configure ntp"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
 #    - ios_time
@@ -67,18 +67,18 @@
 #  notify:
 #    - iosxr_time
 
-- name: "IOSXR Configure ntp"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_ntp.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - iosxr_time
-
 - name: "IOSXR Configure ntp key"
   iosxr_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_ntp_key.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - iosxr_time
+
+- name: "IOSXR Configure ntp"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
 #    - iosxr_time
@@ -112,18 +112,18 @@
 #  notify:
 #    - nxos_time
 
-- name: "nxos Configure ntp"
-  nxos_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_ntp.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - nxos_time
-
 - name: "nxos Configure ntp key"
   nxos_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_ntp_key.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - nxos_time
+
+- name: "nxos Configure ntp"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
 #    - nxos_time
