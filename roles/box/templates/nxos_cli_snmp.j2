@@ -6,9 +6,13 @@ snmp-server system-shutdown
 snmp-server enable traps snmp authentication
 snmp-server enable traps link linkdown
 snmp-server enable traps link linkup
-snmp-server community {{ ro_community }} RO 10
-snmp-server community {{ rw_community }} RW 11
-access-list 10 permit {{ mgt_subnet }} {{ mgt_mask }}
-access-list 10 deny any log
-access-list 11 permit {{ mgt_subnet }} {{ mgt_mask }}
-access-list 11 deny any log
+snmp-server community {{ ro_community }} RO
+ip access-list snmp_read
+ permit ip {{ mgt_subnet }} {{ mgt_mask }}
+ deny ip any any log
+snmp-server community {{ ro_community }} use-ipv4acl snmp_read
+snmp-server community {{ rw_community }} RW
+ip access-list snmp_write
+ permit ip {{ mgt_subnet }} {{ mgt_mask }}
+ deny ip any any log
+snmp-server community {{ rw_community }} use-ipv4acl snmp_write
