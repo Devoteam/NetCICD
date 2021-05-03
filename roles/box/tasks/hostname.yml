@@ -44,7 +44,7 @@
 
 - name: "Netconf set hostname"
   netconf_config:
-    xml: "{{ lookup( 'file', 'templates/{{ ansible_network_os }}_nc_hostname.j2"
+    xml: "{{ lookup( 'file', 'templates/'+ansible_network_os+'_nc_hostname.j2') }}"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - hostname
