@@ -4,13 +4,15 @@
 
 ---
 ntp:
- - { ntp_ip: <ip address>, prefer: prefer}
+ - { ntp_ip: 10.255.1.1, prefer: prefer}
+ - { ntp_ip: 10.255.1.10, prefer: }
 
 snmp:
  - { snmp_ip: <ip address> }
  
 logging:
  - { logging_ip: 10.255.1.1 }
+ - { logging_ip: 10.255.1.10 }
  
 radius:
  - { radius_ip: <ip address> }

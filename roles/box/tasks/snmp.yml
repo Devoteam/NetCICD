@@ -6,78 +6,80 @@
 # Classic IOS specific commands                                    #
 ####################################################################
 
-- name: "IOS Configure log servers"
+- name: "IOS Configure snmp servers"
   ios_config:
     authorize: yes
-    src: "{{ ansible_network_os }}_cli_log_servers.j2"
-  with_items: "{{ logging }}"
+    src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
+  with_items: "{{ snmp }}"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - logging
+#    - snmp
 
-- name: "IOS Configure logging"
+- name: "IOS Configure snmp"
   ios_config:
     authorize: yes
-    src: "{{ ansible_network_os }}_cli_logging.j2"
+    src: "{{ ansible_network_os }}_cli_snmp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - ios_logging
+#    - ios_snmp
 
 ####################################################################
 # IOSXR specific commands                                          #
 ####################################################################
 
-- name: "IOSXR Configure log servers"
+- name: "IOSXR Configure snmp servers"
   iosxr_config:
     authorize: yes
-    src: "{{ ansible_network_os }}_cli_log_servers.j2"
-  with_items: "{{ logging }}"
+    src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
+  with_items: "{{ snmp }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - iosxr_logging
+#    - iosxr_snmp
 
-- name: "IOSXR Configure logging"
+- name: "IOSXR Configure snmp"
   iosxr_config:
     authorize: yes
-    src: "{{ ansible_network_os }}_cli_logging.j2"
+    src: "{{ ansible_network_os }}_cli_snmp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - iosxr_logging
+#    - iosxr_snmp
 
 ####################################################################
 # NXOS specific commands                                           #
 ####################################################################
 
-- name: "NX-OS Configure log servers"
+- name: "NX-OS Configure snmp servers"
   nxos_config:
-    src: "{{ ansible_network_os }}_cli_log_servers.j2"
+    src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
     save_when: modified
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - nxos_logging
+#    - nxos_snmp
 
-- name: "NXOS Configure logging"
+- name: "NXOS Configure snmp"
   nxos_config:
-    src: "{{ ansible_network_os }}_cli_logging.j2"
+    src: "{{ ansible_network_os }}_cli_snmp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - nxos_logging
+#    - nxos_snmp
 
 ####################################################################
 # Netconf specific commands                                        #
 ####################################################################
 
-- name: "Netconf configure logging"
+- name: "Netconf configure snmp"
   netconf_config:
-    src: "{{ ansible_network_os }}_nc_logging.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
-
-- name: "Netconf configure log servers"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_log_servers.j2"
+    src: "{{ ansible_network_os }}_nc_snmp.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nc_logging
+#    - nc_snmp
+
+- name: "Netconf configure snmp servers"
+  netconf_config:
+    src: "{{ ansible_network_os }}_nc_snmp_servers.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_snmp
     
 ####################################################################
 # Kick off handlers for unit testing                               #

@@ -1,8 +1,0 @@
-- name: "Configure ntp servers"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    timeout: 60
-    lines:
-      - ntp authentication-key 1 md5 {{item.key}}
-      - ntp server {{item.ntp_ip}} key 1 {{item.prefer}}
