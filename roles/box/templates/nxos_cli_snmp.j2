@@ -1,7 +1,7 @@
 snmp-server source-interface traps loopback 0
 snmp-server source-interface informs loopback 0
-snmp-server location somewhere
-snmp-server contact someone
+snmp-server location {{ snmp_location }}
+snmp-server contact {{ snmp_contact }}
 snmp-server system-shutdown
 snmp-server enable traps snmp authentication
 snmp-server enable traps link linkdown

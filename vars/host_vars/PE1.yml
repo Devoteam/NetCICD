@@ -2,4 +2,5 @@
 ansible_host: 10.255.1.128
 lo0: 192.168.0.128
 name: PE1
+snmp_location: PE1 Location
 ...

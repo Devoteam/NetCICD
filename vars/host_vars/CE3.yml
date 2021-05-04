@@ -2,4 +2,5 @@
 ansible_host: 10.255.1.146
 lo0: 192.168.0.146
 name: CE3
+snmp_location: CE3 Location
 ...
