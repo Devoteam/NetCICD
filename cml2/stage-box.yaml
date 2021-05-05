@@ -78,6 +78,13 @@ nodes:
       sudo chmod 644 /etc/docker/daemon.json
       sudo chown root:root /etc/docker/daemon.json
 
+      # Preparing Docker run permissions
+      cd /etc/init.d
+      echo "Installing docker cgroups-patch." >>/home/cisco/install-log.txt
+      wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/cgroup-patch
+      chmod +x cgroups-patch
+      rc-update add cgroups-patch boot
+
       echo "Installing ncclient." >>/home/cisco/install-log.txt
       pip install ncclient
 
