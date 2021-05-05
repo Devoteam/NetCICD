@@ -18,4 +18,5 @@ ro_community: the_readers
 mgt_subnet: 10.254.1.0
 mgt_mask: 0.0.0.127
 rw_community: the_writers
+snmp_contact: InfraAutomator
 ...
