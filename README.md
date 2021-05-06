@@ -21,7 +21,7 @@ To use NetCICD within the toolbox, just install the toolbox as per the installat
 ### Locally ###
 If you do not want to install the local toolset and just want to play with NetCICD and CML, you can import the labs in the cml2 directory tp play with. The labs all habe a desktop configured as jumphost.
 ### More info ###
-For more detailed info, see the wiki.
+For more detailed info, see the [wiki](https://github.com/Devoteam/NetCICD/wiki).
 ## Background ##
 The first implementation was made in 2018 and was presented at [Cisco Live 2018 in Barcelona](https://www.ciscolive.com/c/dam/r/ciscolive/emea/docs/2019/pdf/BRKSDN-2158.pdf). The video of the session can be seen after logging in.
 
