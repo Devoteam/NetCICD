@@ -1,0 +1,34 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: "IOS set hostname"
+  template:
+    src: "{{ ansible_network_os }}_cli_hostname.j2"
+    dest: ../files/00_box/00_ios_hostname.template
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: "IOSXR set hostname"
+  template:
+    src: "{{ ansible_network_os }}_cli_hostname.j2"
+    dest: ../files/00_box/00_iosxr_hostname.template
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: "NX-OS set hostname"
+  template:
+    src: "{{ ansible_network_os }}_cli_hostname.j2"
+    dest: ../files/00_box/00_nxos_hostname.template
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+...

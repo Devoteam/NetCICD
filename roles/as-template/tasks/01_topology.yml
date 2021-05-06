@@ -1,0 +1,29 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+- name: Start clean, remove old templates
+  file:
+    state: absent
+    path: ../files/01_topology/
+
+- name: Creates directory 01_topology in the files folder
+  file:
+    path: ../files/01_topology/
+    state: directory
+
+- name: 0 - Set bundles
+  import_tasks: bundles.yml
+  
+- name: 1 - Set GE interfaces
+  import_tasks: ge.yml
+  
+- name: 2 - Set Subinterfaces
+  import_tasks: sub.yml
+
+- name: Generate topology template
+  assemble: 
+    src: ../files/01_topology/
+    dest: ../files/01_topology.j2
+    regexp: 'template$'
+...

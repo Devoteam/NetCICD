@@ -1,0 +1,33 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+- name: "Read vars file for {{ lookup('env','environment') }}"
+  # environment is lab, prod, test, etc... and defined as an environment variable
+  include_vars: "vars/group_vars/{{ lookup('env','environment') }}.yml"
+
+- name: Create box specific section for the as template for DNA Center - non-fabric
+  import_tasks: 00_box.yml
+
+- name: Create topology specific section for as template for DNA Center - non-fabric
+  import_tasks: 01_topology.yml
+
+- name: Create reachability specific section for as template for DNA Center - non-fabric
+  import_tasks: 02_reachability.yml
+
+- name: Start clean, remove old templates
+  file:
+    state: absent
+    path: ../files/templates/
+
+- name: Creates directory templates in the files folder
+  file:
+    path: ../files/templates/
+    state: directory
+
+- name: Assemble access-switch template
+  assemble: 
+    src: ../files/
+    dest: ../files/templates/as.j2
+    regexp: 'j2$'
+...

@@ -81,7 +81,7 @@ nodes:
       # Preparing Docker run permissions
       cd /etc/init.d
       echo "Installing docker cgroups-patch." >>/home/cisco/install-log.txt
-      wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/cgroup-patch
+      wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/cgroups-patch
       chmod +x cgroups-patch
       rc-update add cgroups-patch boot
 
