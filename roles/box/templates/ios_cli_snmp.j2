@@ -1,0 +1,12 @@
+snmp-server ifindex persist
+snmp-server trap-source Loopback0
+snmp-server location {{ snmp_location }}
+snmp-server contact {{ snmp_contact }}
+snmp-server system-shutdown
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server community {{ snmp_ro_community }} RO 10
+snmp-server community {{ snmp_rw_community }} RW 11
+access-list 10 permit {{ snmp_source_read_net }} {{ snmp_source_read_mask }}
+access-list 10 deny any log
+access-list 11 permit {{ snmp_source_write_net }} {{ snmp_source_write_mask }}
+access-list 11 deny any log

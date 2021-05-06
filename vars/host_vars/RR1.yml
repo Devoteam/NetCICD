@@ -2,4 +2,5 @@
 ansible_host: 10.255.1.121
 lo0: 192.168.0.121
 name: RR1
+snmp_location: RR1 Location
 ...

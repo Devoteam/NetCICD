@@ -14,26 +14,23 @@
 
 - name: Setup logging
   import_tasks: logging.yml
-
-#- name: Setup console
-#  import_tasks: console.yml
+    
+- name: Setup time and clock
+  import_tasks: time.yml
+    
+- name: Setup snmp
+  import_tasks: snmp.yml
     
 #- name: Close aux port
 #  import_tasks: aux_port.yml   
     
-#- name: Setup time and clock
-#  import_tasks: time.yml
-    
 #- name: Setup box hardening
 #  import_tasks: hardening.yml
     
-#- name: Setup snmp
-#  import_tasks: snmp.yml
-    
 #- name: Setup aaa
 #  import_tasks: aaa.yml
-    
-#- name: Setup tftp interface
-#  import_tasks: aaa.yml
+
+#- name: Setup console
+#  import_tasks: console.yml
 
 ...

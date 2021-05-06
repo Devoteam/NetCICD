@@ -1,9 +1,0 @@
-- name: "Configure ntp"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    timeout: 60
-    lines:
-      - ntp authenticate
-      - ntp trusted-key 1
-      - ntp source Loopback0

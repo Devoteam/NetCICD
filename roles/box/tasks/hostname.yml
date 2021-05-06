@@ -9,7 +9,7 @@
 - name: "IOS set hostname"
   ios_config:
     authorize: yes
-    lines: hostname {{ inventory_hostname }}
+    src: "{{ ansible_network_os }}_cli_hostname.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - hostname
@@ -21,7 +21,7 @@
 - name: "IOSXR set hostname"
   iosxr_config:
     authorize: yes
-    lines: hostname {{ inventory_hostname }}
+    src: "{{ ansible_network_os }}_cli_hostname.j2"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - hostname
@@ -31,8 +31,8 @@
 ####################################################################
 
 - name: "NX-OS set hostname"
-  nxos_command:
-    lines: hostname {{ inventory_hostname }}
+  nxos_config:
+    src: "{{ ansible_network_os }}_cli_hostname.j2"
     save_when: modified
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
@@ -44,7 +44,7 @@
 
 - name: "Netconf set hostname"
   netconf_config:
-    xml: "{{ lookup('file', 'templates/{{ ansible_network_os }}_nc_hostname.j2') }}"
+    src: "{{ ansible_network_os }}_nc_hostname.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - hostname

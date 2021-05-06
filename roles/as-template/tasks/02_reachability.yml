@@ -1,0 +1,26 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+- name: Start clean, remove old templates
+  file:
+    state: absent
+    path: ../files/02_reachability/
+
+- name: Creates directory 02_reachability in the files folder
+  file:
+    path: ../files/02_reachability/
+    state: directory
+
+- name: 0 - Set keychain
+  import_tasks: keychain.yml
+  
+- name: 1 - Set IGP
+  import_tasks: igp.yml
+
+- name: Generate reachability template
+  assemble: 
+    src: ../files/02_reachability/
+    dest: ../files/02_reachability.j2
+    regexp: 'template$'
+...

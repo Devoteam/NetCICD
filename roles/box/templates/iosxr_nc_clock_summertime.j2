@@ -1,0 +1,18 @@
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+  <clock xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-infra-clock-cfg">
+   <summer-time>
+    <time-zone-name>{{ timezone }}</time-zone-name>
+    <mode>recurring</mode>
+    <start-week-number-or-start-date>5</start-week-number-or-start-date>
+    <start-weekday-or-start-year>0</start-weekday-or-start-year>
+    <start-month>march</start-month>
+    <start-hour>2</start-hour>
+    <start-minute>0</start-minute>
+    <end-week-number-or-end-date>5</end-week-number-or-end-date>
+    <end-weekday-or-end-year>0</end-weekday-or-end-year>
+    <end-month>october</end-month>
+    <end-hour>3</end-hour>
+    <end-minute>0</end-minute>
+   </summer-time>
+  </clock>
+</config>

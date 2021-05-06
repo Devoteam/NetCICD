@@ -1,0 +1,50 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+- name: Start clean, remove old templates
+  file:
+    state: absent
+    path: ../files/00_box/
+
+- name: Creates directory 00_box in the files folder
+  file:
+    path: ../files/00_box/
+    state: directory
+
+- name: 0 - Set hostname
+  import_tasks: hostname.yml
+  
+- name: 1 - Set banners
+  import_tasks: banners.yml
+  
+- name: 2 - Set loopback
+  import_tasks: lo0.yml
+  
+- name: 3 - Set logging
+  import_tasks: logging.yml
+  
+- name: 4 - Set time and clock
+  import_tasks: time.yml
+  
+- name: 5 - Set snmp
+  import_tasks: snmp.yml
+  
+- name: 6 - Set aux port
+  import_tasks: aux.yml
+
+- name: 7 - Set up box hardening
+  import_tasks: hardenking.yml
+  
+- name: 8 - Set aaa
+  import_tasks: aaa.yml
+  
+- name: 9 - Console
+  import_tasks: console.yml
+
+- name: Generate box template
+  assemble: 
+    src: ../files/00_box/
+    dest: ../files/00_box.j2
+    regexp: 'template$'
+...

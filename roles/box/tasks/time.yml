@@ -3,90 +3,183 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: "IOS Set timezone"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_clock_timezone.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - ios_time
+
+- name: "IOS Set summertime"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_clock_summertime.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - ios_time
+
+- name: "IOS Configure ntp key"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp_key.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - ios_time
+
+- name: "IOS Configure ntp"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - ios_time
+
+- name: "IOS Configure ntp servers"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
+  with_items: "{{ ntp }}"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - ios_time
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: "IOSXR Set timezone"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_clock_timezone.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - iosxr_time
+
+- name: "IOSXR Set summertime"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_clock_summertime.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - iosxr_time
+
+- name: "IOSXR Configure ntp key"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp_key.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - iosxr_time
+
+- name: "IOSXR Configure ntp"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - iosxr_time
+
+- name: "IOSXR Configure ntp servers"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
+  with_items: "{{ ntp }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - iosxr_time
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: "nxos Set timezone"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_clock_timezone.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - nxos_time
+
+- name: "nxos Set summertime"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_clock_summertime.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - nxos_time
+
+- name: "nxos Configure ntp key"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp_key.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - nxos_time
+
+- name: "nxos Configure ntp"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - nxos_time
+
+- name: "nxos Configure ntp servers"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
+  with_items: "{{ ntp }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosnxosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify:
+#    - nxos_time
+
+####################################################################
 # Netconf specific commands                                        #
 ####################################################################
 
 - name: "NC Set clock and timezone"
   netconf_config:
-    host: "{{ ansible_host }}"
-    username: "{{ creds['username'] }}"
-    password: "{{ creds['password'] }}"
-    src: "{{ netconf }}_nc_clock.j2"
-  when: netconf is defined
-  notify: 
-    - time
+    src: "{{ ansible_network_os }}_nc_clock_timezone.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_time
 
 - name: "NC Set summertime"
   netconf_config:
-    host: "{{ ansible_host }}"
-    username: "{{ creds['username'] }}"
-    password: "{{ creds['password'] }}"
-    src: "{{ netconf }}_nc_summertime.j2"
-  when: netconf is defined
-  notify: 
-    - time
+    src: "{{ ansible_network_os }}_nc_clock_summertime.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_time
 
 - name: "NC Configure ntp"
   netconf_config:
-    host: "{{ ansible_host }}"
-    username: "{{ creds['username'] }}"
-    password: "{{ creds['password'] }}"
-    src: "{{ netconf }}_nc_ntp.j2"
-  when: netconf is defined
-  notify: 
-    - time
+    src: "{{ ansible_network_os }}_nc_ntp.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_time
 
 - name: "NC Configure ntp key"
   netconf_config:
-    host: "{{ ansible_host }}"
-    username: "{{ creds['username'] }}"
-    password: "{{ creds['password'] }}"
-    src: "{{ netconf }}_nc_ntpkey.j2"
-  when: netconf is defined
-  notify: 
-    - time
+    src: "{{ ansible_network_os }}_nc_ntp_key.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_time
 
+- name: "NC Configure ntp servers"
+  netconf_config:
+    src: "{{ ansible_network_os }}_nc_ntp_servers.j2"
+  with_items: "{{ ntp }}"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_time
+    
 ####################################################################
-# Classic IOS specific commands                                    #
+# Kick off handlers for unit testing                               #
 ####################################################################
-
-- name: "IOS Set clock and timezone"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    src: "time_timezone_ios.j2"
-  when:  (cli is defined and cli == "ios")
-  notify:
-    - time
-
-- name: "IOS Set summertime"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    lines:
-      - clock summer-time {{ timezone }} recurring last Sun Mar 2:00 last Sun Oct 3:00
-  when:  (cli is defined and cli == "ios")
-  notify:
-    - time
-
-- name: "IOS Configure ntp"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    src: "time_ntp_ios.j2"
-  when:  (cli is defined and cli == "ios")
-  notify:
-    - time
-
-- name: "IOS Configure ntp key"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    lines:
-      - ntp authentication-key {{ ntp_key_id }} md5 {{ ntp_key }} 
-  when:  (cli is defined and cli == "ios")
-  notify:
-    - time
     
 - name: force all notified handlers to run at this point, not waiting for normal sync points
   meta: flush_handlers

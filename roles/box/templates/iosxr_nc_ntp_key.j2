@@ -1,0 +1,24 @@
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+  <ntp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-cfg">
+   <authentication>
+    <keies>
+     <key>
+      <key-number>1</key-number>
+      <authentication-key>0306570A</authentication-key>
+     </key>
+    </keies>
+    <enable/>
+    <trusted-keies>
+     <trusted-key>
+      <key-number>1</key-number>
+     </trusted-key>
+    </trusted-keies>
+   </authentication>
+   <sources>
+    <source>
+     <vrf-name>default</vrf-name>
+     <source-interface>Loopback0</source-interface>
+    </source>
+   </sources>
+  </ntp>
+</config>

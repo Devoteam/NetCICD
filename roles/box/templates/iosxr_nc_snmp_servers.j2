@@ -1,0 +1,18 @@
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <snmp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-snmp-agent-cfg">
+   <trap-hosts>
+    <trap-host>
+     <ip-address>{{ item.snmp_ip }}</ip-address>
+     <default-user-communities>
+      <default-user-community>
+       <community-name>{{ item.snmp_community }}</community-name>
+       <version>2</version>
+       <basic-trap-types>0</basic-trap-types>
+       <advanced-trap-types1>0</advanced-trap-types1>
+       <advanced-trap-types2>0</advanced-trap-types2>
+      </default-user-community>
+     </default-user-communities>
+    </trap-host>
+   </trap-hosts>
+  </snmp>
+</config>

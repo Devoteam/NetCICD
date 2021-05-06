@@ -1,11 +1,11 @@
-{% for logserver in logging %}
-<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
   <syslog xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-infra-syslog-cfg">
     <host-server>
       <vrfs>
         <vrf>
           <vrf-name>management</vrf-name>
           <ipv4s>
+{% for logserver in logging %}
             <ipv4>
               <address>{{ logserver.logging_ip }}</address>
               <ipv4-severity-port>
@@ -13,10 +13,10 @@
                 <port>514</port>
               </ipv4-severity-port>
             </ipv4>
+{% endfor %}
           </ipv4s>
         </vrf>
       </vrfs>
     </host-server>
   </syslog>
 </config>
-{% endfor %}
