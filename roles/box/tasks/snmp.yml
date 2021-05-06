@@ -18,8 +18,8 @@
   ios_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
-  with_items: "{{ snmp }}"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  with_items: "{{ snmp }}"
 #  notify: 
 #    - snmp
 
@@ -39,8 +39,8 @@
   iosxr_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
-  with_items: "{{ snmp }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+  with_items: "{{ snmp }}"
 #  notify: 
 #    - iosxr_snmp
 
@@ -59,8 +59,8 @@
   nxos_config:
     src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
     save_when: modified
-  with_items: "{{ snmp }}"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+  with_items: "{{ snmp }}"
 #  notify: 
 #    - nxos_snmp
 
@@ -78,8 +78,8 @@
 - name: "Netconf configure snmp servers"
   netconf_config:
     src: "{{ ansible_network_os }}_nc_snmp_servers.j2"
-  with_items: "{{ snmp }}"
   when: (ansible_connection is defined and ansible_connection == "netconf")
+  with_items: "{{ snmp }}"
 #  notify: 
 #    - nc_snmp
     

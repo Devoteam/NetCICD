@@ -14,9 +14,11 @@ console_pass: C!sco123
 ansible_user: netcicd-pipeline
 ansible_ssh_pass: C!sco123
 ansible_connection_timeout: 30
-ro_community: the_readers
-mgt_subnet: 10.254.1.0
-mgt_mask: 0.0.0.127
-rw_community: the_writers
+snmp_ro_community: the_readers
+snmp_rw_community: the_writers
 snmp_contact: InfraAutomator
+snmp_source_read_net: 10.255.1.0
+snmp_source_read_mask: 0.0.0.255
+snmp_source_write_net: 10.255.1.0
+snmp_source_write_mask: 0.0.0.255
 ...
