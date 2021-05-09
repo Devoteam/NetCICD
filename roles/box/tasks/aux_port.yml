@@ -6,17 +6,11 @@
 # Classic IOS specific commands                                    #
 ####################################################################
 
-- name: "IOS configure console"
+- name: "IOS configure AUX port"
   ios_config:
     authorize: yes
-    lines:
-      - password {{ console_pass }}
-      - authorization exec console
-      - logging synchronous
-      - login authentication console
-      - stopbits 1
-    parents: ['line con 0']
-    when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "{{ ansible_network_os }}_cli_aux.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - console
 
@@ -27,13 +21,7 @@
 - name: "IOSXR configure console"
   iosxr_config:
     authorize: yes
-    lines:
-      - password {{ console_pass }}
-      - authorization exec console
-      - logging synchronous
-      - login authentication console
-      - stopbits 1
-    parents: ['line con 0']
+    src: "{{ ansible_network_os }}_cli_aux.j2"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - console
@@ -42,30 +30,13 @@
 # NXOS specific commands                                           #
 ####################################################################
 
-- name: "NX-OS configure console"
-  nxos_config:
-    lines:
-      - password {{ console_pass }}
-      - authorization exec console
-      - logging synchronous
-      - login authentication console
-      - stopbits 1
-    parents: ['line con 0']
-    save_when: modified
-  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - console
+# No aux port on nxos
 
 ####################################################################
 # Netconf specific commands                                        #
 ####################################################################
 
-- name: "Netconf configure console"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_console.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
-#  notify: 
-#    - console
+#no aux port on IOSXRv
     
 ####################################################################
 # Kick off handlers for unit testing                               #

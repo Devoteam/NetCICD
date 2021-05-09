@@ -21,8 +21,8 @@
 - name: Setup snmp
   import_tasks: snmp.yml
     
-#- name: Close aux port
-#  import_tasks: aux_port.yml   
+- name: Close aux port
+  import_tasks: aux_port.yml   
     
 #- name: Setup box hardening
 #  import_tasks: hardening.yml

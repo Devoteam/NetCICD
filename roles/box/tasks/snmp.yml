@@ -80,6 +80,8 @@
     src: "{{ ansible_network_os }}_nc_snmp_servers.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
   with_items: "{{ snmp }}"
+  #timeout required because IOSXR tries to configure IPv6 host
+  timeout: 300
 #  notify: 
 #    - nc_snmp
     
