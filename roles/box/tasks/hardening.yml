@@ -3,6 +3,150 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: "IOS Disable unused services"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_services.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_hardening
+
+- name: "IOS enable required services"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_enable_services.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_hardening
+
+- name: "IOS Disable source routing"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_source_routing.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_hardening
+
+- name: "IOS Disable http/https servers"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_http.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_hardening
+
+- name: "IOS Disable CDP globally"
+  ios_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_cdp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_hardening
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: "IOSXR Disable unused services"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_services.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - iosxr_hardening
+
+- name: "IOSXR Disable source routing"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_source_routing.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - iosxr_hardening
+
+- name: "IOSXR Disable http/https servers"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_http.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - iosxr_hardening
+
+- name: "IOSXR Disable CDP globally"
+  iosxr_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_cdp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - iosxr_hardening
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: "NXOS Disable unused services"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_services.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - nxos_hardening
+
+- name: "NXOS Disable source routing"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_source_routing.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - nxos_hardening
+
+- name: "NXOS Disable http/https servers"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_http.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - nxos_hardening
+
+- name: "NXOS Disable CDP globally"
+  nxos_config:
+    authorize: yes
+    src: "{{ ansible_network_os }}_cli_disable_cdp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - nxos_hardening
+
+####################################################################
+# Netconf specific commands                                        #
+####################################################################
+
+- name: "Netconf configure snmp"
+  netconf_config:
+    src: "{{ ansible_network_os }}_nc_snmp.j2"
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nc_snmp
+
+- name: "Netconf configure snmp servers"
+  netconf_config:
+    src: "{{ ansible_network_os }}_nc_snmp_servers.j2"
+    #timeout required because IOSXR tries to configure IPv6 host
+    timeout: 300
+  when: (ansible_connection is defined and ansible_connection == "netconf")
+  with_items: "{{ snmp }}"
+#  notify: 
+#    - nc_snmp
+    
+####################################################################
+# Kick off handlers for unit testing                               #
+####################################################################
+    
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
+
+####################################################################
 # Netconf specific commands                                        #
 ####################################################################
 
@@ -45,50 +189,3 @@
   when: netconf is defined
   notify: 
     - hardening
-
-####################################################################
-# Classic IOS specific commands                                    #
-####################################################################
-
-- name: "IOS Disable unused services"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    src: "hardening_ios.j2"
-  when:  (cli is defined and cli == "ios")
-  notify: 
-    - hardening
-
-- name: "IOS Disable source routing"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    lines:
-      - no ip source-route
-  when:  (cli is defined and cli == "ios")
-  notify: 
-    - hardening
-
-- name: "IOS Disable http/https servers"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    lines:
-      - no ip http server
-      - no ip http secure-server
-  when:  (cli is defined and cli == "ios")
-  notify: 
-    - hardening
-
-- name: "IOS Disable CDP globally"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    lines:
-      - no cdp run
-  when:  (cli is defined and cli == "ios")
-  notify: 
-    - hardening
-    
-- name: force all notified handlers to run at this point, not waiting for normal sync points
-  meta: flush_handlers
