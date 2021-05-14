@@ -1,6 +1,6 @@
 ---
-ansible_host: 10.255.1.145
-lo0: 192.168.0.145
+ansible_host: 10.255.1.142
+lo0: 192.168.0.142
 name: CE2
 snmp_location: CE2 Location
 ...

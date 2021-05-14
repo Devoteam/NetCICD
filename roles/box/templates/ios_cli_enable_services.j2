@@ -2,6 +2,8 @@ ip subnet-zero
 ip classless
 service tcp-keepalives-in
 service password-encryption
+service timestamps debug datetime msec
+service timestamps log datetime msec
 ip tcp synwait-time 5
 ip tcp path-mtu-discovery
 ip cef

@@ -15,16 +15,16 @@
 #    - hostname
 
 ####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
+
+####################################################################
 # IOSXR specific commands                                          #
 ####################################################################
 
-- name: "IOSXR set hostname"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_hostname.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - hostname
+# IOSXR is managed through netconf
 
 ####################################################################
 # NXOS specific commands                                           #

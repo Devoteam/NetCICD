@@ -15,11 +15,11 @@ interfaces:
  - { node: "PE1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/1", bundle: 20, ip_address: "", mask: "", prefixlength: 0, remote: "", description: " *** Link to P1 GigabitEthernet 0/0/0/6 ***"}
  - { node: "PE1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/2", bundle: 20, ip_address: "", mask: "", prefixlength: 0, remote: "", description: " *** Link to P1 GigabitEthernet 0/0/0/7 ***"}
  - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/8", bundle: 0, ip_address: "192.168.254.130", mask: "255.255.255.254", prefixlength: 0, remote: "192.168.254.131", description: " *** Link to PE3 Ethernet 2/1 ***"}
- - { node: "PE3", type: "Ethernet", id: "2/5", no_shut: true, bundle: 0, ip_address: "192.168.254.132", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.130", description: " *** Link to P1 GigabitEthernet 0/0/0/8 ***"}
- - { node: "PE3", type: "Ethernet", id: "2/1", no_shut: true, bundle: 0, ip_address: "192.168.254.131", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.133", description: " *** Link to CE3 GigabitEthernet 0/1 ***"}
+ - { node: "PE3", type: "Ethernet", id: "2/1", no_shut: true, bundle: 0, ip_address: "192.168.254.131", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.130", description: " *** Link to P1 GigabitEthernet 0/0/0/8 ***"}
+ - { node: "PE3", type: "Ethernet", id: "2/5", no_shut: true, bundle: 0, ip_address: "192.168.254.132", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.133", description: " *** Link to CE3 GigabitEthernet 0/1 ***"}
  - { node: "CE3", type: "GigabitEthernet", id: "0/1", no_shut: true, bundle: 0, ip_address: "192.168.254.133", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.132", description: " *** Link to PE3 Ethernet 2/5 ***"}
  - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/1", bundle: 0, ip_address: "192.168.254.30", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.31", description: " *** Link to RR1 GigabitEthernet2 ***"}
- - { node: "RR1", type: "GigabitEthernet", no_shut: true, id: "2", bundle: 0, ip_address: "192.168.254.31", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.30", description: " *** Link to RR1 GigabitEthernet 0/2 ***"}
+ - { node: "RR1", type: "GigabitEthernet", no_shut: true, id: "2", bundle: 0, ip_address: "192.168.254.31", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.30", description: " *** Link to P1 GigabitEthernet 0/0/0/1 ***"}
 
 subinterfaces:
  - { node: "PE1", type: "Bundle-Ether", id: "20", sub: 2, no_shut: true, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.32", description: " *** Link to CE3 GigabitEthernet 0/1 ***"}
