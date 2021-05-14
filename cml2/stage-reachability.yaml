@@ -147,11 +147,11 @@ nodes:
       fi
 
       # Installing .profile script to prepare for Ansible playbook run
-      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-box.profile; then
-        echo "NetCICD Toolbox installed. Retrieved stage-box.profile from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
+      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-reachability.profile; then
+        echo "NetCICD Toolbox installed. Retrieved stage-reachability.profile from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
       else
-        echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.profile
+        echo "NetCICD Toolbox not installed. Retrieving stage-reachability.profile from github." >>/home/cisco/install-log.txt
+        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-reachability.profile
       fi
 
       echo "Creating SSH keys." >>/home/cisco/install-log.txt
