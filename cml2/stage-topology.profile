@@ -5,9 +5,19 @@ git clone ${GIT_URL}NetCICD.git
 cd NetCICD
 git status
 echo '====================== Preparing CML lab ======================'
+ansible-playbook -i vars/stage-topology prepare.yml
+echo '================  Starting stage Box playbook  ================'
 cd roles/box/vars
-ln -s stage-box.yml main.yml
+ln -s stage-topology.yml main.yml
 cd ~/NetCICD 
+git status
+ansible-playbook -i vars/stage-topology stage-box.yml -e stage="topology"
+echo '============== Starting stage Topology playbook ==============='
+cd roles/topology/vars
+ln -s stage-topology.yml main.yml
+cd ~/NetCICD 
+git status
+ansible-playbook -i vars/stage-topology stage-topology.yml -e stage="topology"
 echo '=================== Ready for modification ===================='
 echo 'You can now:'
 echo ' - create a branch with git branch <mybranch>'
@@ -19,9 +29,5 @@ echo ''
 echo ' git push --set-upstream origin <mybranch>'
 echo ''
 echo ' you may have to log in with your username/password'
-echo ''
-echo ' To prepare the lab for SSH and netconf, run:'
-echo ''
-echo ' ansible-playbook -i vars/stage-box prepare.yml -e stage="box"'
 echo ''
 echo '========================= Have Fun! ==========================='

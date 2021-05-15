@@ -153,6 +153,7 @@ nodes:
         echo "NetCICD Toolbox not installed. Retrieving stage-reachability.profile from github." >>/home/cisco/install-log.txt
         wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-reachability.profile
       fi
+      chmod +x stage-reachability.profile
 
       echo "Creating SSH keys." >>/home/cisco/install-log.txt
       mkdir /home/cisco/.ssh
