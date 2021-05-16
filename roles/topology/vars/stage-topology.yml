@@ -22,6 +22,6 @@ interfaces:
  - { node: "RR1", type: "GigabitEthernet", no_shut: true, id: "2", bundle: 0, ip_address: "192.168.254.31", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.30", description: " *** Link to P1 GigabitEthernet 0/0/0/1 ***"}
 
 subinterfaces:
- - { node: "PE1", type: "Bundle-Ether", id: "20", sub: 2, no_shut: true, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.32", description: " *** Link to CE3 GigabitEthernet 0/1 ***"}
- - { node: "P1", type: "Bundle-Ether", id: "20", sub: 2, no_shut: true, ip_address: "192.168.254.32", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.33", description: " *** Link to CE3 GigabitEthernet 0/1 ***"}
+ - { node: "PE1", type: "Bundle-Ether", id: "20", sub: 2, no_shut: true, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.32", description: " *** Link to P1 Bundle-Ether20.2 ***"}
+ - { node: "P1", type: "Bundle-Ether", id: "20", sub: 2, no_shut: true, ip_address: "192.168.254.32", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.33", description: " *** Link to PE1 Bundle-Ether20.2 ***"}
 ...
