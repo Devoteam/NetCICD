@@ -12,7 +12,7 @@
     description: "{{ item.description }}"
     state: present
     enabled: "{{ item.no_shut }}"
-  when: (ansible_network_os is defined and ansible_network_os = "ios")
+  when: (ansible_network_os is defined and ansible_network_os == "ios")
   with_items: "{{ interfaces }}"
 #  notify: 
 #   - interfaces
@@ -22,7 +22,7 @@
     name: "{{ item.type }}{{ item.id }}"
     ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os = "ios")
+  when: (ansible_network_os is defined and ansible_network_os == "ios")
   with_items: "{{ interfaces }}"
 #  notify: 
 #   - interfaces
