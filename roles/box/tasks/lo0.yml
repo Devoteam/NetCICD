@@ -25,7 +25,12 @@
 # IOSXE specific commands                                          #
 ####################################################################
 
-# IOSXE is managed through classic IOS or netconf
+- name: "IOSXE NC create global table loopback address in no-shut state"
+  netconf_config:
+    src: "oc_nc_loopback.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nclo0
 
 ####################################################################
 # IOSXR specific commands                                          #
@@ -60,7 +65,7 @@
 
 - name: "NC create global table loopback address in no-shut state"
   netconf_config:
-    src: "oc_nc_loopback.j2"
+    src: "iosxr_nc_loopback.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nclo0

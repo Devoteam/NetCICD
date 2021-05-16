@@ -476,13 +476,13 @@ nodes:
 
       interface Loopback0
           description PE3-Loopback
-          ip address 192.168.0.130/32
+          ip address 192.168.0.133/32
           duplex auto
           no shut
 
       interface mgmt0
           description OOB Management
-          ip address 10.255.1.130 255.255.255.0
+          ip address 10.255.1.133 255.255.255.0
           duplex auto
           no shut
 
