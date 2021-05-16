@@ -12,8 +12,8 @@
     description: "{{ item.description }}"
     state: present
     enabled: "{{ item.no_shut }}"
-  when: (ansible_network_os is defined and ansible_network_os != "nxos" and item.node == inventory_hostname)
-  loop: "{{ interfaces }}"
+  when: (ansible_network_os is defined and ansible_network_os = "ios")
+  with_items: "{{ interfaces }}"
 #  notify: 
 #   - interfaces
 
@@ -22,32 +22,25 @@
     name: "{{ item.type }}{{ item.id }}"
     ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.bundle == 0 and item.node == inventory_hostname)
-  loop: "{{ interfaces }}"
-  notify: 
-   - interfaces
+  when: (ansible_network_os is defined and ansible_network_os = "ios")
+  with_items: "{{ interfaces }}"
+#  notify: 
+#   - interfaces
 
 ####################################################################
-# IOS CLI specific commands                                        #
+# IOSXE specific commands                                          #
 ####################################################################
+
+# IOSXE is managed through classic IOS or netconf
 
 ####################################################################
 # IOSXR specific commands                                          #
 ####################################################################
 
-####################################################################
-# NETConf specific commands                                        #
-####################################################################
-                                                                                                                                            
-- name: "Netconf configure interfaces for IOSXR"                                                        
-  netconf_config:                                                                                     
-    src: "{{ ansible_network_os }}_nc_GEinterface.j2"                                                    
-  when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
-  notify:                                                                                         
-    - interfaces                                                                                    
+# IOSXR is managed through netconf
 
 ####################################################################
-# NXOS CLI specific commands                                       #
+# NXOS specific commands                                           #
 ####################################################################
 
 - name: "Configure NX-OS interfaces"
@@ -67,9 +60,19 @@
     state: present
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.bundle == 0 and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
-  notify: 
-   - interfaces
+#  notify: 
+#   - interfaces
 
+####################################################################
+# NETConf specific commands                                        #
+####################################################################
+                                                                                                                                            
+- name: "Netconf configure interfaces for IOSXR"                                                        
+  netconf_config:                                                                                     
+    src: "{{ ansible_network_os }}_nc_GEinterface.j2"                                                    
+  when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
+#  notify:                                                                                         
+#    - interfaces                                                                                    
                                                                         
 ####################################################################
 # Kick off handlers                                                #
