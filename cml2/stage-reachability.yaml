@@ -1204,7 +1204,23 @@ nodes:
     node_definition: csr1000v
     x: 50
     y: 300
-    configuration: hostname inserthostname_here
+    configuration: |-
+      hostname reflector
+      !
+      username netcicd-pipeline privilege 15 secret C!sco123
+      !
+      interface GigabitEthernet1
+       ip address 10.255.1.122 255.255.255.0
+       negotiation auto
+       no shutdown
+      enable secret C!sco123
+      aaa new-model
+      aaa session-id common
+      aaa authorization exec default local
+      ip domain name netcicd
+      ip ssh version 2
+      crypto key gen rsa mod 2048
+      !
     image_definition: csr1000v-170301a
     tags: []
     interfaces:
