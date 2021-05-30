@@ -4,8 +4,8 @@
 
 ---
 bundles:
- - { node: "P1", type: "Bundle-Ether", id: 20, active: true, shutdown: false, bundle: 20, ip_address: "192.168.254.32", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 20 to PE1  ***"}
- - { node: "PE1", type: "Bundle-Ether", id: 20, active: true, shutdown: false, bundle: 20, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 20 to P1  ***"}
+ - { node: "P1", type: "Bundle-Ether", id: 20, active: true, shutdown: false, bundle: 20, ip_address: "", mask: "", prefixlength: 31, description: "*** Bundle 20 to PE1  ***"}
+ - { node: "PE1", type: "Bundle-Ether", id: 20, active: true, shutdown: false, bundle: 20, ip_address: "", mask: "", prefixlength: 31, description: "*** Bundle 20 to P1  ***"}
 
 interfaces:
  - { node: "CE1", type: "GigabitEthernet", id: "0/1", no_shut: true, bundle: 0, ip_address: "192.168.254.129", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.128", description: " *** Link to PE1 GigabitEthernet 0/0/0/5 ***"}

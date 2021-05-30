@@ -6,7 +6,7 @@
 # Generic network interface configuration                          #
 ####################################################################
 
-- name: "Configure interfaces"
+- name: "Configure IOS GE interfaces"
   net_interface:
     name: "{{ item.type }}{{ item.id }}"
     description: "{{ item.description }}"
@@ -17,7 +17,7 @@
 #  notify: 
 #   - interfaces
 
-- name: "Set IP addresses"
+- name: "Set IP addresses IOS GE interfaces"
   net_l3_interface:
     name: "{{ item.type }}{{ item.id }}"
     ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
@@ -53,7 +53,7 @@
 #  notify: 
 #   - interfaces
 
-- name: "Set IP addresses"
+- name: "Set IP addresses NX-OS Interfaces"
   net_l3_interface:
     name: "{{ item.type }}{{ item.id }}"
     ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
