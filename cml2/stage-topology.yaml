@@ -114,6 +114,8 @@ nodes:
       echo "[defaults]" > /home/cisco/.ansible.cfg
       echo "host_key_checking = False" >> /home/cisco/.ansible.cfg
       echo "nocows = True" >> /home/cisco/.ansible.cfg
+      echo "interpreter_python = auto_silent" >> /home/cisco/.ansible.cfg
+      echo "stdout_callback = full_skip" >> /home/cisco/.ansible.cfg
       echo "" >> /home/cisco/.ansible.cfg
       echo "# Installs collections into /home/cisco/.ansible/ansible_collections/namespace/collection_name" >> /home/cisco/.ansible.cfg
       echo "collections_paths = /home/cisco/.ansible/" >> /home/cisco/.ansible.cfg
