@@ -11,7 +11,7 @@
     name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
     description: "{{ item.description }}"
     state: present
-    enabled: "{{ item.no_shut }}"
+    enabled: "{{ item.shutdown }}"
   when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
 
