@@ -57,7 +57,8 @@
   nxos_l3_interface:
     config:
       - name: "{{ item.type }}{{ item.id }}"
-        ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
+        ipv4: 
+          - address: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.bundle == 0 and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
