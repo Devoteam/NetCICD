@@ -54,7 +54,7 @@
 #   - interfaces
 
 - name: "Set IP addresses NX-OS Interfaces"
-  nxos_l3_interface:
+  nxos_l3_interfaces:
     config:
       - name: "{{ item.type }}{{ item.id }}"
         ipv4: 
