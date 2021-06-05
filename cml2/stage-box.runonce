@@ -1,13 +1,18 @@
 #!/bin/sh
-git config --global user.name "netcicd-pipeline"
-git config --global user.email "netcicd-pipeline@infraautomator.example.net"
-git clone ${GIT_URL}NetCICD.git
-cd NetCICD
-git status
-echo '====================== Preparing CML lab ======================'
-cd roles/box/vars
-ln -s stage-box.yml main.yml
-cd ~/NetCICD 
+if [ cat NetCICD_state == "prepare" ] then
+    git config --global user.name "netcicd-pipeline"
+    git config --global user.email "netcicd-pipeline@infraautomator.example.net"
+    git clone ${GIT_URL}NetCICD.git
+    cd NetCICD
+    git status
+    echo '====================== Preparing CML lab ======================'
+    cd roles/box/vars
+    ln -s stage-box.yml main.yml
+    cd ~/NetCICD 
+    ansible-playbook -i vars/stage-box prepare.yml -e stage="box"
+    echo "prepare" > NetCICD_state   
+fi
+
 echo '=================== Ready for modification ===================='
 echo 'You can now:'
 echo ' - create a branch with git branch <mybranch>'
