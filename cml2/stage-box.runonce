@@ -1,5 +1,7 @@
 #!/bin/sh
-if [ cat NetCICD_state == "prepare" ] then
+if grep -q prepare NetCICD_state; then
+    echo "Lab already prepared"
+else
     git config --global user.name "netcicd-pipeline"
     git config --global user.email "netcicd-pipeline@infraautomator.example.net"
     git clone ${GIT_URL}NetCICD.git
@@ -10,9 +12,8 @@ if [ cat NetCICD_state == "prepare" ] then
     ln -s stage-box.yml main.yml
     cd ~/NetCICD 
     ansible-playbook -i vars/stage-box prepare.yml -e stage="box"
-    echo "prepare" > NetCICD_state   
+    echo "prepare" > ../NetCICD_state   
 fi
-
 echo '=================== Ready for modification ===================='
 echo 'You can now:'
 echo ' - create a branch with git branch <mybranch>'
