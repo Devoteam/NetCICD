@@ -9,7 +9,6 @@ ntp:
 
 snmp:
  - { snmp_ip: 10.255.1.1, snmp_community: the_readers }
- - { snmp_ip: 10.255.1.10, snmp_community: the_readers }
  
 logging:
  - { logging_ip: 10.255.1.1 }

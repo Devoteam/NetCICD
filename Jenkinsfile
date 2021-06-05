@@ -202,6 +202,8 @@ def startsim(stage, build, commit, secret, token) {
                 def test = cs.every {element -> element == "BOOTED"}
                 echo "Simulation ready? " + "${test}"
                 if (test) {
+                    echo "Waiting 3 minutes for the simulation to stabilize"
+                    sleep 180
                     return true
                 } else {
                     return false

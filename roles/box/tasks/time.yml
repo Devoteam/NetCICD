@@ -48,49 +48,16 @@
 #    - ios_time
 
 ####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
+
+####################################################################
 # IOSXR specific commands                                          #
 ####################################################################
 
-- name: "IOSXR Set timezone"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_clock_timezone.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - iosxr_time
-
-- name: "IOSXR Set summertime"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_clock_summertime.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - iosxr_time
-
-- name: "IOSXR Configure ntp key"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_ntp_key.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - iosxr_time
-
-- name: "IOSXR Configure ntp"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_ntp.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - iosxr_time
-
-- name: "IOSXR Configure ntp servers"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
-  with_items: "{{ ntp }}"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify:
-#    - iosxr_time
+# IOSXR is managed through netconf
 
 ####################################################################
 # NXOS specific commands                                           #
@@ -133,7 +100,7 @@
     authorize: yes
     src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
   with_items: "{{ ntp }}"
-  when: (ansible_network_os is defined and ansible_network_os == "iosnxosxr" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
 #    - nxos_time
 

@@ -3,7 +3,7 @@ lab:
   notes: ''
   timestamp: 1619408255.058225
   title: NetCICD Stage Box
-  version: 0.0.4
+  version: 0.0.3
 nodes:
   - id: n0
     label: NetCICD_agent
@@ -48,7 +48,7 @@ nodes:
         echo "http://nexus:8081/repository/apk-community-proxy/" >> /etc/apk/repositories
         echo "http://nexus:8081/repository/apk-testing-proxy/" >> /etc/apk/repositories
       else
-        echo "NetCICD Toolbox not installed." >>/home/cisco/install-log.txt
+        echo "NetCICD Toolbox not installed. Fetching repositories from Alpine." >>/home/cisco/install-log.txt
         echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
         echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
       fi
@@ -114,14 +114,21 @@ nodes:
       echo "[defaults]" > /home/cisco/.ansible.cfg
       echo "host_key_checking = False" >> /home/cisco/.ansible.cfg
       echo "nocows = True" >> /home/cisco/.ansible.cfg
+      echo "interpreter_python = auto_silent" >> /home/cisco/.ansible.cfg
+      echo "stdout_callback = full_skip" >> /home/cisco/.ansible.cfg
       echo "" >> /home/cisco/.ansible.cfg
-      echo "# Installs collections into /home/cisco/.ansible/ansible_collections/namespace/collection_name" >> /home/cisco/.ansible.cfg
-      echo "collections_paths = /home/cisco/.ansible/" >> /home/cisco/.ansible.cfg
+      echo "# Installs collections into /home/cisco/.ansible/collections/namespace/collection_name" >> /home/cisco/.ansible.cfg
+      echo "collections_paths = /home/cisco/.ansible/collections" >> /home/cisco/.ansible.cfg
       echo "" >> /home/cisco/.ansible.cfg
       echo "# Installs roles into /home/cisco/.ansible/roles/namespace.rolename" >> /home/cisco/.ansible.cfg
       echo "roles_path = /home/cisco/.ansible/roles" >> /home/cisco/.ansible.cfg
       chown cisco:cisco /home/cisco/.ansible.cfg
-
+      sudo mkdir /home/cisco/.ansible/roles
+      ansible-galaxy collection install cisco.ios -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
+      ansible-galaxy collection install cisco.iosxr -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
+      ansible-galaxy collection install cisco.nxos -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
+      chown cisco:cisco -R /home/cisco/.ansible
+      
       # set vars
       if wget ${GIT_URL}; then
         echo "Setting git to Gitea." >>/home/cisco/install-log.txt
@@ -147,12 +154,13 @@ nodes:
       fi
 
       # Installing .profile script to prepare for Ansible playbook run
-      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-box.profile; then
+      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-box.runonce; then
         echo "NetCICD Toolbox installed. Retrieved stage-box.profile from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
       else
         echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.profile
+        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.runonce
       fi
+      mv stage-box.runonce ~/.profile
 
       echo "Creating SSH keys." >>/home/cisco/install-log.txt
       mkdir /home/cisco/.ssh
@@ -163,7 +171,6 @@ nodes:
       echo "Starting Docker." >>/home/cisco/install-log.txt
       sudo service docker start  >>/home/cisco/install-log.txt
       sudo chmod 666 /var/run/docker.sock
-    image_definition: desktop-3-12-xfce
     ram: 4096
     cpus: 2
     tags: []
@@ -251,7 +258,6 @@ nodes:
        transport input telnet ssh
       !
       end
-    image_definition: iosv-159-3
     tags:
       - CE1
     interfaces:
@@ -351,7 +357,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    image_definition: iosxrv-6-3-1
     tags: []
     interfaces:
       - id: i0
@@ -499,7 +504,6 @@ nodes:
 
       line console
       line vty
-    image_definition: nxosv-7-3-0
     tags: []
     interfaces:
       - id: i0
@@ -543,7 +547,6 @@ nodes:
       ip ssh version 2
       crypto key gen rsa mod 2048
       !
-    image_definition: csr1000v-170301a
     tags: []
     interfaces:
       - id: i0

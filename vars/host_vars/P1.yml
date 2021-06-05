@@ -1,6 +1,6 @@
 ---
-ansible_host: 10.255.1.110
-lo0: 192.168.0.110
+ansible_host: 10.255.1.111
+lo0: 192.168.0.111
 name: P1
 snmp_location: P1 Location
 ...

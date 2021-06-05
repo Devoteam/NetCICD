@@ -22,23 +22,21 @@
   when: ioslo.changed
 
 ####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+- name: "IOSXE NC create global table loopback address in no-shut state"
+  netconf_config:
+    src: "oc_nc_loopback.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "netconf")
+#  notify: 
+#    - nclo0
+
+####################################################################
 # IOSXR specific commands                                          #
 ####################################################################
 
-- name: "IOSXR Global table loopback address"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_lo0.j2"
-  register: iosxrlo
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - xrlo0
-
-- name: "IOSXR No shut on global table loopback address"
-  iosxr_config:
-    authorize: yes
-    src: "{{ ansible_network_os }}_cli_lo0_no_shut.j2"
-  when: iosxrlo.changed
+# IOSXR is managed through netconf
 
 ####################################################################
 # NXOS specific commands                                           #
@@ -67,7 +65,7 @@
 
 - name: "NC create global table loopback address in no-shut state"
   netconf_config:
-    src: "{{ ansible_network_os }}_nc_loopback.j2"
+    src: "iosxr_nc_loopback.j2"
   when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nclo0

@@ -1,0 +1,116 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy ofthe MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+bundles:
+ - { node: "P1", type: "Bundle-Ether", id: 1, active: true, shutdown: false, bundle: 1, ip_address: "192.168.254.0", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 1 to P2  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 1, active: true, shutdown: false, bundle: 1, ip_address: "192.168.254.1", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 1 to P1  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 2, active: true, shutdown: false, bundle: 2, ip_address: "192.168.254.2", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 2 to P4  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 2, active: true, shutdown: false, bundle: 2, ip_address: "192.168.254.3", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 2 to P2  ***"}
+ - { node: "P4", type: "Bundle-Ether", id: 4, active: true, shutdown: false, bundle: 4, ip_address: "192.168.254.4", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 4 to P3  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 4, active: true, shutdown: false, bundle: 4, ip_address: "192.168.254.5", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 4 to P4  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 3, active: true, shutdown: false, bundle: 3, ip_address: "192.168.254.6", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 3 to P1  ***"}
+ - { node: "P1", type: "Bundle-Ether", id: 3, active: true, shutdown: false, bundle: 3, ip_address: "192.168.254.7", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 3 to P3  ***"}
+ - { node: "P1", type: "Bundle-Ether", id: 11, active: true, shutdown: false, bundle: 11, ip_address: "192.168.254.16", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 11 to PE1  ***"}
+ - { node: "PE1", type: "Bundle-Ether", id: 11, active: true, shutdown: false, bundle: 11, ip_address: "192.168.254.17", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 11 to P1  ***"}
+ - { node: "P1", type: "Bundle-Ether", id: 13, active: true, shutdown: false, bundle: 13, ip_address: "192.168.254.20", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 13 to PE3  ***"}
+ - { node: "PE3", type: "Bundle-Ether", id: 13, active: true, shutdown: false, bundle: 13, ip_address: "192.168.254.21", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 13 to P1  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 31, active: true, shutdown: false, bundle: 31, ip_address: "192.168.254.18", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 31 to PE1  ***"}
+ - { node: "PE1", type: "Bundle-Ether", id: 31, active: true, shutdown: false, bundle: 31, ip_address: "192.168.254.19", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 31 to P3  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 33, active: true, shutdown: false, bundle: 33, ip_address: "192.168.254.22", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 33 to PE3  ***"}
+ - { node: "PE3", type: "Bundle-Ether", id: 33, active: true, shutdown: false, bundle: 33, ip_address: "192.168.254.23", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 33 to P3  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 22, active: true, shutdown: false, bundle: 22, ip_address: "192.168.254.32", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 22 to PE2  ***"}
+ - { node: "PE2", type: "Bundle-Ether", id: 22, active: true, shutdown: false, bundle: 22, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 22 to P2  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 24, active: true, shutdown: false, bundle: 24, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 24 to PE4  ***"}
+ - { node: "PE4", type: "Bundle-Ether", id: 24, active: true, shutdown: false, bundle: 24, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 24 to P2  ***"}
+ - { node: "P4", type: "Bundle-Ether", id: 42, active: true, shutdown: false, bundle: 42, ip_address: "192.168.254.36", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 42 to PE2  ***"}
+ - { node: "PE2", type: "Bundle-Ether", id: 42, active: true, shutdown: false, bundle: 42, ip_address: "192.168.254.37", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 42 to P4  ***"}
+ - { node: "P4", type: "Bundle-Ether", id: 44, active: true, shutdown: false, bundle: 44, ip_address: "192.168.254.38", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 44 to PE4  ***"}
+ - { node: "PE4", type: "Bundle-Ether", id: 44, active: true, shutdown: false, bundle: 44, ip_address: "192.168.254.39", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 44 to P4  ***"}
+
+interfaces:
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/4", bundle: 1, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/4 ***"}
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/5", bundle: 1, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/5 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/4", bundle: 1, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/4 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/5", bundle: 1, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/5 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/2", bundle: 2, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/2 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/3", bundle: 2, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/3 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/2", bundle: 2, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/2 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/3", bundle: 2, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/3 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/4", bundle: 4, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P3 GigabitEthernet 0/0/0/4 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/5", bundle: 4, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P3 GigabitEthernet 0/0/0/5 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/4", bundle: 4, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/4 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/5", bundle: 4, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/5 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/2", bundle: 3, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/2 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/3", bundle: 3, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/3 ***"}
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/2", bundle: 3, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P3 GigabitEthernet 0/0/0/2 ***"}
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/3", bundle: 3, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P3 GigabitEthernet 0/0/0/3 ***"}
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/6", bundle: 11, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE1 GigabitEthernet 0/0/0/1 ***"}
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/7", bundle: 11, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE1 GigabitEthernet 0/0/0/2 ***"}
+ - { node: "PE1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/1", bundle: 11, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/6 ***"}
+ - { node: "PE1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/2", bundle: 11, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/7 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/6", bundle: 31, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE1 GigabitEthernet 0/0/0/3 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/7", bundle: 31, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE1 GigabitEthernet 0/0/0/4 ***"}
+ - { node: "PE1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/3", bundle: 31, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/6 ***"}
+ - { node: "PE1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/4", bundle: 31, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/7 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/6", bundle: 22, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE2 GigabitEthernet 0/0/0/1 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/7", bundle: 22, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE2 GigabitEthernet 0/0/0/2 ***"}
+ - { node: "PE2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/1", bundle: 22, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/6 ***"}
+ - { node: "PE2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/2", bundle: 22, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/7 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/6", bundle: 42, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE2 GigabitEthernet 0/0/0/3 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/7", bundle: 42, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE2 GigabitEthernet 0/0/0/4 ***"}
+ - { node: "PE2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/3", bundle: 42, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/6 ***"}
+ - { node: "PE2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/4", bundle: 42, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/7 ***"}
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/8", bundle: 13, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE3 Ethernet 2/1 ***"}
+ - { node: "P1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/9", bundle: 13, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE3 Ethernet 2/2 ***"}
+ - { node: "PE3", type: "Ethernet", no_shut: true, id: "2/1", bundle: 13, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/8 ***"}
+ - { node: "PE3", type: "Ethernet", no_shut: true, id: "2/2", bundle: 13, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P1 GigabitEthernet 0/0/0/9 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/8", bundle: 33, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE3 Ethernet 2/3 ***"}
+ - { node: "P3", type: "GigabitEthernet", no_shut: true, id: "0/0/0/9", bundle: 33, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE3 Ethernet 2/4 ***"}
+ - { node: "PE3", type: "Ethernet", no_shut: true, id: "2/3", bundle: 33, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P3 GigabitEthernet 0/0/0/8 ***"}
+ - { node: "PE3", type: "Ethernet", no_shut: true, id: "2/4", bundle: 33, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P3 GigabitEthernet 0/0/0/9 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/8", bundle: 24, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE4 Ethernet 2/1 ***"}
+ - { node: "P2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/9", bundle: 24, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE4 Ethernet 2/2 ***"}
+ - { node: "PE4", type: "Ethernet", no_shut: true, id: "2/1", bundle: 24, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/8 ***"}
+ - { node: "PE4", type: "Ethernet", no_shut: true, id: "2/2", bundle: 24, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P2 GigabitEthernet 0/0/0/9 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/8", bundle: 44, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE4 Ethernet 2/3 ***"}
+ - { node: "P4", type: "GigabitEthernet", no_shut: true, id: "0/0/0/9", bundle: 44, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to PE4 Ethernet 2/4 ***"}
+ - { node: "PE4", type: "Ethernet", no_shut: true, id: "2/3", bundle: 44, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/8 ***"}
+ - { node: "PE4", type: "Ethernet", no_shut: true, id: "2/4", bundle: 44, ip_address: "", mask: "", prefixlength: 0, remote: "", description: "*** Link to P4 GigabitEthernet 0/0/0/9 ***"}
+ - { node: "PE1", type: "GigabitEthernet", no_shut: true, id: "0/0/0/5", bundle: 0, ip_address: "192.168.254.128", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.129", description: "*** Link to CE1 GigabitEthernet 0/1 ***"}
+ - { node: "CE1", type: "GigabitEthernet", no_shut: true, id: "0/1", bundle: 0, ip_address: "192.168.254.129", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.128", description: "*** Link to PE1 GigabitEthernet 0/0/0/5 ***"}
+ - { node: "PE2", type: "GigabitEthernet", no_shut: true, id: "0/0/0/5", bundle: 0, ip_address: "192.168.254.130", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.131", description: "*** Link to CE2 GigabitEthernet 0/1 ***"}
+ - { node: "CE2", type: "GigabitEthernet", no_shut: true, id: "0/1", bundle: 0, ip_address: "192.168.254.131", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.130", description: "*** Link to PE2 GigabitEthernet 0/0/0/5 ***"}
+
+ - { node: "PE3", type: "Ethernet", no_shut: true, id: "2/5", bundle: 0, ip_address: "192.168.254.132", mask: "255.255.255.254", prefixlength: "31", remote: "192.168.254.133", description: "*** Link to CE3 GigabitEthernet 0/1 ***"}
+ - { node: "CE3", type: "GigabitEthernet", no_shut: true, id: "0/1", bundle: 0, ip_address: "192.168.254.133", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.132", description: "*** Link to PE3 Ethernet 2/5 ***"}
+ - { node: "PE4", type: "Ethernet", no_shut: true, id: "2/5", bundle: 0, ip_address: "192.168.254.134", mask: "255.255.255.254", prefixlength: "31", remote: "192.168.254.135", description: "*** Link to CE4 GigabitEthernet 0/1 ***"}
+ - { node: "CE4", type: "GigabitEthernet", no_shut: true, id: "0/1", bundle: 0, ip_address: "192.168.254.135", mask: "255.255.255.254", prefixlength: 31, remote: "192.168.254.134", description: "*** Link to PE4 Ethernet 2/5 ***"}
+
+subinterfaces:
+ - { node: "P1", type: "Bundle-Ether", id: 1, sub: 2, shutdown: false, ip_address: "192.168.254.0", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 1 to P2  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 1, sub: 2, shutdown: false, ip_address: "192.168.254.1", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 1 to P1  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 2, sub: 2, shutdown: false, ip_address: "192.168.254.2", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 2 to P4  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 2, sub: 2, shutdown: false, ip_address: "192.168.254.3", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 2 to P2  ***"}
+ - { node: "P4", type: "Bundle-Ether", id: 4, sub: 2, shutdown: false, ip_address: "192.168.254.4", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 4 to P3  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 4, sub: 2, shutdown: false, ip_address: "192.168.254.5", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 4 to P4  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 3, sub: 2, shutdown: false, ip_address: "192.168.254.6", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 3 to P1  ***"}
+ - { node: "P1", type: "Bundle-Ether", id: 3, sub: 2, shutdown: false, ip_address: "192.168.254.7", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 3 to P3  ***"}
+ - { node: "P1", type: "Bundle-Ether", id: 11, sub: 2, shutdown: false, ip_address: "192.168.254.16", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 11 to PE1  ***"}
+ - { node: "PE1", type: "Bundle-Ether", id: 11, sub: 2, shutdown: false, ip_address: "192.168.254.17", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 11 to P1  ***"}
+ - { node: "P1", type: "Bundle-Ether", id: 13, sub: 2, shutdown: false, ip_address: "192.168.254.20", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 13 to PE3  ***"}
+ - { node: "PE3", type: "Bundle-Ether", id: 13, sub: 2, shutdown: false, ip_address: "192.168.254.21", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 13 to P1  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 31, sub: 2, shutdown: false, ip_address: "192.168.254.18", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 31 to PE1  ***"}
+ - { node: "PE1", type: "Bundle-Ether", id: 31, sub: 2, shutdown: false, ip_address: "192.168.254.19", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 31 to P3  ***"}
+ - { node: "P3", type: "Bundle-Ether", id: 33, sub: 2, shutdown: false, ip_address: "192.168.254.22", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 33 to PE3  ***"}
+ - { node: "PE3", type: "Bundle-Ether", id: 33, sub: 2, shutdown: false, ip_address: "192.168.254.23", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 33 to P3  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 22, sub: 2, shutdown: false, ip_address: "192.168.254.32", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 22 to PE2  ***"}
+ - { node: "PE2", type: "Bundle-Ether", id: 22, sub: 2, shutdown: false, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 22 to P2  ***"}
+ - { node: "P2", type: "Bundle-Ether", id: 24, sub: 2, shutdown: false, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 24 to PE4  ***"}
+ - { node: "PE4", type: "Bundle-Ether", id: 24, sub: 2, shutdown: false, ip_address: "192.168.254.33", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 24 to P2  ***"}
+ - { node: "P4", type: "Bundle-Ether", id: 42, sub: 2, shutdown: false, ip_address: "192.168.254.36", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 42 to PE2  ***"}
+ - { node: "PE2", type: "Bundle-Ether", id: 42, sub: 2, shutdown: false, ip_address: "192.168.254.37", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 42 to P4  ***"}
+ - { node: "P4", type: "Bundle-Ether", id: 44, sub: 2, shutdown: false, ip_address: "192.168.254.38", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 44 to PE4  ***"}
+ - { node: "PE4", type: "Bundle-Ether", id: 44, sub: 2, shutdown: false, ip_address: "192.168.254.39", mask: "255.255.255.254", prefixlength: 31, description: "*** Bundle 44 to P4  ***"}
+...

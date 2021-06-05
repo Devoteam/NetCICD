@@ -1,0 +1,22 @@
+<config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">   
+  <ipv4 xmlns="http://openconfig.net/yang/interfaces/ip">
+    <addresses>
+      <address>
+        <ip>{{ lo0 }}</ip>
+          <config>
+            <ip>{{ lo0 }}</ip>
+            <prefix-length>32</prefix-length>
+          </config>
+      </address>
+    </addresses>
+  </ipv4>
+  <interfaces xmlns="http://openconfig.net/yang/interfaces">
+   <interface>
+    <name>Loopback0</name>
+    <config>
+     <type xmlns:idx="urn:ietf:params:xml:ns:yang:iana-if-type">idx:softwareLoopback</type>
+     <enabled>true</enabled>
+    </config>
+   </interface>
+  </interfaces>
+</config>

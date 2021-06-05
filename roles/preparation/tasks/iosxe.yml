@@ -2,16 +2,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   
-- name: enable netconf
+- name: enable netconf on IOSXE
   vars:
     ansible_connection: network_cli
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     lines:
       - netconf-yang
   register: netconf_enabled
   
-- name: Wait until netconf has started
+- name: Wait until netconf has started on IOSXE
   wait_for: timeout=90
   delegate_to: localhost
   when: netconf_enabled is changed

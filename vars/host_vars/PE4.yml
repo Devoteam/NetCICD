@@ -1,6 +1,6 @@
 ---
-ansible_host: 10.255.1.131
-lo0: 192.168.0.131
+ansible_host: 10.255.1.134
+lo0: 192.168.0.134
 name: PE4
 snmp_location: PE4 Location
 ...
