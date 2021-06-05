@@ -6,7 +6,12 @@
 - name: Start of CI/CD pipeline
   hosts: netcicd
   gather_facts: false
-  
+  collections:
+    - cisco.ios
+    - cisco.iosxr
+    - cisco.nxos
+    - ansible.netcommon
+          
   roles:
     - topology
 ...

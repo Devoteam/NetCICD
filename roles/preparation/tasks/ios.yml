@@ -9,8 +9,7 @@
 - name: Add ssh user key for user 
   vars:
     ansible_connection: network_cli
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     lines:
       - key-hash ssh-rsa "{{ np_pubkey.stdout_lines[0] }}"
     parents:

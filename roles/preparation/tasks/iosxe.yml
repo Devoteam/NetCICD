@@ -5,8 +5,7 @@
 - name: enable netconf
   vars:
     ansible_connection: network_cli
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     lines:
       - netconf-yang
   register: netconf_enabled

@@ -33,7 +33,7 @@
 - name: Import SSH key to IOSXR node
   vars:
     ansible_connection: network_cli
-  iosxr_command:
+  cisco.iosxr.iosxr_command:
     commands:
       - crypto key import authentication rsa disk0:/id_rsa_pub.b64
       - show crypto key authentication rsa
@@ -41,7 +41,7 @@
 - name: Disable telnet
   vars:
     ansible_connection: network_cli
-  iosxr_config:
+  cisco.iosxr.iosxr_config:
     lines:
       - no telnet ipv4 server max-servers 10
 ...

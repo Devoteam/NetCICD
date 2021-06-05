@@ -9,7 +9,7 @@
 - name: Import SSH key to nx-os node
   vars:
     ansible_connection: network_cli
-  nxos_config:
+  cisco.nxos.nxos_config:
     lines:
       - username netcicd-pipeline sshkey file bootflash:id_rsa.pub
       - show user-account
@@ -17,7 +17,7 @@
 - name: Disable scp server
   vars:
     ansible_connection: network_cli
-  nxos_config:
+  cisco.nxos.nxos_config:
     lines:
       - no feature scp
 ...
