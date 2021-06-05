@@ -14,7 +14,7 @@
       - crypto key gen rsa
       - "2048"
   
-- name: Validate key existence
+- name: Validate key existence on IOSXR
   telnet:
     user: "{{ ansible_user }}"
     password: "{{ ansible_ssh_pass }}"
@@ -24,10 +24,7 @@
     command:
       - sh crypto key my rsa
 
-- name: Generate base64 ssh user pubkey for user 
-  local_action: shell cut -d" " -f2 ~/.ssh/id_rsa.pub | base64 -d > ~/.ssh/id_rsa_pub.b64
-
-- name: Copy b64 pubkey to the router
+- name: Copy b64 pubkey to the IOSXR router
   local_action: shell sshpass -p {{ ansible_ssh_pass }} scp -q ~/.ssh/id_rsa_pub.b64 netcicd-pipeline@{{ ansible_host }}:/disk0:/id_rsa_pub.b64
 
 - name: Import SSH key to IOSXR node
@@ -38,7 +35,7 @@
       - crypto key import authentication rsa disk0:/id_rsa_pub.b64
       - show crypto key authentication rsa
   
-- name: Disable telnet
+- name: Disable telnet on IOSXR
   vars:
     ansible_connection: network_cli
   cisco.iosxr.iosxr_config:

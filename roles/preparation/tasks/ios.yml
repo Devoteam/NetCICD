@@ -2,11 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
   
-- name: Get ssh user pubkey for user 
-  local_action: shell ssh-keygen -E MD5 -lf ~/.ssh/id_rsa.pub | awk '{ print $2}' | cut -n -c 5- | sed 's/://g'
-  register: np_pubkey
-  
-- name: Add ssh user key for user 
+- name: Add ssh user key for user to IOS
   vars:
     ansible_connection: network_cli
   cisco.ios.ios_config:

@@ -3,10 +3,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-- name: Copy pubkey to the router
+- name: Copy pubkey to NXOS node
   local_action: shell sshpass -p {{ ansible_ssh_pass }} scp -q ~/.ssh/id_rsa.pub netcicd-pipeline@{{ ansible_host }}:id_rsa.pub
 
-- name: Import SSH key to nx-os node
+- name: Import SSH key to NXOS node
   vars:
     ansible_connection: network_cli
   cisco.nxos.nxos_config:
@@ -14,7 +14,7 @@
       - username netcicd-pipeline sshkey file bootflash:id_rsa.pub
       - show user-account
   
-- name: Disable scp server
+- name: Disable scp server on NXOS node
   vars:
     ansible_connection: network_cli
   cisco.nxos.nxos_config:
