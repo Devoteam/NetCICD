@@ -154,13 +154,13 @@ nodes:
       fi
 
       # Installing .profile script to prepare for Ansible playbook run
-      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-box.profile; then
+      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-box.runonce; then
         echo "NetCICD Toolbox installed. Retrieved stage-box.profile from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
       else
         echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.profile
+        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.runonce
       fi
-      chmod +x stage-box.profile
+      mv stage-box.runonce ~/.profile
 
       echo "Creating SSH keys." >>/home/cisco/install-log.txt
       mkdir /home/cisco/.ssh
