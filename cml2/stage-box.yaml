@@ -204,7 +204,7 @@ nodes:
         label: port
         type: physical
   - id: n2
-    label: CE1,144, ios
+    label: CE1,141, ios
     node_definition: iosv
     x: -650
     y: 0
@@ -227,7 +227,7 @@ nodes:
       crypto key gen rsa mod 2048
       !
       interface GigabitEthernet0/0
-       ip address 10.255.1.144 255.255.255.0
+       ip address 10.255.1.141 255.255.255.0
        no shutdown
        duplex auto
        speed auto
