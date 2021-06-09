@@ -160,7 +160,7 @@ nodes:
         echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
         wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.runonce
       fi
-      mv stage-box.runonce ~/.profile
+      mv /home/cisco/stage-box.runonce /home/cisco/.profile
 
       echo "Creating SSH keys." >>/home/cisco/install-log.txt
       mkdir /home/cisco/.ssh
