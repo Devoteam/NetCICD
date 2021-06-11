@@ -12,6 +12,7 @@ else
     ln -s stage-box.yml main.yml
     cd ~/NetCICD 
     ansible-playbook -i vars/stage-box prepare.yml -e stage="box"
+    ansible-playbook -i vars/stage-topology stage-box.yml -e stage="box"
     echo "prepare" > ../NetCICD_state   
 fi
 echo '=================== Ready for modification ===================='
