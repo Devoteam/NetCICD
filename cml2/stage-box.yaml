@@ -160,7 +160,7 @@ nodes:
         echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
         wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.runonce
       fi
-      mv stage-box.runonce ~/.profile
+      mv /home/cisco/stage-box.runonce /home/cisco/.profile
 
       echo "Creating SSH keys." >>/home/cisco/install-log.txt
       mkdir /home/cisco/.ssh
@@ -204,7 +204,7 @@ nodes:
         label: port
         type: physical
   - id: n2
-    label: CE1,144, ios
+    label: CE1,141, ios
     node_definition: iosv
     x: -650
     y: 0
@@ -227,7 +227,7 @@ nodes:
       crypto key gen rsa mod 2048
       !
       interface GigabitEthernet0/0
-       ip address 10.255.1.144 255.255.255.0
+       ip address 10.255.1.141 255.255.255.0
        no shutdown
        duplex auto
        speed auto
@@ -281,7 +281,7 @@ nodes:
         label: GigabitEthernet0/3
         type: physical
   - id: n3
-    label: PE1, 110, XRv
+    label: PE1, 131, XRv
     node_definition: iosxrv
     x: -500
     y: 100
@@ -334,7 +334,7 @@ nodes:
       !
       interface MgmtEth0/0/CPU0/0
        description *** management ***
-       ipv4 address 10.255.1.128 255.255.255.0
+       ipv4 address 10.255.1.131 255.255.255.0
        no shutdown
       !
       interface GigabitEthernet0/0/0/0
@@ -419,7 +419,7 @@ nodes:
         label: port7
         type: physical
   - id: n7
-    label: PE3, 130, nxos
+    label: PE3, 133, nxos
     node_definition: nxosv
     x: -350
     y: 0
@@ -468,13 +468,13 @@ nodes:
 
       interface Loopback0
           description PE3-Loopback
-          ip address 192.168.0.130/32
+          ip address 192.168.0.133/32
           duplex auto
           no shut
 
       interface mgmt0
           description OOB Management
-          ip address 10.255.1.130 255.255.255.0
+          ip address 10.255.1.133 255.255.255.0
           duplex auto
           no shut
 
