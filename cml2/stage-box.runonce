@@ -1,5 +1,5 @@
 #!/bin/sh
-if grep -q prepare NetCICD_state; then
+if grep -q prepared NetCICD_state; then
     echo "Lab already prepared"
 else
     git config --global user.name "netcicd-pipeline"
@@ -12,8 +12,8 @@ else
     ln -s stage-box.yml main.yml
     cd ~/NetCICD 
     ansible-playbook -i vars/stage-box prepare.yml -e stage="box"
-    ansible-playbook -i vars/stage-topology stage-box.yml -e stage="box"
-    echo "prepare" > ../NetCICD_state   
+#    ansible-playbook -i vars/stage-topology stage-box.yml -e stage="box"
+    echo "prepared" > ../NetCICD_state   
 fi
 echo '=================== Ready for modification ===================='
 echo 'You can now:'
