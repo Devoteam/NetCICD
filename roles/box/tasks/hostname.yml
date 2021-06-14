@@ -43,7 +43,7 @@
 
 - name: "Netconf set hostname"
   ansible.netcommon.netconf_config:
-    src: "{{ ansible_network_os }}_nc_hostname.j2"
+    content: "{{ ansible_network_os }}_nc_hostname.j2"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
   notify: 
     - iosxr_hostname
