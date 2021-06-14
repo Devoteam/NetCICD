@@ -3,44 +3,108 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ####################################################################
-# Banners supported by generic Ansible module                      #
-# Only IOS-type devices have a login banner, nxos does not         #
+# Classic IOS specific commands                                    #
 ####################################################################
 
-- name: "Set login banner non-nexus devices"
-  net_banner:
+- name: "Set login banner on IOS"
+  cisco.ios.ios_banner:
     banner: login
     text: "{{ lookup('file', 'templates/banner_login.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os != "nxos")
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_login_banner
+
+- name: "Set exec banner on IOS"
+  cisco.ios.ios_banner:
+    banner: exec
+    text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_exec_banners
+
+- name: "Set motd banner on IOS"
+  cisco.ios.ios_banner:
+    banner: motd
+    text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - ios_motd_banners
+
+####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: "Set login banner on IOS"
+  cisco.ios.ios_banner:
+    banner: login
+    text: "{{ lookup('file', 'templates/banner_login.j2') }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - iosxr_login_banner
+
+- name: "Set exec banner on IOS"
+  cisco.ios.ios_banner:
+    banner: exec
+    text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - iosxr_exec_banners
+
+- name: "Set motd banner on IOS"
+  cisco.ios.ios_banner:
+    banner: motd
+    text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - iosxr_motd_banners
+
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: "Set exec banner on nxos"
+  cisco.nxos.nxos_banner:
+    banner: exec
+    text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - banners
+
+- name: "Set motd banner on IOS"
+  cisco.nxos.nxos_banner:
+    banner: motd
+    text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+#  notify: 
+#    - banners
+
+####################################################################
+# Netconf specific commands                                        #
+####################################################################
 
 ####################################################################
 # Banners supported by generic Ansible module                      #
 # nxos has exec banner                                             #
 ####################################################################
 
-- name: "Set exec banner"
-  net_banner:
-    banner: exec
-    text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
-    state: present
-  when: (ansible_network_os is defined and ansible_network_os != "iosxr")
-#  notify: 
-#    - banners
-
 ####################################################################
 # MOTD banner has Ansible net_module, regardless of network_os     #
 ####################################################################
-
-- name: "Set motd banner"
-  net_banner:
-    banner: motd
-    text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
-    state: present
-#  notify: 
-#    - banners
 
 ####################################################################
 # Kick off handlers for unit testing                               #

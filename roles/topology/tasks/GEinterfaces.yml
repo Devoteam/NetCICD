@@ -7,7 +7,7 @@
 ####################################################################
 
 - name: "Configure IOS GE interfaces"
-  net_interface:
+  cisco.ios.ios_interface:
     name: "{{ item.type }}{{ item.id }}"
     description: "{{ item.description }}"
     state: present
@@ -18,7 +18,7 @@
 #   - interfaces
 
 - name: "Set IP addresses IOS GE interfaces"
-  net_l3_interface:
+  cisco.ios.ios_l3_interface:
     name: "{{ item.type }}{{ item.id }}"
     ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
@@ -44,7 +44,7 @@
 ####################################################################
 
 - name: "Configure NX-OS interfaces"
-  net_interface:
+  cisco.nxos.nxos_interface:
     name: "{{ item.type }}{{ item.id }}"
     description: "item.description"
     admin_state: up
@@ -54,7 +54,7 @@
 #   - interfaces
 
 - name: "Set IP addresses NX-OS Interfaces"
-  nxos_l3_interfaces:
+  cisco.nxos.nxos_l3_interfaces:
     config:
       - name: "{{ item.type }}{{ item.id }}"
         ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
@@ -69,7 +69,7 @@
 ####################################################################
                                                                                                                                             
 - name: "Netconf configure interfaces for IOSXR"                                                        
-  netconf_config:                                                                                     
+  ansible.netcommon.netconf_config:                                                                                     
     src: "{{ ansible_network_os }}_nc_GEinterface.j2"                                                    
   when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
 #  notify:                                                                                         

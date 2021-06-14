@@ -7,7 +7,7 @@
 ####################################################################
 
 - name: "Configure subinterfaces"
-  net_interface:
+  cisco.ios.ios_interface:
     name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
     description: "{{ item.description }}"
     state: present
@@ -16,7 +16,7 @@
   loop: "{{ subinterfaces }}"
 
 - name: "Set IP addresses on IOS subinterfaces"
-  net_l3_interface:
+  cisco.ios.ios_l3_interface:
     name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
     ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
@@ -38,7 +38,7 @@
 ####################################################################
                                                                                                                                             
 - name: "Netconf configure subinterfaces for IOSXR"                                                        
-  netconf_config:                                                                                     
+  ansible.netcommon.netconf_config:                                                                                     
     src: "{{ ansible_network_os }}_nc_subinterface.j2"                                                    
   when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
 #  notify:                                                                                         
@@ -49,7 +49,7 @@
 ####################################################################
 
 - name: "Configure NX-OS subinterfaces"
-  net_interface:
+  cisco.nxos.nxos_interface:
     name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
     description: "item.description"
     admin_state: up
@@ -57,7 +57,7 @@
   loop: "{{ subinterfaces }}"
 
 - name: "Set IP addresses on NX-OS subinterfaces"
-  net_l3_interface:
+  cisco.nxos.nxos_l3_interface:
     name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
     ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
