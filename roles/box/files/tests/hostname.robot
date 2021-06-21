@@ -21,7 +21,7 @@ Hostname set correctly
 
 *** Keywords ***
 Both the node and the configuration language are defined
-    Log To Console    \nThe node name is:    ${node}
+    Log To Console    '\nThe node name is: ' ${node}
     Log To Console    \nThe node CLI language is:    ${c_lang}
     Log To Console    \nThe stage is:    ${stage}
 
