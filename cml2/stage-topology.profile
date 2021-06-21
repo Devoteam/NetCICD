@@ -1,23 +1,27 @@
 #!/bin/sh
-git config --global user.name "netcicd-pipeline"
-git config --global user.email "netcicd-pipeline@infraautomator.example.net"
-git clone ${GIT_URL}NetCICD.git
-cd NetCICD
-git status
-echo '====================== Preparing CML lab ======================'
-ansible-playbook -i vars/stage-topology prepare.yml
-echo '================  Starting stage Box playbook  ================'
-cd roles/box/vars
-ln -s stage-topology.yml main.yml
-cd ~/NetCICD 
-git status
-ansible-playbook -i vars/stage-topology stage-box.yml -e stage="topology"
-echo '============== Starting stage Topology playbook ==============='
-cd roles/topology/vars
-ln -s stage-topology.yml main.yml
-cd ~/NetCICD 
-git status
-ansible-playbook -i vars/stage-topology stage-topology.yml -e stage="topology"
+if grep -q prepare NetCICD_state; then
+    echo "Lab already prepared"
+else
+    git config --global user.name "netcicd-pipeline"
+    git config --global user.email "netcicd-pipeline@infraautomator.example.net"
+    git clone ${GIT_URL}NetCICD.git
+    cd NetCICD
+    git status
+    echo '====================== Preparing CML lab ======================'
+    cd roles/box/vars
+    ln -s stage-topology.yml main.yml
+    cd ~/NetCICD 
+    ansible-playbook -i vars/stage-topology prepare.yml
+    echo '================  Starting stage Box playbook  ================'
+    ansible-playbook -i vars/stage-topology stage-box.yml -e stage="topology"
+    echo '============== Starting stage Topology playbook ==============='
+    cd roles/topology/vars
+    ln -s stage-topology.yml main.yml
+    cd ~/NetCICD 
+    git status
+    ansible-playbook -i vars/stage-topology stage-topology.yml -e stage="topology"
+    echo "prepare" > ../NetCICD_state   
+fi
 echo '=================== Ready for modification ===================='
 echo 'You can now:'
 echo ' - create a branch with git branch <mybranch>'

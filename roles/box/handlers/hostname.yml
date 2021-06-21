@@ -3,16 +3,62 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
 - name: Validate hostname
-  local_action: shell behave hostname.feature -D node={{ inventory_hostname }} -D c_lang={{ ansible_network_os }} -D stage={{ stage }} --no-capture -c
+  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
   args:
-    chdir: roles/box/files/features/
-  register: test_output
-  listen: hostname
+    chdir: roles/box/files/tests/
+  register: ios_hostname_output
+  listen: ios_hostname
   
 - name: Print testresults
   debug: 
-    var: test_output.stdout_lines
-  failed_when: "'Assertion Failed' in test_output.stdout"
-  listen: hostname
+    var: ios_hostname_output.stdout_lines
+  failed_when: "'Failed' in test_output.stdout"
+  listen: ios_hostname
+
+####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: Validate hostname
+  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  args:
+    chdir: roles/box/files/tests/
+  register: iosxr_hostname_output
+  listen: iosxr_hostname
+  
+- name: Print testresults
+  debug: 
+    var: iosxr_hostname_output.stdout_lines
+  failed_when: "'Failed' in test_output.stdout"
+  listen: iosxr_hostname
+
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: Validate hostname
+  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  args:
+    chdir: roles/box/files/tests/
+  register: nxos_hostname_output
+  listen: nxos_hostname
+  
+- name: Print testresults
+  debug: 
+    var: nxos_hostname_output.stdout_lines
+  failed_when: "'Failed' in test_output.stdout"
+  listen: nxos_hostname
+
 ...
