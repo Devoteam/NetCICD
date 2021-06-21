@@ -709,6 +709,7 @@ nodes:
           content: |-
             #!/bin/sh
             export JAVA_HOME=/usr
+
             if wget -q --method=HEAD http://gitea:3000/infraautomator/; then
               echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
               export GIT_URL=http://gitea:3000/infraautomator/
@@ -716,6 +717,7 @@ nodes:
               echo "Setting git to Github." >>/home/ubuntu/install-log.txt
               export GIT_URL=https://github.com/Devoteam/
             fi
+
             if grep -q prepared NetCICD_state; then
                 echo "Lab already prepared"
             else
@@ -729,12 +731,9 @@ nodes:
                 ln -s stage-box.yml main.yml
                 cd ~/NetCICD
                 ansible-playbook -i vars/stage-box prepare.yml -e stage="box"
-            #    ansible-playbook -i vars/stage-box stage-box.yml -e stage="box"
                 echo "prepared" > ../NetCICD_state
             fi
-            if ![ ls -al ~/.ssh -eq 0 ]; then
-              ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/ubuntu/install-log.txt
-            fi
+
             echo '=================== Ready for modification ===================='
             echo 'You can now:'
             echo ' - create a branch with git branch <mybranch>'
@@ -746,6 +745,10 @@ nodes:
             echo ' git push --set-upstream origin <mybranch>'
             echo ''
             echo ' you may have to log in with your username/password'
+            echo ''
+            echo 'If you want to configure box-level: '
+            echo ''
+            echo ' ansible-playbook -i vars/stage-box stage-box.yml -e stage="box"'
             echo ''
             echo '========================= Have Fun! ==========================='
 
@@ -764,9 +767,6 @@ nodes:
 
       runcmd:
         - netplan apply
-        - chown ubuntu:ubuntu /home/ubuntu
-        - chown ubuntu:ubuntu /home/ubuntu/.ansible.cfg
-        - chown ubuntu:ubuntu /home/ubuntu/.profile
         - echo " Add Gitea to /etc/hosts" >>/home/ubuntu/install-log.txt
         - echo "172.16.11.3   gitea" >> /etc/hosts
         - echo " Add Jenkins to /etc/hosts" >>/home/ubuntu/install-log.txt
@@ -788,11 +788,15 @@ nodes:
         - pip install pyats[full]
         - groupadd docker
         - usermod -aG docker ubuntu
+        - chown ubuntu:ubuntu /home/ubuntu/install-log.txt
+        - chown ubuntu:ubuntu /home/ubuntu
+        - chown ubuntu:ubuntu /home/ubuntu/.ansible.cfg
+        - chown ubuntu:ubuntu /home/ubuntu/.profile
 
       power_state:
         mode: reboot
         message: Rebooting to make all changes active
-        timeout: 30
+        timeout: 5
         condition: True
     image_definition: ubuntu-20-04
     tags: []
