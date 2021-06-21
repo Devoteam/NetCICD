@@ -10,14 +10,9 @@ Documentation     Testing the correct setting of the hostname.
 ...               [http://cukes.info|Cucumber]. It works well especially when
 ...               tests act as examples that need to be easily understood also
 ...               by the business people.
-Library           CalculatorLibrary.py
+
 
 *** Test Cases ***
-Addition
-    Given calculator has been cleared
-    When user types "1 + 1"
-    and user pushes equals
-    Then result is "2"
 
 Hostname set correctly
     Given both the node and the configuration language are defined
@@ -26,19 +21,14 @@ Hostname set correctly
 
 *** Keywords ***
 Both the node and the configuration language are defined
-
+    Log To Console    \n
+    Log To Console    The node name is: ${node}
+    Log To Console    The node CLI language is: ${c_lang}
+    Log To Console    The stage is: ${stage}
+    Log To Console    \n
+    
 We execute the command "sh run | in hostname"
+    Log To Console    "sh run | in hostname"
 
 We see the hostname set correctly
-
-Calculator has been cleared
-    Push button    C
-
-User types "${expression}"
-    Push buttons    ${expression}
-
-User pushes equals
-    Push button    =
-
-Result is "${result}"
-    Result should be    ${result}
+    Log To Console    The node name is: ${node}

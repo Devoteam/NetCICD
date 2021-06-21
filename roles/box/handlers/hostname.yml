@@ -8,7 +8,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  local_action: shell robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} hostname.robot 
   args:
     chdir: roles/box/files/tests/
   register: ios_hostname_output
@@ -17,7 +17,7 @@
 - name: Print testresults
   debug: 
     var: ios_hostname_output.stdout_lines
-  failed_when: "'Failed' in test_output.stdout"
+  failed_when: "'Failed' in ios_hostname_output.stdout"
   listen: ios_hostname
 
 ####################################################################
@@ -31,7 +31,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  local_action: shell robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} hostname.robot
   args:
     chdir: roles/box/files/tests/
   register: iosxr_hostname_output
@@ -40,7 +40,7 @@
 - name: Print testresults
   debug: 
     var: iosxr_hostname_output.stdout_lines
-  failed_when: "'Failed' in test_output.stdout"
+  failed_when: "'Failed' in iosxr_hostname_output.stdout"
   listen: iosxr_hostname
 
 
@@ -49,7 +49,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  local_action: shell robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} hostname.robot 
   args:
     chdir: roles/box/files/tests/
   register: nxos_hostname_output
@@ -58,7 +58,7 @@
 - name: Print testresults
   debug: 
     var: nxos_hostname_output.stdout_lines
-  failed_when: "'Failed' in test_output.stdout"
+  failed_when: "'Failed' in nxos_hostname_output.stdout"
   listen: nxos_hostname
 
 ...
