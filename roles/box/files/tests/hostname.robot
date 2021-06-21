@@ -26,7 +26,7 @@ Both the node and the configuration language are defined
     Log To Console    ${stage}
 
 We execute the command "sh run | in hostname"
-    Log To Console "sh run | in hostname"
+    Log To Console    "sh run | in hostname"
 
 We see the hostname set correctly
     Log To Console    ${node}
