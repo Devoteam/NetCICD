@@ -8,7 +8,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  local_action: shell robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} hostname.robot 
   args:
     chdir: roles/box/files/tests/
   register: ios_hostname_output
@@ -31,7 +31,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  local_action: shell robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} hostname.robot
   args:
     chdir: roles/box/files/tests/
   register: iosxr_hostname_output
@@ -49,7 +49,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot hostname.robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} 
+  local_action: shell robot --variable node:{{ inventory_hostname }} --variable c_lang:{{ ansible_network_os }} --variable stage:{{ stage }} hostname.robot 
   args:
     chdir: roles/box/files/tests/
   register: nxos_hostname_output
