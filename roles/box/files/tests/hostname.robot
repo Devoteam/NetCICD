@@ -21,10 +21,12 @@ Hostname set correctly
 
 *** Keywords ***
 Both the node and the configuration language are defined
+    Log To Console    \n
     Log To Console    The node name is: ${node}
     Log To Console    The node CLI language is: ${c_lang}
     Log To Console    The stage is: ${stage}
-
+    Log To Console    \n
+    
 We execute the command "sh run | in hostname"
     Log To Console    "sh run | in hostname"
 
