@@ -1,9 +1,9 @@
 lab:
   description: LAB specifically created for NetCICD Box testing
   notes: ''
-  timestamp: 1619408255.058225
-  title: NetCICD Stage Box
-  version: 0.0.3
+  timestamp: 1624220979.6443126
+  title: stage-box.yaml
+  version: 0.0.4
 nodes:
   - id: n0
     label: NetCICD_agent
@@ -66,7 +66,7 @@ nodes:
 
       # Installing required packages
       apk update >>/home/cisco/install-log.txt
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker mousepad
+      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker mousepad
       addgroup cisco docker >>/home/cisco/install-log.txt
       rc-update add docker boot >>/home/cisco/install-log.txt
 
@@ -85,9 +85,6 @@ nodes:
       chmod +x cgroups-patch
       rc-update add cgroups-patch boot
 
-      echo "Installing ncclient." >>/home/cisco/install-log.txt
-      pip install ncclient
-
       # Preparing interface to lab
       echo "Installing additional eth interface" >>/home/cisco/install-log.txt
       echo "auto eth1" >> /etc/network/interfaces
@@ -97,7 +94,7 @@ nodes:
       /etc/init.d/networking restart
 
       ip r  >>/home/cisco/install-log.txt
-      
+
       # Preparing ssh
       echo -e """\
       \n\
@@ -128,7 +125,7 @@ nodes:
       ansible-galaxy collection install cisco.iosxr -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
       ansible-galaxy collection install cisco.nxos -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
       chown cisco:cisco -R /home/cisco/.ansible
-      
+
       # set vars
       if wget ${GIT_URL}; then
         echo "Setting git to Gitea." >>/home/cisco/install-log.txt
@@ -139,28 +136,6 @@ nodes:
       fi
 
       echo "export JAVA_HOME=/usr" >> /etc/profile
-
-      # Preparing Jenkins connection
-      cd /home/cisco
-      if wget http://jenkins:8080/jnlpJars/agent.jar; then
-        echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/cisco/install-log.txt
-        agent=1
-        chown cisco:cisco agent.jar
-        echo jenkins_secret > secret-file
-        chown cisco:cisco secret-file
-        sudo -H -u cisco java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/cisco" &
-      else
-        echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/cisco/install-log.txt
-      fi
-
-      # Installing .profile script to prepare for Ansible playbook run
-      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-box.runonce; then
-        echo "NetCICD Toolbox installed. Retrieved stage-box.profile from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
-      else
-        echo "NetCICD Toolbox not installed. Retrieving stage-box.profile from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-box.runonce
-      fi
-      mv /home/cisco/stage-box.runonce /home/cisco/.profile
 
       echo "Creating SSH keys." >>/home/cisco/install-log.txt
       mkdir /home/cisco/.ssh
@@ -568,6 +543,268 @@ nodes:
         slot: 3
         label: GigabitEthernet4
         type: physical
+  - id: n4
+    label: ext-conn-1
+    node_definition: external_connector
+    x: -650
+    y: -200
+    configuration: virbr0
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port
+        type: physical
+  - id: n6
+    label: NetCICD-Agent
+    node_definition: ubuntu
+    x: -650
+    y: -100
+    configuration: |-
+      #cloud-config
+      password: cisco
+      chpasswd: { expire: False }
+      hostname: NetCICD-agent
+
+      write_files:
+        - path: /etc/netplan/50-cloud-init.yaml
+          owner: root:root
+          permissions: '0644'
+          content: |-
+            network:
+              version: 2
+              renderer: networkd
+              ethernets:
+                ens2:
+                  dhcp4: yes
+                ens3:
+                  dhcp4: no
+                  addresses:
+                    - 10.255.1.2/24
+
+        - path: /etc/docker/deamon.json
+          owner: root:root
+          permissions: '0644'
+          content: |-
+            {
+                "insecure-registries" : ["nexus:8181"],
+                "registry-mirrors": ["http://nexus:8181"]
+            }
+
+        - path: /etc/rc.local
+          owner: root:root
+          permissions: '0755'
+          content: |-
+            #!/bin/sh
+            cd /home/ubuntu
+            if wget http://jenkins:8080/jnlpJars/agent.jar; then
+              echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
+              agent=1
+              chown ubuntu:ubuntu agent.jar
+              echo jenkins_secret > secret-file
+              chown ubuntu:ubuntu secret-file
+              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
+            else
+              echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
+            fi
+
+            if wget -q --method=HEAD http://gitea:3000/infraautomator/ ; then
+              echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
+              export GIT_URL=http://gitea:3000/infraautomator/ >> /etc/profile
+            else
+              echo "Setting git to Github." >>/home/ubuntu/install-log.txt
+              export GIT_URL=https://github.com/Devoteam/ >> /etc/profile
+            fi
+
+
+            # Setting Ubuntu repo to proxy host to enable curated packages
+            if $(wget http://nexus:8081); then
+              echo "NetCICD Toolbox installed. Setting deb repositories to Nexus." >>/home/ubuntu/install-log.txt
+              echo "To be done"  >>/home/ubuntu/install-log.txt
+            else
+              echo "NetCICD Toolbox not installed. Fetching repositories from Ubuntu." >>/home/ubuntu/install-log.txt
+            fi
+
+        - path: /etc/ssh/ssh_config
+          owner: root:root
+          permissions: '0755'
+          content: |-
+            Host *
+                PasswordAuthentication yes
+                StrictHostKeyChecking no
+                UserKnownHostsFile=/dev/null
+                HostkeyAlgorithms ssh-dss,ssh-rsa
+                KexAlgorithms +diffie-hellman-group14-sha1
+
+        - path: /etc/rsyslog.conf
+          owner: root:root
+          permissions: '0755'
+          content: |-
+            # rsyslogd.conf
+            #
+            # if you experience problems, check:
+            # http://www.rsyslog.com/troubleshoot
+
+            #### MODULES ####
+
+            module(load="imuxsock")    # local system logging support (e.g. via logger command)
+            #module(load="imklog")     # kernel logging support (previously done by rklogd)
+            module(load="immark")      # --MARK-- message support
+            module(load="imudp")       # UDP listener support
+
+
+            input(type="imudp" port="514")
+
+            # Log all kernel messages to the console.
+            # Logging much else clutters up the screen.
+            #kern.*                                                 action(type="omfile" file="/dev/console")
+
+            # Log anything (except mail) of level info or higher.
+            # Don't log private authentication messages!
+            *.info;mail.none;authpriv.none;cron.none                action(type="omfile" file="/var/log/messages")
+
+            # The authpriv file has restricted access.
+            authpriv.*                                              action(type="omfile" file="/var/log/secure")
+
+            # Log all the mail messages in one place.
+            mail.*                                                  action(type="omfile" file="/var/log/maillog")
+
+            # Log cron stuff
+            cron.*                                                  action(type="omfile" file="/var/log/cron")
+
+            # Everybody gets emergency messages
+            *.emerg                                                 action(type="omusrmsg" users="*")
+
+            # Save news errors of level crit and higher in a special file.
+            uucp,news.crit                                          action(type="omfile" file="/var/log/spooler")
+
+            # Save boot messages also to boot.log
+            local7.*                                                action(type="omfile" file="/var/log/boot.log")
+
+            # log every host in its own directory
+            if $fromhost-ip then /var/log/$fromhost-ip/messages
+
+            # Include all .conf files in /etc/rsyslog.d
+            $IncludeConfig /etc/rsyslog.d/*.conf
+            $template GRAYLOGRFC5424,"<%PRI%>%PROTOCOL-VERSION% %TIMESTAMP:::date-rfc3339% %HOSTNAME% %APP-NAME% %PROCID% %MSGID% %STRUCTURED-DATA% %msg%\n"
+            *.info;mail.none;authpriv.none;cron.none;*.* @@graylog:514;GRAYLOGRFC5424 # forward everything to remote server
+
+        - path: /home/ubuntu/.ansible.cfg
+          permissions: '0755'
+          content: |-
+            [defaults]
+            host_key_checking = False
+            nocows = True
+            interpreter_python = auto_silent
+            display_skipped_hosts = no
+
+            # Installs collections into /home/ubuntu/.ansible/collections/namespace/collection_name
+            collections_paths = /home/ubuntu/.ansible/collections
+
+            # Installs roles into /home/ubuntu/.ansible/roles/namespace.rolename
+            roles_path = /home/ubuntu/.ansible/roles
+
+        - path: /home/ubuntu/.profile
+          permissions: '0755'
+          content: |-
+            #!/bin/sh
+            export JAVA_HOME=/usr
+            if wget -q --method=HEAD http://gitea:3000/infraautomator/; then
+              echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
+              export GIT_URL=http://gitea:3000/infraautomator/
+            else
+              echo "Setting git to Github." >>/home/ubuntu/install-log.txt
+              export GIT_URL=https://github.com/Devoteam/
+            fi
+            if grep -q prepared NetCICD_state; then
+                echo "Lab already prepared"
+            else
+                git config --global user.name "netcicd-pipeline"
+                git config --global user.email "netcicd-pipeline@infraautomator.example.net"
+                git clone ${GIT_URL}NetCICD.git
+                cd NetCICD
+                git status
+                echo '====================== Preparing CML lab ======================'
+                cd roles/box/vars
+                ln -s stage-box.yml main.yml
+                cd ~/NetCICD
+                ansible-playbook -i vars/stage-box prepare.yml -e stage="box"
+            #    ansible-playbook -i vars/stage-box stage-box.yml -e stage="box"
+                echo "prepared" > ../NetCICD_state
+            fi
+            if ![ ls -al ~/.ssh -eq 0 ]; then
+              ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/ubuntu/install-log.txt
+            fi
+            echo '=================== Ready for modification ===================='
+            echo 'You can now:'
+            echo ' - create a branch with git branch <mybranch>'
+            echo ' - view which files you changed with git status'
+            echo ' - stage your changed files with git add'
+            echo ' - commit with git commit -m "<commit message>"'
+            echo ' - push the changes to the git server with:'
+            echo ''
+            echo ' git push --set-upstream origin <mybranch>'
+            echo ''
+            echo ' you may have to log in with your username/password'
+            echo ''
+            echo '========================= Have Fun! ==========================='
+
+      package_update: true
+      packages:
+        - rsyslog
+        - openjdk-8-jdk
+        - git
+        - libxml2-dev
+        - libxslt-dev
+        - sshpass
+        - python-is-python3
+        - python3-pip
+        - docker.io
+        - curl
+
+      runcmd:
+        - netplan apply
+        - chown ubuntu:ubuntu /home/ubuntu
+        - chown ubuntu:ubuntu /home/ubuntu/.ansible.cfg
+        - chown ubuntu:ubuntu /home/ubuntu/.profile
+        - echo " Add Gitea to /etc/hosts" >>/home/ubuntu/install-log.txt
+        - echo "172.16.11.3   gitea" >> /etc/hosts
+        - echo " Add Jenkins to /etc/hosts" >>/home/ubuntu/install-log.txt
+        - echo "172.16.11.8   jenkins" >> /etc/hosts
+        - echo " Add Nexus to /etc/hosts" >>/home/ubuntu/install-log.txt
+        - echo "172.16.11.9   nexus" >> /etc/hosts
+        - echo "Restarting rsyslog deamon" >>/home/ubuntu/install-log.txt
+        - rc-service rsyslog restart>>/home/ubuntu/install-log.txt
+        - echo "Set Docker repo to proxy host to enable curated packages" >>/home/ubuntu/install-log.txt
+        - echo "routes installed" >>/home/ubuntu/install-log.txt
+        - ip r  >>/home/ubuntu/install-log.txt
+        - ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/ubuntu/install-log.txt
+        - pip install --upgrade paramiko ncclient cffi cmlutils
+        - pip install --upgrade ansible
+        - ansible-galaxy collection install cisco.ios -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
+        - ansible-galaxy collection install cisco.iosxr -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
+        - ansible-galaxy collection install cisco.nxos -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
+        - chown -R ubuntu:ubuntu /home/ubuntu/.ansible
+        - pip install pyats[full]
+        - groupadd docker
+        - usermod -aG docker ubuntu
+
+      power_state:
+        mode: reboot
+        message: Rebooting to make all changes active
+        timeout: 30
+        condition: True
+    image_definition: ubuntu-20-04
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: enp0s2
+        type: physical
+      - id: i1
+        slot: 1
+        label: enp0s3
+        type: physical
 links:
   - id: l0
     i1: i0
@@ -598,4 +835,14 @@ links:
     i1: i1
     n1: n9
     i2: i5
+    n2: n5
+  - id: l5
+    i1: i0
+    n1: n4
+    i2: i0
+    n2: n6
+  - id: l6
+    i1: i1
+    n1: n6
+    i2: i4
     n2: n5
