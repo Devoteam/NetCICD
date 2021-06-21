@@ -17,7 +17,7 @@
 - name: Print testresults
   debug: 
     var: ios_hostname_output.stdout_lines
-  failed_when: "'Failed' in test_output.stdout"
+  failed_when: "'Failed' in ios_hostname_output.stdout"
   listen: ios_hostname
 
 ####################################################################
@@ -40,7 +40,7 @@
 - name: Print testresults
   debug: 
     var: iosxr_hostname_output.stdout_lines
-  failed_when: "'Failed' in test_output.stdout"
+  failed_when: "'Failed' in iosxr_hostname_output.stdout"
   listen: iosxr_hostname
 
 
@@ -58,7 +58,7 @@
 - name: Print testresults
   debug: 
     var: nxos_hostname_output.stdout_lines
-  failed_when: "'Failed' in test_output.stdout"
+  failed_when: "'Failed' in nxos_hostname_output.stdout"
   listen: nxos_hostname
 
 ...
