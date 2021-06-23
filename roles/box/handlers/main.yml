@@ -46,9 +46,4 @@
 #- name: Setup aaa
 #  import_tasks: aaa.yml
 #  when: ( stage is defined and stage == "0")
-
-- name: Aggregate test results
-  local_action: shell rebot --outputdir roles/box/files/tests/report --output box.xml *.xml
-  args:
-    chdir: roles/box/files/tests
 ...

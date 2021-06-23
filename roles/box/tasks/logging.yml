@@ -7,17 +7,15 @@
 ####################################################################
 
 - name: "IOS Configure log servers"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_log_servers.j2"
   with_items: "{{ logging }}"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - logging
+#    - ios_log_servers
 
 - name: "IOS Configure logging"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_logging.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
@@ -40,16 +38,16 @@
 ####################################################################
 
 - name: "NX-OS Configure log servers"
-  nxos_config:
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_log_servers.j2"
     save_when: modified
   with_items: "{{ logging }}"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - nxos_logging
+#    - nxos_log_servers
 
 - name: "NXOS Configure logging"
-  nxos_config:
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_logging.j2"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
@@ -60,17 +58,20 @@
 ####################################################################
 
 - name: "Netconf configure logging"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_logging.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_logging.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
+
+#  notify: 
+#    - iosxr_log_servers
 
 - name: "Netconf configure log servers"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_log_servers.j2"
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_log_servers.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
   with_items: "{{ logging }}"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nc_logging
+#    - iosxr_logging
     
 ####################################################################
 # Kick off handlers for unit testing                               #

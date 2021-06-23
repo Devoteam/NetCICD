@@ -7,21 +7,19 @@
 ####################################################################
 
 - name: "IOS Configure snmp"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_snmp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - ios_snmp
 
 - name: "IOS Configure snmp servers"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
   with_items: "{{ snmp }}"
 #  notify: 
-#    - snmp
+#    - ios_snmp_servers
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -40,41 +38,41 @@
 ####################################################################
 
 - name: "NXOS Configure snmp"
-  nxos_config:
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_snmp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
 #    - nxos_snmp
 
 - name: "NX-OS Configure snmp servers"
-  nxos_config:
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_snmp_servers.j2"
     save_when: modified
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
   with_items: "{{ snmp }}"
 #  notify: 
-#    - nxos_snmp
+#    - nxos_snmp_servers
 
 ####################################################################
 # Netconf specific commands                                        #
 ####################################################################
 
 - name: "Netconf configure snmp"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_snmp.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_snmp.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - nc_snmp
 
 - name: "Netconf configure snmp servers"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_snmp_servers.j2"
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_snmp_servers.j2') }}"
     #timeout required because IOSXR tries to configure IPv6 host
     timeout: 300
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
   with_items: "{{ snmp }}"
 #  notify: 
-#    - nc_snmp
+#    - nc_snmp_servers
     
 ####################################################################
 # Kick off handlers for unit testing                               #

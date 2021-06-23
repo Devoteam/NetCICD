@@ -34,4 +34,8 @@
 #- name: Setup console
 #  import_tasks: console.yml
 
+- name: Aggregate test results
+  local_action: shell rebot --output box.xml --log box_log.html --report box_report.html *.xml 
+  args:
+    chdir: roles/box/files/tests
 ...
