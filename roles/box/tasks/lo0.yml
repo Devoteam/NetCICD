@@ -16,7 +16,6 @@
 
 - name: "IOS No shut on global table loopback address"
   ios_config:
-    authorize: yes
     src: "{{ ansible_network_os }}_cli_lo0_no_shut.j2"
   when: ioslo.changed
 
