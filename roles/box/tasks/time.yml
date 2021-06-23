@@ -7,45 +7,40 @@
 ####################################################################
 
 - name: "IOS Set timezone"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_clock_timezone.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - ios_time
+#    - ios_timezone
 
 - name: "IOS Set summertime"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_clock_summertime.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - ios_time
+#    - ios_summertime
 
 - name: "IOS Configure ntp key"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_ntp_key.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - ios_time
+#    - ios_ntp_key
 
 - name: "IOS Configure ntp"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_ntp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - ios_time
+#    - ios_ntp
 
 - name: "IOS Configure ntp servers"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
   with_items: "{{ ntp }}"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - ios_time
+#    - ios_ntp_servers
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -64,85 +59,80 @@
 ####################################################################
 
 - name: "nxos Set timezone"
-  nxos_config:
-    authorize: yes
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_clock_timezone.j2"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - nxos_time
+#    - nxos_timezone
 
 - name: "nxos Set summertime"
-  nxos_config:
-    authorize: yes
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_clock_summertime.j2"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - nxos_time
+#    - nxos_summertime
 
 - name: "nxos Configure ntp key"
-  nxos_config:
-    authorize: yes
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_ntp_key.j2"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - nxos_time
+#    - nxos_ntp_key
 
 - name: "nxos Configure ntp"
-  nxos_config:
-    authorize: yes
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_ntp.j2"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - nxos_time
+#    - nxos_ntp
 
 - name: "nxos Configure ntp servers"
-  nxos_config:
-    authorize: yes
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
   with_items: "{{ ntp }}"
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify:
-#    - nxos_time
+#    - nxos_ntp_servers
 
 ####################################################################
 # Netconf specific commands                                        #
 ####################################################################
 
 - name: "NC Set clock and timezone"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_clock_timezone.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_clock_timezone.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nc_time
+#    - iosxr_time
 
 - name: "NC Set summertime"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_clock_summertime.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_clock_summertime.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nc_time
+#    - iosxr_summertime
 
 - name: "NC Configure ntp"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_ntp.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_ntp.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nc_time
+#    - iosxr_ntp
 
 - name: "NC Configure ntp key"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_ntp_key.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_ntp_key.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nc_time
+#    - iosxr_ntp_key
 
 - name: "NC Configure ntp servers"
-  netconf_config:
-    src: "{{ ansible_network_os }}_nc_ntp_servers.j2"
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_ntp_servers.j2') }}"
   with_items: "{{ ntp }}"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nc_time
+#    - iosxr_ntp_servers
     
 ####################################################################
 # Kick off handlers for unit testing                               #
