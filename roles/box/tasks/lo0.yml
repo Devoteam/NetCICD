@@ -51,7 +51,6 @@
 
 - name: "NXOS No shut on global table loopback address"
   cisco.nxos.nxos_config:
-    authorize: yes
     src: "{{ ansible_network_os }}_cli_lo0_no_shut.j2"
     save_when: modified
   when: nxoslo.changed
