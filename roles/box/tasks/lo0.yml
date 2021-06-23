@@ -7,13 +7,12 @@
 ####################################################################
 
 - name: "IOS Global table loopback address"
-  ios_config:
-    authorize: yes
+  cisco.ios.ios_config:
     src: "{{ ansible_network_os }}_cli_lo0.j2"
   register: ioslo
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - lo0
+#    - ios_lo0
 
 - name: "IOS No shut on global table loopback address"
   ios_config:
@@ -26,11 +25,11 @@
 ####################################################################
 
 - name: "IOSXE NC create global table loopback address in no-shut state"
-  netconf_config:
-    src: "oc_nc_loopback.j2"
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_loopback.j2') }}"
   when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nclo0
+#    - iosxe_lo0
 
 ####################################################################
 # IOSXR specific commands                                          #
@@ -43,16 +42,16 @@
 ####################################################################
 
 - name: "NX-OS Configure loopback"
-  nxos_config:
+  cisco.nxos.nxos_config:
     src: "{{ ansible_network_os }}_cli_lo0.j2"
     save_when: modified
   register: nxoslo
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
 #  notify: 
-#    - nxlo0
+#    - nxos_lo0
 
 - name: "NXOS No shut on global table loopback address"
-  nxos_config:
+  cisco.nxos.nxos_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_lo0_no_shut.j2"
     save_when: modified
@@ -64,11 +63,11 @@
 ####################################################################
 
 - name: "NC create global table loopback address in no-shut state"
-  netconf_config:
-    src: "iosxr_nc_loopback.j2"
-  when: (ansible_connection is defined and ansible_connection == "netconf")
+  ansible.netcommon.netconf_config:
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_loopback.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
-#    - nclo0
+#    - iosxr_lo0
     
 ####################################################################
 # Kick off handlers for unit testing                               #
