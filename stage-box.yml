@@ -19,7 +19,7 @@
   hosts: localhost
   tasks:
     - name: Aggregate report
-      local_action: shell rebot --output box.xml --log box_log.html --report box_report.html *.xml 
+      local_action: shell rebot --output box_unittest.xml --log box_unittest_log.html --report box_unittest_report.html --outputdir ../ *.xml 
       args:
-        chdir: roles/box/files/tests
+        chdir: roles/box/files/reports
 ...
