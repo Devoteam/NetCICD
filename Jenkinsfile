@@ -81,9 +81,9 @@ pipeline {
                     }
                     steps {
                         echo "Testing stage ${this_stage}" 
-                        //robot outputPath: '.', logFileName: '${this_stage}_log.html', outputFileName: '${this_stage}.xml', reportFileName: '${this_stage}_report.hml', passThreshold: 100, unstableThreshold: 75.0
-                        //archiveArtifacts artifacts: '**/*', fingerprint: true
-                        //junit 'build/reports/**/*.xml'
+                        robot outputPath: './roles/${this_stage}/files', logFileName: '${this_stage}_unittest_log.html', outputFileName: '${this_stage}_unittest.xml', reportFileName: '${this_stage}_unittest_report.html', passThreshold: 100, unstableThreshold: 75.0
+                        archiveArtifacts artifacts: '**/*', fingerprint: true
+                        junit 'build/reports/**/*.xml'
                     }
                 }
                 stage ('Cleaning up') {
@@ -202,11 +202,8 @@ def startsim(stage, build, commit, secret, token) {
                 def test = cs.every {element -> element == "BOOTED"}
                 echo "Simulation ready? " + "${test}"
                 if (test) {
-                    echo "Waiting 3 minutes for the simulation to stabilize"
-                    sleep 180
-                    return true
-                } else {
-                    return false
+                    echo "Waiting 3 minutes for the simulation to stabilize";
+                    sleep 180;
                 }
             }
         }
