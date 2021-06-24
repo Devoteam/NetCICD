@@ -204,6 +204,9 @@ def startsim(stage, build, commit, secret, token) {
                 if (test) {
                     echo "Waiting 3 minutes for the simulation to stabilize";
                     sleep 180;
+                    return true;
+                } else {
+                    return false;
                 }
             }
         }
