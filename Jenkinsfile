@@ -209,8 +209,8 @@ def startsim(stage, build, commit, secret, token) {
             }
         }
     }
-    echo "Waiting 5 minutes for the simulation to stabilize";
-    sleep 300;
+    echo "Waiting for the simulation to stabilize and the agent to come up";
+    // sleep 300;
     return "${lab}"
 }
 
