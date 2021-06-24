@@ -81,7 +81,7 @@ pipeline {
                     }
                     steps {
                         echo "Testing stage ${this_stage}" 
-                        robot outputPath: './roles/${this_stage}/files', logFileName: '${this_stage}_unittest_log.html', outputFileName: '${this_stage}_unittest.xml', reportFileName: '${this_stage}_unittest_report.html', passThreshold: 100, unstableThreshold: 75.0
+                        robot outputPath: 'roles/${this_stage}/files', logFileName: '${this_stage}_unittest_log.html', outputFileName: '${this_stage}_unittest.xml', reportFileName: '${this_stage}_unittest_report.html', passThreshold: 100, unstableThreshold: 75.0
                         archiveArtifacts artifacts: '**/*', fingerprint: true
                         junit 'build/reports/**/*.xml'
                     }
@@ -140,7 +140,7 @@ pipeline {
 
 def startagent(stage, build, commit) {
     echo "Creating Jenkins build node placeholder for stage: ${stage}, build: ${build} (commit:  ${commit})"
-    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -X POST -d \'json={"name":+"stage' + "${stage}" + "-" + "${commit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+stage-'  + "${stage}" + "-"+ "${commit}" + '",+"numExecutors":+"1",+"remoteFS":+"/home/cisco",+"labelString":+"slave' + "${stage}" + "-"+ "${commit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="stage-' + "${stage}" + "-" + "${commit}" + '"&type=hudson.slaves.DumbSlave"'
+    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -X POST -d \'json={"name":+"stage' + "${stage}" + "-" + "${commit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+stage-'  + "${stage}" + "-"+ "${commit}" + '",+"numExecutors":+"1",+"remoteFS":+"/home/ubuntu",+"labelString":+"slave' + "${stage}" + "-"+ "${commit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="stage-' + "${stage}" + "-" + "${commit}" + '"&type=hudson.slaves.DumbSlave"'
 
     echo 'Retrieving Agent Secret'
     script {
@@ -202,15 +202,15 @@ def startsim(stage, build, commit, secret, token) {
                 def test = cs.every {element -> element == "BOOTED"}
                 echo "Simulation ready? " + "${test}"
                 if (test) {
-                    echo "Waiting 3 minutes for the simulation to stabilize";
-                    sleep 180;
-                    return true;
+                    return true
                 } else {
-                    return false;
+                    return false
                 }
             }
         }
     }
+    echo "Waiting 5 minutes for the simulation to stabilize";
+    sleep 300;
     return "${lab}"
 }
 
