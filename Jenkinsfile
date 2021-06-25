@@ -80,8 +80,8 @@ pipeline {
                     }
                     steps {
                         echo "Testing stage ${this_stage}" 
-                        robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
-                        nexusArtifactUploader artifacts: [[artifactId: "${this_stage}_unittest", type: 'xml', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest.xml"],[artifactId: "${this_stage}_unittest_log", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_log.html"],[artifactId: "${this_stage}_unittest_report", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_report.html"]], nexusVersion: 'nexus3', protocol: 'http', nexusUrl: 'nexus:8081/repository/NetCICD-reports/', groupId :'', version: '', repository: 'NetCICD-reports',credentialsId: 'jenkins-nexus'                   
+                        robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log-.html", outputFileName: "${this_stage}_unittest-.xml", reportFileName: "${this_stage}_unittest_report-.html", passThreshold: 100, unstableThreshold: 75.0
+                        nexusArtifactUploader artifacts: [[artifactId: "${this_stage}_unittest", type: 'xml', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest-.xml"],[artifactId: "${this_stage}_unittest_log", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_log-.html"],[artifactId: "${this_stage}_unittest_report", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_report-.html"]], nexusVersion: 'nexus3', protocol: 'http', nexusUrl: 'nexus:8081/repository/NetCICD-reports/', groupId :'', version: '', repository: 'NetCICD-reports',credentialsId: 'jenkins-nexus'                   
                     }
                 }
                 stage ('Cleaning up') {
