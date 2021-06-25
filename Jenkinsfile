@@ -85,7 +85,7 @@ pipeline {
                         nexusArtifactUploader {
                             nexusVersion('nexus3')
                             protocol('http')
-                            nexusUrl('nexus:8081/repository/NetCICD-hosted/')
+                            nexusUrl('nexus:8081/repository/NetCICD-testreports/')
                             groupId('NetCICD_agent')
                             version('2.4')
                             repository('NetCICD-hosted')
