@@ -81,9 +81,34 @@ pipeline {
                     }
                     steps {
                         echo "Testing stage ${this_stage}" 
-                        robot outputPath: 'roles/${this_stage}/files', logFileName: '${this_stage}_unittest_log.html', outputFileName: '${this_stage}_unittest.xml', reportFileName: '${this_stage}_unittest_report.html', passThreshold: 100, unstableThreshold: 75.0
-                        archiveArtifacts artifacts: '**/*', fingerprint: true
-                        junit 'build/reports/**/*.xml'
+                        robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
+                        nexusArtifactUploader {
+                            nexusVersion('nexus3')
+                            protocol('http')
+                            nexusUrl('nexus:8081/repository/NetCICD-hosted/')
+                            groupId('NetCICD_agent')
+                            version('2.4')
+                            repository('NetCICD-hosted')
+                            credentialsId('jenkins-nexus')
+                            artifact {
+                                artifactId("${this_stage}_${gitCommit}_data")
+                                type('xml')
+                                classifier('testdata')
+                                file("${this_stage}_unittest.xml")
+                            }
+                            artifact {
+                                artifactId("${this_stage}_${gitCommit}_log")
+                                type('html')
+                                classifier('testlog')
+                                file("${this_stage}_unittest_log.html")
+                            }
+                            artifact {
+                                artifactId("${this_stage}_${gitCommit}_report")
+                                type('html')
+                                classifier('testreport')
+                                file("${this_stage}_unittest_report.html")
+                            }
+                        }
                     }
                 }
                 stage ('Cleaning up') {
