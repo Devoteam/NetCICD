@@ -70,8 +70,9 @@ pipeline {
                     steps {
                         echo "Prepare lab ${lab_id}"
                         ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
-                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
                     }
                 }
                 stage ('Testing') {
@@ -81,7 +82,7 @@ pipeline {
                     steps {
                         echo "Testing stage ${this_stage}" 
                         robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log-.html", outputFileName: "${this_stage}_unittest-.xml", reportFileName: "${this_stage}_unittest_report-.html", passThreshold: 100, unstableThreshold: 75.0
-                        nexusArtifactUploader artifacts: [[artifactId: "${this_stage}_unittest", type: 'xml', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest-.xml"],[artifactId: "${this_stage}_unittest_log", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_log-.html"],[artifactId: "${this_stage}_unittest_report", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_report-.html"]], nexusVersion: 'nexus3', protocol: 'http', nexusUrl: 'nexus:8081/repository/NetCICD-reports/', groupId :'', version: '', repository: 'NetCICD-reports',credentialsId: 'jenkins-nexus'                   
+                        nexusArtifactUploader artifacts: [[artifactId: "${gitCommit}_${this_stage}_unittest", type: 'xml', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest-.xml"],[artifactId: "${gitCommit}_${this_stage}_unittest", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_log-.html"],[artifactId: "${gitCommit}_${this_stage}_unittest", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_report-.html"]], nexusVersion: 'nexus3', protocol: 'http', nexusUrl: 'nexus:8081/repository/NetCICD-reports/', groupId :'', version: '', repository: 'NetCICD-reports',credentialsId: 'jenkins-nexus'                   
                     }
                 }
                 stage ('Cleaning up') {
@@ -138,6 +139,21 @@ pipeline {
         //                 checkout scm
         //                 echo "Set stage ${this_stage} variables"
         //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //             }
+        //         }
+        //         stage('Running playbook') {
+        //             agent {
+        //                 label agentName
+        //             }
+        //             steps {
+        //                 echo "Prepare lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Box playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
 
@@ -197,6 +213,24 @@ pipeline {
         //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
         //             }
         //         }
+        //         stage('Running playbook') {
+        //             agent {
+        //                 label agentName
+        //             }
+        //             steps {
+        //                 echo "Prepare lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Box playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Topology playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-topology.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+        //             }
+        //         }
 
         //         stage ('Cleaning up') {
         //             steps {
@@ -252,6 +286,27 @@ pipeline {
         //                 checkout scm
         //                 echo "Set stage ${this_stage} variables"
         //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //             }
+        //         }
+        //         stage('Running playbook') {
+        //             agent {
+        //                 label agentName
+        //             }
+        //             steps {
+        //                 echo "Prepare lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Box playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Topology playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-topology.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Reachability playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-reachability.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
 
@@ -311,6 +366,30 @@ pipeline {
         //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
         //             }
         //         }
+        //         stage('Running playbook') {
+        //             agent {
+        //                 label agentName
+        //             }
+        //             steps {
+        //                 echo "Prepare lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Box playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Topology playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-topology.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Reachability playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-reachability.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Forwarding playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-forwarding.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+        //             }
+        //         }
 
         //         stage ('Cleaning up') {
         //             steps {
@@ -366,6 +445,33 @@ pipeline {
         //                 checkout scm
         //                 echo "Set stage ${this_stage} variables"
         //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //             }
+        //         }
+        //         stage('Running playbook') {
+        //             agent {
+        //                 label agentName
+        //             }
+        //             steps {
+        //                 echo "Prepare lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Box playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Topology playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-topology.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Reachability playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-reachability.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Forwarding playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-forwarding.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage Platform playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-platform.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+        //                 echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
 
