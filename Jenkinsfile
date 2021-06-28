@@ -16,6 +16,7 @@ pipeline {
     environment {
         JENKINS_CRED = credentials('jenkins-jenkins')
         CML_CRED = credentials('CML-SIM-CRED')
+        NEXUS_CRED = credentials('jenkins-nexus')
     }
 
     stages {
@@ -81,8 +82,8 @@ pipeline {
                     }
                     steps {
                         echo "Testing stage ${this_stage}" 
-                        robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log-.html", outputFileName: "${this_stage}_unittest-.xml", reportFileName: "${this_stage}_unittest_report-.html", passThreshold: 100, unstableThreshold: 75.0
-                        nexusArtifactUploader artifacts: [[artifactId: "${gitCommit}_${this_stage}_unittest", type: 'xml', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest-.xml"],[artifactId: "${gitCommit}_${this_stage}_unittest", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_log-.html"],[artifactId: "${gitCommit}_${this_stage}_unittest", type: 'html', classifier: '', file: "roles/${this_stage}/files/${this_stage}_unittest_report-.html"]], nexusVersion: 'nexus3', protocol: 'http', nexusUrl: 'nexus:8081/repository/NetCICD-reports/', groupId :'', version: '', repository: 'NetCICD-reports',credentialsId: 'jenkins-nexus'                   
+                        robot outputPath: "roles/${this_stage}/files", logFileName: "${gitCommit}_${this_stage}_unittest_log.html", outputFileName: "${gitCommit}_${this_stage}_unittest.xml", reportFileName: "${gitCommit}_${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
+                        copyTestResultsToNexus("${this_stage}",${"NEXUS_CRED"})
                     }
                 }
                 stage ('Cleaning up') {
@@ -617,4 +618,49 @@ def stopsim(stage, build, commit, lab, token) {
     }
      
     return null
+}
+
+def copyTestResultsToNexus (stage, nxcred) {
+    @Library('uploader')
+    import org.codehaus.groovy.modules.http-builder:http-builder:0.7.2
+    import groovyx.net.http.HTTPBuilder
+
+    File sourceFolder = new File("roles/{stage}/files/reports")
+    assert sourceFolder.exists(): "${sourceFolder} does not exist"
+    def authInterceptor = new HttpRequestInterceptor() {
+        void process(HttpRequest httpRequest, HttpContext httpContext) {
+            httpRequest.addHeader('Authorization', 'Basic ' + "${nxcred}".bytes.encodeBase64().toString())
+        }
+    }
+
+    HTTPBuilder http = new HTTPBuilder('http://nexus:8081')
+    http.client.addRequestInterceptor(authInterceptor)
+    def resourcePath = "/repository/NetCICD-reports/"
+
+    def files = []
+    sourceFolder.eachFileRecurse(FILES) { file ->
+        if (file.name != '.DS_Store') {
+            files << file
+        }
+    }
+    println "Staging ${files.size()} files for publishing"
+
+    files.each { File file ->
+        println "pushing $file"
+        http.request(PUT) {
+            uri.path = "$resourcePath${relativeize(sourceFolder, file)}"
+            requestContentType = TEXT
+
+            body = file.text
+            response.success = { resp ->
+            println "POST response status: ${resp.statusLine}"
+            assert resp.statusLine.statusCode == 201
+            }
+        }
+    }
+
+    String relativeize(File parent, File child) {
+        return parent.toURI().relativize(child.toURI()).getPath()
+    }
+
 }
