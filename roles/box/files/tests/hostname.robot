@@ -2,7 +2,7 @@
 Documentation     Testing the correct setting of the hostname.
 
 *** Variables ***
-${HOSTNAME} PE3
+${C_HOSTNAME}       PE3
 
 *** Tasks ***
 Display calling arguments
@@ -29,7 +29,7 @@ Use PyATS to connect to the router
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
-    Log To Console    The configured node name is: ${NODE}
+    Log To Console    The configured node name is: ${C_HOSTNAME}
 
 Compare retrieved hostname to given node
-    Should Be Equal   ${HOSTNAME}    ${NODE}
+    Should Be Equal   ${C_HOSTNAME}    ${NODE}
