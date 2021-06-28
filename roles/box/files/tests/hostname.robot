@@ -1,6 +1,9 @@
 *** Settings ***
 Documentation     Testing the correct setting of the hostname.
 
+*** Variables ***
+${HOSTNAME} PE3
+
 *** Tasks ***
 Display calling arguments
     Show Arguments
@@ -27,7 +30,6 @@ Use PyATS to connect to the router
 
 Use PyATS to retrieve the hostname
     Log To Console    The configured node name is: ${NODE}
-    ${HOSTNAME} =  PE3
 
 Compare retrieved hostname to given node
     Should Be Equal   ${HOSTNAME}    ${NODE}
