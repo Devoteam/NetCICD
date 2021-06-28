@@ -26,7 +26,8 @@ Use PyATS to connect to the router
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
-    Log To Console    The configured node name is:   ${NODE}
+    Log To Console    The configured node name is: ${NODE}
+    ${HOSTNAME} =  PE3
 
 Compare retrieved hostname to given node
-    Should Be Equal   ${NODE}    ${NODE}
+    Should Be Equal   ${HOSTNAME}    ${NODE}
