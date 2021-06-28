@@ -621,8 +621,7 @@ def stopsim(stage, build, commit, lab, token) {
 }
 
 def copyTestResultsToNexus (stage, nxcred) {
-    @Library('uploader')
-    import org.codehaus.groovy.modules.http-builder:http-builder:0.7.2
+    @Grab('org.codehaus.groovy.modules.http-builder:http-builder:0.7.2')
     import groovyx.net.http.HTTPBuilder
 
     File sourceFolder = new File("roles/{stage}/files/reports")
