@@ -74,6 +74,13 @@ pipeline {
 
                         echo "Start stage ${this_stage} playbook on lab ${lab_id}"
                         ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+
+                        echo "Retrieving lab yaml file for PyATS"
+                        script {
+                            lab_yaml = sh(returnStdout: true, script: 'curl -k -X GET "${CML_URL}/api/v0/labs/${lab_id}/pyats_testbed" -H "accept: text/plain" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()
+                        }
+                        echo "${ lab_yaml }"
+                        writeFile file: "roles/tests/pyats_${this_stage}.yaml", text: "${ lab_yaml }"
                     }
                 }
                 stage ('Testing') {
