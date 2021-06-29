@@ -2,7 +2,7 @@
 Documentation     Testing the correct setting of the hostname.
 
 *** Variables ***
-${C_HOSTNAME}       PE3
+${C_HOSTNAME}       ${NODE}
 
 *** Tasks ***
 Display calling arguments
