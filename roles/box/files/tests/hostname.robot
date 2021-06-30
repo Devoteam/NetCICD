@@ -2,12 +2,14 @@
 Documentation     Testing the correct setting of the hostname.
 
 Library        ats.robot.pyATSRobot
+Library        genie.libs.robot.GenieRobot
+Library        unicon.robot.UniconRobot
 
 *** Variables ***
 ${C_HOSTNAME}       ${NODE}
-${testbed}          box-testbed.yaml
+${testbed}          pyats-box.yaml
 
-*** Tasks ***
+*** Test Cases ***
 Display calling arguments
     Show Arguments
 
@@ -29,12 +31,12 @@ Show arguments
     Log To Console    \n
 
 Use PyATS to connect to the router
-    #use testbed "${testbed}"
-    #connect to device ${NODE} as alias "cli"
+    use genie testbed "${testbed}"
+    connect to device ${NODE}
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
-    #run testcase pyats/hostname
+    ${C_HOSTNAME}=    parse "show hostname" on device ${NODE}
     Log To Console    The configured node name is: ${C_HOSTNAME}
 
 Compare retrieved hostname to given node

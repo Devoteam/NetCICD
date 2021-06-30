@@ -1,0 +1,175 @@
+testbed:
+  name: stage-box.yaml
+devices:
+  terminal_server:
+    os: linux
+    type: linux
+    credentials:
+      default:
+        username: change_me
+        password: change_me
+    connections:
+      cli:
+        protocol: ssh
+        ip: 192.168.32.161
+  NetCICD_agent:
+    os: linux
+    type: server
+    credentials:
+      default:
+        username: cisco
+        password: cisco
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: telnet
+        proxy: terminal_server
+        command: open /814a5f/n0/0
+  CE1,141, ios:
+    os: ios
+    type: router
+    series: iosv
+    credentials:
+      default:
+        username: cisco
+        password: cisco
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: telnet
+        proxy: terminal_server
+        command: open /814a5f/n2/0
+  PE1, 131, XRv:
+    os: iosxr
+    type: router
+    series: iosxrv
+    credentials:
+      default:
+        username: cisco
+        password: cisco
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: telnet
+        proxy: terminal_server
+        command: open /814a5f/n3/0
+  PE3, 133, nxos:
+    os: nxos
+    type: switch
+    series: nxosv
+    credentials:
+      default:
+        username: cisco
+        password: cisco
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: telnet
+        proxy: terminal_server
+        command: open /814a5f/n7/0
+  RR1, 121, xe:
+    os: iosxe
+    type: router
+    series: csr1000v
+    credentials:
+      default:
+        username: cisco
+        password: cisco
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: telnet
+        proxy: terminal_server
+        command: open /814a5f/n9/0
+  NetCICD-Agent:
+    os: linux
+    type: server
+    credentials:
+      default:
+        username: cisco
+        password: cisco
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: telnet
+        proxy: terminal_server
+        command: open /814a5f/n6/0
+topology:
+  NetCICD_agent:
+    interfaces:
+      eth0:
+        link: l0
+        type: ethernet
+      eth1:
+        link: l4
+        type: ethernet
+      eth2:
+        type: ethernet
+      eth3:
+        type: ethernet
+  CE1,141, ios:
+    interfaces:
+      Loopback0:
+        type: loopback
+      GigabitEthernet0/0:
+        link: l1
+        type: ethernet
+      GigabitEthernet0/1:
+        type: ethernet
+      GigabitEthernet0/2:
+        type: ethernet
+      GigabitEthernet0/3:
+        type: ethernet
+  PE1, 131, XRv:
+    interfaces:
+      Loopback0:
+        type: loopback
+      MgmtEth0/0/CPU0/0:
+        link: l3
+        type: ethernet
+      GigabitEthernet0/0/0/0:
+        type: ethernet
+      GigabitEthernet0/0/0/1:
+        type: ethernet
+      GigabitEthernet0/0/0/2:
+        type: ethernet
+  PE3, 133, nxos:
+    interfaces:
+      Loopback0:
+        type: loopback
+      mgmt0:
+        link: l2
+        type: ethernet
+      Ethernet2/1:
+        type: ethernet
+      Ethernet2/2:
+        type: ethernet
+      Ethernet2/3:
+        type: ethernet
+  RR1, 121, xe:
+    interfaces:
+      Loopback0:
+        type: loopback
+      GigabitEthernet1:
+        link: l7
+        type: ethernet
+      GigabitEthernet2:
+        type: ethernet
+      GigabitEthernet3:
+        type: ethernet
+      GigabitEthernet4:
+        type: ethernet
+  NetCICD-Agent:
+    interfaces:
+      enp0s2:
+        link: l5
+        type: ethernet
+      enp0s3:
+        link: l6
+        type: ethernet
