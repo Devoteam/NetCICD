@@ -1,8 +1,11 @@
 *** Settings ***
 Documentation     Testing the correct setting of the hostname.
 
+Library        ats.robot.pyATSRobot
+
 *** Variables ***
 ${C_HOSTNAME}       ${NODE}
+${testbed}          box-testbed.yaml
 
 *** Tasks ***
 Display calling arguments
@@ -26,9 +29,12 @@ Show arguments
     Log To Console    \n
 
 Use PyATS to connect to the router
+    #use testbed "${testbed}"
+    #connect to device ${NODE} as alias "cli"
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
+    #run testcase pyats/hostname
     Log To Console    The configured node name is: ${C_HOSTNAME}
 
 Compare retrieved hostname to given node
