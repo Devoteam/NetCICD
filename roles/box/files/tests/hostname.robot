@@ -31,7 +31,7 @@ Show arguments
     Log To Console    \n
 
 Use PyATS to connect to the router
-    use genie testbed "${testbed}"
+    use testbed "${testbed}"
     connect to device ${NODE}
     Log to Console    Connecting to ${NODE}
 
