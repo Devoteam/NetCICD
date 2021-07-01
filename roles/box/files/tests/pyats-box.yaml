@@ -1,5 +1,8 @@
 testbed:
   name: stage-box.yaml
+  credentials: 
+    username: netcicd-pipeline
+    password: C!sco123
 devices:
   CE1:
     os: ios
