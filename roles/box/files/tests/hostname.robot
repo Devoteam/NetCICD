@@ -1,9 +1,10 @@
 *** Settings ***
 Documentation     Testing the correct setting of the hostname.
 
-Library        pyats.robot.pyATSRobot
+Library        ats.robot.pyATSRobot
 Library        genie.libs.robot.GenieRobot
 Library        unicon.robot.UniconRobot
+Library        collections
 
 *** Variables ***
 ${C_HOSTNAME}       ${NODE}
@@ -20,7 +21,7 @@ Retrieve hostname
     Use PyATS to retrieve the hostname
 
 Validate hostname
-    Compare retrieved hostname to given node
+    Compare configured name to given name
 
 *** Keywords ***
 Show arguments
@@ -36,8 +37,10 @@ Use PyATS to connect to the router
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
-    ${C_HOSTNAME}=    parse    "show hostname"     on device     ${NODE}
-    Log To Console    The configured node name is:     ${C_HOSTNAME}
+    ${response}=      parse "show version" on device "${NODE}"
+    #Log To Console    ${response}
+    Set Suite Variable    ${host}    ${response['version']['hostname']}
+    Log To Console    The configured node name is: ${host}
 
-Compare retrieved hostname to given node
-    Should Be Equal   ${C_HOSTNAME}    ${NODE}
+Compare configured name to given name
+    Should Be Equal     ${host}    ${NODE}
