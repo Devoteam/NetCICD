@@ -2,6 +2,7 @@
 Documentation     Testing the correct setting of the hostname.
 
 Library        ats.robot.pyATSRobot
+Library        pyats.robot.pyATSRobot
 Library        genie.libs.robot.GenieRobot
 Library        unicon.robot.UniconRobot
 
@@ -32,7 +33,7 @@ Show arguments
 
 Use PyATS to connect to the router
     use testbed "${testbed}"
-    connect to devices ${NODE}
+    connect to device ${NODE}
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
