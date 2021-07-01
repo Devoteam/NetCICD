@@ -1,7 +1,6 @@
 *** Settings ***
 Documentation     Testing the correct setting of the hostname.
 
-Library        ats.robot.pyATSRobot
 Library        pyats.robot.pyATSRobot
 Library        genie.libs.robot.GenieRobot
 Library        unicon.robot.UniconRobot
