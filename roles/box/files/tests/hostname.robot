@@ -1,34 +1,46 @@
 *** Settings ***
 Documentation     Testing the correct setting of the hostname.
-...
-...               This test has a workflow similar to the keyword-driven
-...               examples. The difference is that the keywords use higher
-...               abstraction level and their arguments are embedded into
-...               the keyword names.
-...
-...               This kind of _gherkin_ syntax has been made popular by
-...               [http://cukes.info|Cucumber]. It works well especially when
-...               tests act as examples that need to be easily understood also
-...               by the business people.
 
+Library        ats.robot.pyATSRobot
+Library        genie.libs.robot.GenieRobot
+Library        unicon.robot.UniconRobot
+Library        collections
+
+*** Variables ***
+${C_HOSTNAME}       ${NODE}
+${testbed}          pyats-box.yaml
 
 *** Test Cases ***
+Display calling arguments
+    Show Arguments
 
-Hostname set correctly
-    Given both the node and the configuration language are defined
-    When we execute the command "sh run | in hostname"
-    Then we see the hostname set correctly
+Connect to node
+    Use PyATS to connect to the router
+
+Retrieve hostname
+    Use PyATS to retrieve the hostname
+
+Validate hostname
+    Compare configured name to given name
 
 *** Keywords ***
-Both the node and the configuration language are defined
+Show arguments
     Log To Console    \n
-    Log To Console    The node name is: ${node}
-    Log To Console    The node CLI language is: ${c_lang}
-    Log To Console    The stage is: ${stage}
+    Log To Console    The node name is: ${NODE}
+    Log To Console    The node CLI language is: ${LANG}
+    Log To Console    The stage is: ${STAGE}
     Log To Console    \n
-    
-We execute the command "sh run | in hostname"
-    Log To Console    "sh run | in hostname"
 
-We see the hostname set correctly
-    Log To Console    The node name is: ${node}
+Use PyATS to connect to the router
+    use testbed "${testbed}"
+    connect to device    ${NODE}
+    Log to Console    Connecting to ${NODE}
+
+Use PyATS to retrieve the hostname
+    ${response}=      parse "show version" on device "${NODE}"
+    #Log To Console    ${response}
+    Set Suite Variable    ${host}    ${response['version']['hostname']}
+    Log To Console    The configured node name is: ${host}
+
+Compare configured name to given name
+    Should Be Equal     ${host}    ${NODE}

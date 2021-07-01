@@ -17,4 +17,4 @@
       - key-hash ssh-rsa "{{ np_pubkey.stdout_lines[0] }}"
     parents:
       - ip ssh pubkey-chain
-      - username netcicd-pipeline
+      -   username netcicd-pipeline
