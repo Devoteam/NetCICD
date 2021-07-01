@@ -37,10 +37,25 @@ Use PyATS to connect to the router
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
-    ${response}=      parse "show version" on device "${NODE}"
-    #Log To Console    ${response}
-    Set Suite Variable    ${host}    ${response['version']['hostname']}
+    Run Keyword If    '${LANG}'=='ios'      Get IOS prameters
+    Run Keyword If    '${LANG}'=='iosxr'    Get IOSXR prameters
+    Run Keyword If    '${LANG}'=='nxos'     Get NXOS prameters
     Log To Console    The configured node name is: ${host}
 
 Compare configured name to given name
     Should Be Equal     ${host}    ${NODE}
+
+Get IOS prameters
+    ${response}=      parse "show version" on device "${NODE}"
+    Log To Console    ${response}
+    Set Suite Variable    ${host}    ${response['version']['hostname']}
+
+Get IOSXR prameters
+    ${response}=      parse "show version" on device "${NODE}"
+    Log To Console    ${response}
+    Set Suite Variable    ${host}    ${response['version']['hostname']}
+
+Get NXOS prameters
+    ${response}=      parse "show version" on device "${NODE}"
+    Log To Console    ${response}
+    Set Suite Variable    ${host}    ${response['platform']['hardware']['device_name']}
