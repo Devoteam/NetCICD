@@ -1,17 +1,14 @@
 testbed:
   name: stage-box.yaml
-  credentials: 
-    username: netcicd-pipeline
-    password: C!sco123
+  credentials:
+    default:
+      username: netcicd-pipeline
+      password: C!sco123
 devices:
   CE1:
     os: ios
     type: router
     series: iosv
-    credentials:
-      default:
-        username: cisco
-        password: cisco
     connections:
       defaults:
         class: unicon.Unicon
@@ -22,10 +19,6 @@ devices:
     os: iosxr
     type: router
     series: iosxrv
-    credentials:
-      default:
-        username: cisco
-        password: cisco
     connections:
       defaults:
         class: unicon.Unicon
@@ -36,10 +29,6 @@ devices:
     os: nxos
     type: switch
     series: nxosv
-    credentials:
-      default:
-        username: cisco
-        password: cisco
     connections:
       defaults:
         class: unicon.Unicon
@@ -50,10 +39,6 @@ devices:
     os: iosxe
     type: router
     series: csr1000v
-    credentials:
-      default:
-        username: cisco
-        password: cisco
     connections:
       defaults:
         class: unicon.Unicon
