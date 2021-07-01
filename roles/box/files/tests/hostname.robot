@@ -32,12 +32,12 @@ Show arguments
 
 Use PyATS to connect to the router
     use testbed "${testbed}"
-    connect to device ${NODE}
+    connect to device    ${NODE}
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
-    ${C_HOSTNAME}=    parse "show hostname" on device ${NODE}
-    Log To Console    The configured node name is: ${C_HOSTNAME}
+    ${C_HOSTNAME}=    parse    "show hostname"     on device     ${NODE}
+    Log To Console    The configured node name is:     ${C_HOSTNAME}
 
 Compare retrieved hostname to given node
     Should Be Equal   ${C_HOSTNAME}    ${NODE}
