@@ -14,6 +14,7 @@ devices:
         class: unicon.Unicon
       a:
         protocol: ssh
+        ip: 10.255.1.141
   PE1:
     os: iosxr
     type: router
@@ -27,6 +28,7 @@ devices:
         class: unicon.Unicon
       a:
         protocol: ssh
+        ip: 10.255.1.131
   PE3:
     os: nxos
     type: switch
@@ -40,6 +42,7 @@ devices:
         class: unicon.Unicon
       a:
         protocol: ssh
+        ip: 10.255.2.133
   RR1:
     os: iosxe
     type: router
@@ -53,6 +56,7 @@ devices:
         class: unicon.Unicon
       a:
         protocol: ssh
+        ip: 10.255.1.121
 topology:
   CE1:
     interfaces:
