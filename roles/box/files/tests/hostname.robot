@@ -32,7 +32,7 @@ Show arguments
 
 Use PyATS to connect to the router
     use testbed "${testbed}"
-    connect to device ${NODE}
+    connect to devices ${NODE}
     Log to Console    Connecting to ${NODE}
 
 Use PyATS to retrieve the hostname
