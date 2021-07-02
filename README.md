@@ -42,5 +42,9 @@ Installation should be done by installing the [NetCICD Developer Toolbox](https:
 ## Environment ##
 NetCICD is developed on a Ubuntu 20.04.1 Desktop laptop with CML Personal edition version 2.1. 
 
+CML can be stock install with refplat_p-20201110-fcs.iso. CML is not down/upward compatible for reference platforms ([see the CML documentation, question 7](https://developer.cisco.com/docs/modeling-labs/#!faq/installation-questions)) .
+
+I use one additional network for compatibility with the DevNet sandboxes: 10.10.20.0/24. The host running VMWare must have IPaddress 10.10.20.50, [see the VMWare documentation.](https://www.vmware.com/support/ws55/doc/ws_net_advanced_ipaddress.html)
+
 For more information see the wiki attached to this repo.
 
