@@ -597,13 +597,14 @@ nodes:
           content: |-
             #!/bin/sh
             cd /home/ubuntu
-            if wget http://jenkins:8080/jnlpJars/agent.jar; then
+            if $(curl --output /dev/null --silent --head --fail http://jenkins:8084/whoAmI); then
+              wget http://jenkins:8084/jnlpJars/agent.jar
               echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
               agent=1
               chown ubuntu:ubuntu agent.jar
               echo jenkins_secret > secret-file
               chown ubuntu:ubuntu secret-file
-              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins:8080/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
+              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
             else
               echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
             fi
@@ -785,7 +786,7 @@ nodes:
         - ansible-galaxy collection install cisco.iosxr -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.nxos -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
         - chown -R ubuntu:ubuntu /home/ubuntu/.ansible
-        - pip install pyats[full]
+        - pip install --upgrade pyats[full]
         - groupadd docker
         - usermod -aG docker ubuntu
         - chown ubuntu:ubuntu /home/ubuntu/install-log.txt
