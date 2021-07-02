@@ -34,7 +34,7 @@ devices:
         class: unicon.Unicon
       a:
         protocol: ssh
-        ip: 10.255.2.133
+        ip: 10.255.1.133
   RR1:
     os: iosxe
     type: router
