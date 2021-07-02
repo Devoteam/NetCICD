@@ -10,7 +10,7 @@ Library        collections
 ${C_HOSTNAME}       ${NODE}
 ${testbed}          pyats-box.yaml
 
-*** Test Cases ***
+*** Tasks ***
 Display calling arguments
     Show Arguments
 
