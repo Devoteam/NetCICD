@@ -520,6 +520,10 @@ nodes:
       aaa authorization exec default local
       ip domain name netcicd
       ip ssh version 2
+      !
+      line vty 0 4
+        transport input ssh
+      !
       crypto key gen rsa mod 2048
       !
     tags: []
@@ -789,10 +793,7 @@ nodes:
         - pip install --upgrade pyats[full]
         - groupadd docker
         - usermod -aG docker ubuntu
-        - chown ubuntu:ubuntu /home/ubuntu/install-log.txt
-        - chown ubuntu:ubuntu /home/ubuntu
-        - chown ubuntu:ubuntu /home/ubuntu/.ansible.cfg
-        - chown ubuntu:ubuntu /home/ubuntu/.profile
+        - chown ubuntu:ubuntu -R /home/ubuntu
 
       power_state:
         mode: reboot
