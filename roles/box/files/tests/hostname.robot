@@ -51,8 +51,7 @@ Get IOS prameters
     Set Suite Variable    ${host}    ${response['version']['hostname']}
 
 Get IOSXR prameters
-    ${response}=      parse "show version" on device "${NODE}"
-    Log To Console    ${response}
+    ${response}=   get running config hostname  device=${NODE}
     Set Suite Variable    ${host}    ${response['version']['hostname']}
 
 Get NXOS prameters
