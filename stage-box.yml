@@ -27,5 +27,5 @@
       local_action: shell rebot --output box_unittest.xml --log box_unittest_log.html --report box_unittest_report.html --outputdir ../ *.xml 
       args:
         chdir: roles/box/files/reports
-      when:  not box_result.stat.exists
+      when: box_result.stat.exists
 ...

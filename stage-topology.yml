@@ -27,5 +27,5 @@
       local_action: shell rebot --output topology_unittest.xml --log topology_unittest_log.html --report topology_unittest_report.html --outputdir ../ *.xml 
       args:
         chdir: roles/topology/files/reports
-      when:  not topology_result.stat.exists
+      when: topology_result.stat.exists
 ...
