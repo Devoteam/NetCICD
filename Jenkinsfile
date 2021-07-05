@@ -3,15 +3,13 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import groovy.json.JsonSlurper
-import groovy.transform.Field
 
-@Field
-def this_stage = "None"
-def gitCommit = ""
-def cml_token = "12345"
-def thisSecret = "verysecret"
-def lab_id = "1"
-def agentName = ""
+this_stage = "None"
+gitCommit = ""
+cml_token = "12345"
+thisSecret = "verysecret"
+lab_id = "1"
+agentName = ""
 
 pipeline {
     agent none
