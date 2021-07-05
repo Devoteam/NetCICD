@@ -95,29 +95,8 @@ pipeline {
             }
             stages {
                 stage ('Collecting variables') {
-                    steps {             
-                        script {
-                            this_stage = "topology"
-                            gitCommit = "${env.GIT_COMMIT[0..7]}"
-                        }
-                        // Collect CML token first
-                        script {
-                            cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
-                        }                       
-                        echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
-                        echo 'Creating Jenkins Agent'
-                        script {
-                            thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
-                        }
-                        echo 'Starting CML simulation'
-                        script {
-                            lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
-                        }
-                        echo "Lab ${lab_id} is operational."
-                        script {
-                            agentName = "stage-${this_stage}-${gitCommit}"
-                        }
-                        echo "The next stage agent is: ${agentName}"
+                    steps {
+                        varscollection("topology")
                     }
                 }
                 stage ('Preparing playbook') {
