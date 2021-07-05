@@ -8,7 +8,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --outputdir ../reports hostname.robot
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports hostname.robot
   args:
     chdir: roles/box/files/tests/
   register: ios_hostname_output
@@ -31,7 +31,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --outputdir ../reports hostname.robot
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports hostname.robot
   args:
     chdir: roles/box/files/tests/
   register: iosxr_hostname_output
@@ -49,7 +49,7 @@
 ####################################################################
 
 - name: Validate hostname
-  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --outputdir ../reports hostname.robot
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports hostname.robot
   args:
     chdir: roles/box/files/tests/
   register: nxos_hostname_output
