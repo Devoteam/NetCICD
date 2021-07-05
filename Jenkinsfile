@@ -495,12 +495,11 @@ def stopsim(stage, build, commit, lab, token) {
 
 def varscollection(stage) {
     script {
-        // Set global this_stage variable
+        // Set global variables
         this_stage = "${stage}"
-
         gitCommit = "${env.GIT_COMMIT[0..7]}"
     
-        // Collect CML token first
+        // Collect CML token
         cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
     }                       
     echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
