@@ -39,6 +39,7 @@ pipeline {
                     }
                     steps {
                         prepare("${this_stage}", "${gitCommit}")
+                        sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
                     }
                 }
                 stage('Running playbook') {
@@ -86,6 +87,8 @@ pipeline {
                     }
                     steps {
                         prepare("${this_stage}", "${gitCommit}")
+                        sh "cd roles/box/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                        sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
                     }
                 }
                 stage('Running playbook') {
@@ -136,6 +139,9 @@ pipeline {
         //             }
         //             steps {
         //                 prepare("${this_stage}", "${gitCommit}")
+        //                 sh "cd roles/box/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/topology/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
         //             }
         //         }
         //         stage('Running playbook') {
@@ -180,7 +186,7 @@ pipeline {
         //     stages {
         //         stage ('Collecting variables') {
         //             steps {
-        //                 varscollection("platform")
+        //                 varscollection("forwarding")
         //             }
         //         }
         //         stage ('Preparing playbook') {
@@ -189,6 +195,10 @@ pipeline {
         //             }
         //             steps {
         //                 prepare("${this_stage}", "${gitCommit}")
+        //                 sh "cd roles/box/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/topology/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/reachability/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
         //             }
         //         }
         //         stage('Running playbook') {
@@ -245,6 +255,11 @@ pipeline {
         //             }
         //             steps {
         //                 prepare("${this_stage}", "${gitCommit}")
+        //                 sh "cd roles/box/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/topology/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/reachability/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/forwarding/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
         //             }
         //         }
         //         stage('Running playbook') {
@@ -304,6 +319,12 @@ pipeline {
         //             }
         //             steps {
         //                 prepare("${this_stage}", "${gitCommit}")
+        //                 sh "cd roles/box/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/topology/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/reachability/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/forwarding/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/platform/vars/ && ln -s stage-${this_stage}.yml main.yml"
+        //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
         //             }
         //         }
         //         stage('Running playbook') {
@@ -522,7 +543,6 @@ def prepare(stage, commit) {
     echo "Switched to jenkins agent: stage-${stage}-${commit}"
     checkout scm
     echo "Set stage ${stage} variables"
-    sh "cd roles/${stage}/vars/ && ln -s stage-${stage}.yml main.yml"
 
     return null
 }
