@@ -2,11 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import groovy.json.JsonSlurper 
+import groovy.json.JsonSlurper
+import groovy.transform.Field
 
+@Field
 def this_stage = "None"
 def gitCommit = ""
 def cml_token = "12345"
+def thisSecret = "verysecret"
 def lab_id = "1"
 def agentName = ""
 
@@ -28,29 +31,8 @@ pipeline {
             }
             stages {
                 stage ('Collecting variables') {
-                    steps {             
-                        script {
-                            this_stage = "box"
-                            gitCommit = "${env.GIT_COMMIT[0..7]}"
-                        }
-                        // Collect CML token first
-                        script {
-                            cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
-                        }                       
-                        echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
-                        echo 'Creating Jenkins Agent'
-                        script {
-                            thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
-                        }
-                        echo 'Starting CML simulation'
-                        script {
-                            lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
-                        }
-                        echo "Lab ${lab_id} is operational."
-                        script {
-                            agentName = "stage-${this_stage}-${gitCommit}"
-                        }
-                        echo "The next stage agent is: ${agentName}"
+                    steps {
+                        varscollection("box")
                     }
                 }
                 stage ('Preparing playbook') {
@@ -201,29 +183,8 @@ pipeline {
         //     }
         //     stages {
         //         stage ('Collecting variables') {
-        //             steps {             
-        //                 script {
-        //                     this_stage = "reachability"
-        //                     gitCommit = "${env.GIT_COMMIT[0..7]}"
-        //                 }
-        //                 // Collect CML token first
-        //                 script {
-        //                     cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
-        //                 }                       
-        //                 echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
-        //                 echo 'Creating Jenkins Agent'
-        //                 script {
-        //                     thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
-        //                 }
-        //                 echo 'Starting CML simulation'
-        //                 script {
-        //                     lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
-        //                 }
-        //                 echo "Lab ${lab_id} is operational."
-        //                 script {
-        //                     agentName = "stage-${this_stage}-${gitCommit}"
-        //                 }
-        //                 echo "The next stage agent is: ${agentName}"
+        //             steps {
+        //                 varscollection("platform")
         //             }
         //         }
         //         stage ('Preparing playbook') {
@@ -255,30 +216,17 @@ pipeline {
         //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
-                // stage ('Testing') {
-                //     agent {
-                //         label agentName
-                //     }
-                //     steps {
-                //         echo "Testing stage ${this_stage}" 
-                //         robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
-                //         script { 
-                //             nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
-                //             nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
-                //             nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
-                //         }
-                //         echo "Test uploaded: ${nexus_test_upload}"
-                //         echo "Test log uploaded: ${nexus_log_upload}"
-                //         echo "Test report uploaded: ${nexus_report_upload}"
-                //     }
-                // }
+        //         stage ('Testing') {
+        //             agent {
+        //                 label agentName
+        //             }
+        //             steps {
+        //                 teststep ("user")
+        //             }
+        //         }
         //         stage ('Cleaning up') {
         //             steps {
-        //                 echo "Switched to jenkins agent: master"
-        //                 echo "Stopping CML simulation on lab ${lab_id}"
-        //                 stopsim("${this_stage}", "${env.BUILD_tag}", "${gitCommit}", "${lab_id}", "${cml_token}")   
-        //                 echo 'Removing Jenkins Agent'
-        //                 stopagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
+        //                 cleanup(${lab_id},${this_stage},${gitCommit},"${cml_token}")
         //                 deleteDir() /* clean up our workspace */
         //             }
         //         }
@@ -292,29 +240,8 @@ pipeline {
         //     }
         //     stages {
         //         stage ('Collecting variables') {
-        //             steps {             
-        //                 script {
-        //                     this_stage = "forwarding"
-        //                     gitCommit = "${env.GIT_COMMIT[0..7]}"
-        //                 }
-        //                 // Collect CML token first
-        //                 script {
-        //                     cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
-        //                 }                       
-        //                 echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
-        //                 echo 'Creating Jenkins Agent'
-        //                 script {
-        //                     thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
-        //                 }
-        //                 echo 'Starting CML simulation'
-        //                 script {
-        //                     lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
-        //                 }
-        //                 echo "Lab ${lab_id} is operational."
-        //                 script {
-        //                     agentName = "stage-${this_stage}-${gitCommit}"
-        //                 }
-        //                 echo "The next stage agent is: ${agentName}"
+        //             steps {
+        //                 varscollection("platform")
         //             }
         //         }
         //         stage ('Preparing playbook') {
@@ -349,25 +276,17 @@ pipeline {
         //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
-        //         steps {
-        //             echo "Testing stage ${this_stage}" 
-        //             robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
-        //             script { 
-        //                 nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
-        //                 nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
-        //                 nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+        //         stage ('Testing') {
+        //             agent {
+        //                 label agentName
         //             }
-        //             echo "Test uploaded: ${nexus_test_upload}"
-        //             echo "Test log uploaded: ${nexus_log_upload}"
-        //             echo "Test report uploaded: ${nexus_report_upload}"
+        //             steps {
+        //                 teststep ("user")
+        //             }
         //         }
         //         stage ('Cleaning up') {
         //             steps {
-        //                 echo "Switched to jenkins agent: master"
-        //                 echo "Stopping CML simulation on lab ${lab_id}"
-        //                 stopsim("${this_stage}", "${env.BUILD_tag}", "${gitCommit}", "${lab_id}", "${cml_token}")   
-        //                 echo 'Removing Jenkins Agent'
-        //                 stopagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
+        //                 cleanup(${lab_id},${this_stage},${gitCommit},"${cml_token}")
         //                 deleteDir() /* clean up our workspace */
         //             }
         //         }
@@ -381,29 +300,8 @@ pipeline {
         //     }
         //     stages {
         //         stage ('Collecting variables') {
-        //             steps {             
-        //                 script {
-        //                     this_stage = "platform"
-        //                     gitCommit = "${env.GIT_COMMIT[0..7]}"
-        //                 }
-        //                 // Collect CML token first
-        //                 script {
-        //                     cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
-        //                 }                       
-        //                 echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
-        //                 echo 'Creating Jenkins Agent'
-        //                 script {
-        //                     thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
-        //                 }
-        //                 echo 'Starting CML simulation'
-        //                 script {
-        //                     lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
-        //                 }
-        //                 echo "Lab ${lab_id} is operational."
-        //                 script {
-        //                     agentName = "stage-${this_stage}-${gitCommit}"
-        //                 }
-        //                 echo "The next stage agent is: ${agentName}"
+        //             steps {
+        //                 varscollection("platform")
         //             }
         //         }
         //         stage ('Preparing playbook') {
@@ -441,25 +339,17 @@ pipeline {
         //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
-        //         steps {
-        //             echo "Testing stage ${this_stage}" 
-        //             robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
-        //             script { 
-        //                 nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
-        //                 nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
-        //                 nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+        //         stage ('Testing') {
+        //             agent {
+        //                 label agentName
         //             }
-        //             echo "Test uploaded: ${nexus_test_upload}"
-        //             echo "Test log uploaded: ${nexus_log_upload}"
-        //             echo "Test report uploaded: ${nexus_report_upload}"
+        //             steps {
+        //                 teststep ("user")
+        //             }
         //         }
         //         stage ('Cleaning up') {
         //             steps {
-        //                 echo "Switched to jenkins agent: master"
-        //                 echo "Stopping CML simulation on lab ${lab_id}"
-        //                 stopsim("${this_stage}", "${env.BUILD_tag}", "${gitCommit}", "${lab_id}", "${cml_token}")   
-        //                 echo 'Removing Jenkins Agent'
-        //                 stopagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
+        //                 cleanup(${lab_id},${this_stage},${gitCommit},"${cml_token}")
         //                 deleteDir() /* clean up our workspace */
         //             }
         //         }
@@ -473,29 +363,8 @@ pipeline {
         //     }
         //     stages {
         //         stage ('Collecting variables') {
-        //             steps {             
-        //                 script {
-        //                     this_stage = "user"
-        //                     gitCommit = "${env.GIT_COMMIT[0..7]}"
-        //                 }
-        //                 // Collect CML token first
-        //                 script {
-        //                     cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
-        //                 }                       
-        //                 echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
-        //                 echo 'Creating Jenkins Agent'
-        //                 script {
-        //                     thisSecret = startagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
-        //                 }
-        //                 echo 'Starting CML simulation'
-        //                 script {
-        //                     lab_id = startsim("${this_stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
-        //                 }
-        //                 echo "Lab ${lab_id} is operational."
-        //                 script {
-        //                     agentName = "stage-${this_stage}-${gitCommit}"
-        //                 }
-        //                 echo "The next stage agent is: ${agentName}"
+        //             steps {
+        //                 varscollection("user")
         //             }
         //         }
         //         stage ('Preparing playbook') {
@@ -536,25 +405,17 @@ pipeline {
         //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
-        //         steps {
-        //             echo "Testing stage ${this_stage}" 
-        //             robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
-        //             script { 
-        //                 nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
-        //                 nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
-        //                 nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+        //         stage ('Testing') {
+        //             agent {
+        //                 label agentName
         //             }
-        //             echo "Test uploaded: ${nexus_test_upload}"
-        //             echo "Test log uploaded: ${nexus_log_upload}"
-        //             echo "Test report uploaded: ${nexus_report_upload}"
+        //             steps {
+        //                 teststep ("user")
+        //             }
         //         }
         //         stage ('Cleaning up') {
         //             steps {
-        //                 echo "Switched to jenkins agent: master"
-        //                 echo "Stopping CML simulation on lab ${lab_id}"
-        //                 stopsim("${this_stage}", "${env.BUILD_tag}", "${gitCommit}", "${lab_id}", "${cml_token}")   
-        //                 echo 'Removing Jenkins Agent'
-        //                 stopagent("${this_stage}","${env.BUILD_tag}","${gitCommit}")
+        //                 cleanup(${lab_id},${this_stage},${gitCommit},"${cml_token}")
         //                 deleteDir() /* clean up our workspace */
         //             }
         //         }
@@ -700,5 +561,56 @@ def stopsim(stage, build, commit, lab, token) {
         echo "Lab deleted"        
     }
      
+    return null
+}
+
+def varscollection(stage) {
+    script {
+        gitCommit = "${env.GIT_COMMIT[0..7]}"
+    }
+    // Collect CML token first
+    script {
+        cml_token = sh(returnStdout: true, script: 'curl -k -X POST "${CML_URL}/api/v0/authenticate" -H  "accept: application/json" -H  "Content-Type: application/json" -d \'{"username":"' + "${CML_CRED_USR}" + '","password":"' + "${CML_CRED_PSW}" + '"}\'').trim()                             
+    }                       
+    echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
+    echo 'Creating Jenkins Agent'
+    script {
+        thisSecret = startagent("${stage}","${env.BUILD_tag}","${gitCommit}")
+    }
+    echo 'Starting CML simulation'
+    script {
+        lab_id = startsim("${stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
+    }
+    echo "Lab ${lab_id} is operational."
+    script {
+        agentName = "stage-${this_stage}-${gitCommit}"
+    }
+    echo "The next stage agent is: ${agentName}"
+
+    return null
+}
+
+def teststep(stage) {
+    echo "Testing stage ${stage}" 
+    robot outputPath: "roles/${stage}/files", logFileName: "${stage}_unittest_log.html", outputFileName: "${stage}_unittest.xml", reportFileName: "${stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
+    script { 
+        nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
+        nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
+        nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+    }
+    echo "Test uploaded: ${nexus_test_upload}"
+    echo "Test log uploaded: ${nexus_log_upload}"
+    echo "Test report uploaded: ${nexus_report_upload}"
+
+    return null
+}
+
+def cleanup(lab, stage, commit, token) {
+    echo "Switched to jenkins agent: master"
+    echo "Stopping CML simulation on lab ${lab}"
+    stopsim("${stage}", "${env.BUILD_tag}", "${commit}", "${lab}", "${token}")   
+    echo 'Removing Jenkins Agent'
+    stopagent("${stage}","${env.BUILD_tag}","${commit}")
+
     return null
 }
