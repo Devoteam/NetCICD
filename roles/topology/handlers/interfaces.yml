@@ -8,15 +8,21 @@
     dest: "{{ item.remote }}"
   when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.bundle == 0)
   loop: "{{ interfaces }}"
-  listen: interfaces
+  listen: ios_interfaces
 
 - name: ping remote generic interfaces
   net_ping:
     dest: "{{ item.remote }}"
   when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.bundle == 0)
   loop: "{{ interfaces }}"
-  register: test_output
-  listen: interfaces
+  register: ios_interfaces_output
+  listen: ios_interfaces
+  
+- name: Print testresults
+  debug: 
+    var: ios_interfaces_output.stdout_lines
+  failed_when: "'Failed' in ios_interfaces_output.stdout"
+  listen: ios_interfaces
 
 ####################################################################
 # IOSXR specific commands                                          #
@@ -29,7 +35,13 @@
     commands: "ping {{ item.remote }}" 
   when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os == "iosxr" and item.bundle == 0)
   loop: "{{ interfaces }}"
-  register: test_output
-  listen: interfaces
+  register: iosxr_interfaces_output
+  listen: iosxr_interfaces
+  
+- name: Print testresults
+  debug: 
+    var: iosxr_interfaces_output.stdout_lines
+  failed_when: "'Failed' in iosxr_interfaces_output.stdout"
+  listen: iosxr_interfaces
 
 ...

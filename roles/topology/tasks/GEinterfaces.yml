@@ -15,7 +15,7 @@
   when: (ansible_network_os is defined and ansible_network_os == "ios" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - ios_interfaces
 
 - name: "Set IP addresses IOS GE interfaces"
   cisco.ios.ios_l3_interface:
@@ -25,7 +25,7 @@
   when: (ansible_network_os is defined and ansible_network_os == "ios" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - ios_interfaces
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -51,7 +51,7 @@
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - nxos_interfaces
 
 - name: "Set IP addresses NX-OS Interfaces"
   cisco.nxos.nxos_l3_interfaces:
@@ -62,7 +62,7 @@
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.bundle == 0 and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - nxos_interfaces
 
 ####################################################################
 # NETConf specific commands                                        #
@@ -73,7 +73,7 @@
     src: "{{ ansible_network_os }}_nc_GEinterface.j2"                                                    
   when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
 #  notify:                                                                                         
-#    - interfaces                                                                                    
+#    - iosxr_interfaces                                                                                    
                                                                         
 ####################################################################
 # Kick off handlers                                                #

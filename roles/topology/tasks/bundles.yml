@@ -23,7 +23,7 @@
     src: "iosxr_nc_bundle.j2"                                                    
   when: (ansible_connection is defined and ansible_connection == "netconf" and ansible_network_os == "iosxr" )                             
 #  notify:                                                                                         
-#    - bundles                                                                                    
+#    - iosxr_bundles                                                                                    
     
 ####################################################################
 # Kick off handlers                                                #

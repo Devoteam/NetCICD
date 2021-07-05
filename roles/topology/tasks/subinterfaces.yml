@@ -23,7 +23,7 @@
   when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
 #  notify: 
-#   - subinterfaces
+#   - ios_subinterfaces
 
 ####################################################################
 # IOS CLI specific commands                                        #
@@ -42,7 +42,7 @@
     src: "{{ ansible_network_os }}_nc_subinterface.j2"                                                    
   when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
 #  notify:                                                                                         
-#    - subinterfaces                                                                                    
+#    - ios_subinterfaces                                                                                    
 
 ####################################################################
 # NXOS CLI specific commands                                       #
@@ -64,7 +64,7 @@
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
 #  notify: 
-#   - subinterfaces
+#   - nxos_subinterfaces
 
                                                                         
 ####################################################################

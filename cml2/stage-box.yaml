@@ -24,21 +24,21 @@ nodes:
         echo " Gitea exists in /etc/hosts" >>/home/cisco/install-log.txt
       else
         echo " Add Gitea to /etc/hosts" >>/home/cisco/install-log.txt
-        sudo echo "172.16.11.3   gitea" >> /etc/hosts
+        sudo echo "gitea_ip   gitea" >> /etc/hosts
       fi
 
       if grep -q "jenkins" /etc/hosts; then
         echo " Jenkins exists in /etc/hosts" >>/home/cisco/install-log.txt
       else
         echo " Add Jenkins to /etc/hosts" >>/home/cisco/install-log.txt
-        sudo echo "172.16.11.8   jenkins" >> /etc/hosts
+        sudo echo "jenkins_ip   jenkins" >> /etc/hosts
       fi
 
       if grep -q "nexus" /etc/hosts; then
         echo " Nexus exists in /etc/hosts" >>/home/cisco/install-log.txt
       else
         echo " Add Nexus to /etc/hosts" >>/home/cisco/install-log.txt
-        sudo echo "172.16.11.9   nexus" >> /etc/hosts
+        sudo echo "nexus_ip   nexus" >> /etc/hosts
       fi
 
       # Setting Alpine repo to proxy host to enable curated packages
@@ -773,11 +773,11 @@ nodes:
       runcmd:
         - netplan apply
         - echo " Add Gitea to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "172.16.11.3   gitea" >> /etc/hosts
+        - echo "gitea_ip   gitea" >> /etc/hosts
         - echo " Add Jenkins to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "172.16.11.8   jenkins" >> /etc/hosts
+        - echo "jenkins_ip   jenkins" >> /etc/hosts
         - echo " Add Nexus to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "172.16.11.9   nexus" >> /etc/hosts
+        - echo "nexus_ip   nexus" >> /etc/hosts
         - echo "Restarting rsyslog deamon" >>/home/ubuntu/install-log.txt
         - rc-service rsyslog restart>>/home/ubuntu/install-log.txt
         - echo "Set Docker repo to proxy host to enable curated packages" >>/home/ubuntu/install-log.txt
