@@ -7,18 +7,22 @@
 ####################################################################
 
 - name: "Configure subinterfaces"
-  cisco.ios.ios_interface:
-    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
-    description: "{{ item.description }}"
+  cisco.ios.ios_interfaces:
+    config:
+      - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+        description: "{{ item.description }}"
+        enabled: "{{ item.shutdown }}"
     state: present
-    enabled: "{{ item.shutdown }}"
   when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
+#  notify: 
+#   - ios_subinterfaces
 
 - name: "Set IP addresses on IOS subinterfaces"
-  cisco.ios.ios_l3_interface:
-    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
-    ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
+  cisco.ios.ios_l3_interfaces:
+    config:
+      - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+        ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
   when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
@@ -34,38 +38,42 @@
 ####################################################################
 
 ####################################################################
-# NETConf specific commands                                        #
-####################################################################
-                                                                                                                                            
-- name: "Netconf configure subinterfaces for IOSXR"                                                        
-  ansible.netcommon.netconf_config:                                                                                     
-    src: "{{ ansible_network_os }}_nc_subinterface.j2"                                                    
-  when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
-#  notify:                                                                                         
-#    - ios_subinterfaces                                                                                    
-
-####################################################################
 # NXOS CLI specific commands                                       #
 ####################################################################
 
 - name: "Configure NX-OS subinterfaces"
   cisco.nxos.nxos_interface:
-    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
-    description: "item.description"
-    admin_state: up
-  when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
-  loop: "{{ subinterfaces }}"
-
-- name: "Set IP addresses on NX-OS subinterfaces"
-  cisco.nxos.nxos_l3_interface:
-    name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
-    ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
+    config:
+      - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+        description: "item.description"
+        enabled: "{{ item.shutdown }}"
     state: present
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
 #  notify: 
 #   - nxos_subinterfaces
 
+- name: "Set IP addresses on NX-OS subinterfaces"
+  cisco.nxos.nxos_l3_interface:
+    config:
+      - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
+        ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
+    state: present
+  when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
+  loop: "{{ subinterfaces }}"
+#  notify: 
+#   - nxos_subinterfaces
+
+####################################################################
+# NETConf specific commands                                        #
+####################################################################
+                                                                                                                                            
+- name: "Netconf configure subinterfaces for IOSXR"                                                        
+  ansible.netcommon.netconf_config:                                                                                                                               
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_subinterface.j2') }}" 
+  when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
+#  notify:                                                                                         
+#    - iosxr_subinterfaces                                                                                    
                                                                         
 ####################################################################
 # Kick off handlers                                                #
