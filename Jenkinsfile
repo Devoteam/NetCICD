@@ -164,17 +164,22 @@ pipeline {
                         ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
                     }
                 }
-                steps {
-                    echo "Testing stage ${this_stage}" 
-                    robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
-                    script { 
-                        nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
-                        nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
-                        nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+                stage ('Testing') {
+                    agent {
+                        label agentName
                     }
-                    echo "Test uploaded: ${nexus_test_upload}"
-                    echo "Test log uploaded: ${nexus_log_upload}"
-                    echo "Test report uploaded: ${nexus_report_upload}"
+                    steps {
+                        echo "Testing stage ${this_stage}" 
+                        robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
+                        script { 
+                            nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
+                            nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
+                            nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+                        }
+                        echo "Test uploaded: ${nexus_test_upload}"
+                        echo "Test log uploaded: ${nexus_log_upload}"
+                        echo "Test report uploaded: ${nexus_report_upload}"
+                    }
                 }
                 stage ('Cleaning up') {
                     steps {
@@ -250,18 +255,23 @@ pipeline {
         //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
         //             }
         //         }
-        //         steps {
-        //             echo "Testing stage ${this_stage}" 
-        //             robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
-        //             script { 
-        //                 nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
-        //                 nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
-        //                 nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
-        //             }
-        //             echo "Test uploaded: ${nexus_test_upload}"
-        //             echo "Test log uploaded: ${nexus_log_upload}"
-        //             echo "Test report uploaded: ${nexus_report_upload}"
-        //         }
+                // stage ('Testing') {
+                //     agent {
+                //         label agentName
+                //     }
+                //     steps {
+                //         echo "Testing stage ${this_stage}" 
+                //         robot outputPath: "roles/${this_stage}/files", logFileName: "${this_stage}_unittest_log.html", outputFileName: "${this_stage}_unittest.xml", reportFileName: "${this_stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
+                //         script { 
+                //             nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
+                //             nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
+                //             nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${this_stage}" + '/files/' + "${this_stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+                //         }
+                //         echo "Test uploaded: ${nexus_test_upload}"
+                //         echo "Test log uploaded: ${nexus_log_upload}"
+                //         echo "Test report uploaded: ${nexus_report_upload}"
+                //     }
+                // }
         //         stage ('Cleaning up') {
         //             steps {
         //                 echo "Switched to jenkins agent: master"
