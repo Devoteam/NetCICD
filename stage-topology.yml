@@ -19,13 +19,18 @@
   hosts: localhost
   tasks:
     - name: Check if tests are done
-      stat:
-        path: roles/topology/files/reports/*.xml
-      register: topology_result
+      find:
+        path: roles/topology/files/reports
+        pattern: "*.xml"
+      register: topology_test_result
 
-    - name: Aggregate report
+    - debug: 
+        msg: "No reports found"
+      when: topology_test_result.matched == 0
+
+    - name: "Publishing reports" 
       local_action: shell rebot --output topology_unittest.xml --log topology_unittest_log.html --report topology_unittest_report.html --outputdir ../ *.xml 
       args:
         chdir: roles/topology/files/reports
-      when: topology_result.stat.exists
+      when: topology_test_result.matched != 0 
 ...
