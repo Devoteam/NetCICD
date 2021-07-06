@@ -549,7 +549,7 @@ def prepare(stage, commit) {
 
 def teststep(stage) {
     echo "Testing stage ${stage}" 
-    if (fileExists("${stage}_unittest.xml")) {
+    if (fileExists("roles/${stage}/files/${stage}_unittest.xml")) {
         robot outputPath: "roles/${stage}/files", logFileName: "${stage}_unittest_log.html", outputFileName: "${stage}_unittest.xml", reportFileName: "${stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
         script { 
             nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
