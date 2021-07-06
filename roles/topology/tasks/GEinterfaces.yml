@@ -7,25 +7,28 @@
 ####################################################################
 
 - name: "Configure IOS GE interfaces"
-  cisco.ios.ios_interface:
-    name: "{{ item.type }}{{ item.id }}"
-    description: "{{ item.description }}"
-    state: present
-    enabled: "{{ item.no_shut }}"
+  cisco.ios.ios_interfaces:
+    config:
+      - name: "{{ item.type }}{{ item.id }}"
+        description: "{{ item.description }}"
+        enabled: "{{ item.no_shut }}"
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "ios" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - ios_GeInterfaces
 
 - name: "Set IP addresses IOS GE interfaces"
-  cisco.ios.ios_l3_interface:
-    name: "{{ item.type }}{{ item.id }}"
-    ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
-    state: present
+  cisco.ios.ios_l3_interfaces:
+    config:
+      - name: "{{ item.type }}{{ item.id }}"
+        ipv4: 
+        - address: "{{ item.ip_address }}/{{ item.prefixlength }}"
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "ios" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - ios_GeInterfaces
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -44,25 +47,28 @@
 ####################################################################
 
 - name: "Configure NX-OS interfaces"
-  cisco.nxos.nxos_interface:
-    name: "{{ item.type }}{{ item.id }}"
-    description: "item.description"
-    admin_state: up
+  cisco.nxos.nxos_interfaces:
+    config:
+      - name: "{{ item.type }}{{ item.id }}"
+        description: "item.description"
+        enabled: "{{ item.no_shut }}"
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - nxos_GeInterfaces
 
 - name: "Set IP addresses NX-OS Interfaces"
   cisco.nxos.nxos_l3_interfaces:
     config:
       - name: "{{ item.type }}{{ item.id }}"
-        ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
-    state: present
+        ipv4:
+        - address: "{{ item.ip_address }}/{{ item.prefixlength }}"
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.bundle == 0 and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - interfaces
+#   - nxos_GeInterfaces
 
 ####################################################################
 # NETConf specific commands                                        #
@@ -70,10 +76,10 @@
                                                                                                                                             
 - name: "Netconf configure interfaces for IOSXR"                                                        
   ansible.netcommon.netconf_config:                                                                                     
-    src: "{{ ansible_network_os }}_nc_GEinterface.j2"                                                    
+    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_GEinterface.j2') }}"                                                    
   when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
 #  notify:                                                                                         
-#    - interfaces                                                                                    
+#    - iosxr_GeInterfaces                                                                                    
                                                                         
 ####################################################################
 # Kick off handlers                                                #

@@ -3,33 +3,16 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-- name: Prepare ping subinterfaces - prevent initial timeout failure
-  net_ping:
-    dest: "{{ item.remote }}"
-  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
-  loop: "{{ subinterfaces }}"
-  listen: subinterfaces
-
-- name: ping remote generic subinterfaces
-  net_ping:
-    dest: "{{ item.remote }}"
-  when: (item.node == inventory_hostname and ansible_network_os != "iosxr" and item.bundle == 0)
-  loop: "{{ subinterfaces }}"
+- name: Validate subinterfaces
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports subinterfaces.robot
+  args:
+    chdir: roles/topology/files/tests/
   register: test_output
-  listen: subinterfaces
-
-####################################################################
-# IOSXR specific commands                                          #
-####################################################################
-
-- name: ping remote IOSXR subinterfaces
-  vars:
-    ansible_connection: network_cli
-  iosxr_command:
-    commands: "ping {{ item.remote }}" 
-  when: (item.node == inventory_hostname and ansible_network_os == "iosxr" and item.bundle == 0)
-  loop: "{{ subinterfaces }}"
-  register: test_output
-  listen: subinterfaces
-
+  listen: iosxr_subinterfaces
+  
+- name: Print testresults
+  debug: 
+    var: test_output.stdout_lines
+  failed_when: "'Assertion Failed' in test_output.stdout"
+  listen: iosxr_subinterfaces
 ...

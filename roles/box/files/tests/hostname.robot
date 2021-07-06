@@ -3,6 +3,7 @@ Documentation     Testing the correct setting of the hostname.
 
 Library        ats.robot.pyATSRobot
 Library        genie.libs.robot.GenieRobot
+Library        genie.libs.robot.GenieRobotApis
 Library        unicon.robot.UniconRobot
 Library        collections
 
@@ -51,9 +52,8 @@ Get IOS prameters
     Set Suite Variable    ${host}    ${response['version']['hostname']}
 
 Get IOSXR prameters
-    ${response}=      parse "show version" on device "${NODE}"
-    Log To Console    ${response}
-    Set Suite Variable    ${host}    ${response['version']['hostname']}
+    ${response}=   get running config hostname  device=${NODE}
+    Set Suite Variable    ${host}    ${response}
 
 Get NXOS prameters
     ${response}=      parse "show version" on device "${NODE}"

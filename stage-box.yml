@@ -15,11 +15,23 @@
   roles:
     - box
 
+
 - name: Aggregate test results
   hosts: localhost
   tasks:
-    - name: Aggregate report
+    - name: Check if tests are done
+      find:
+        path: roles/box/files/reports
+        pattern: "*.xml"
+      register: box_test_result
+
+    - debug: 
+        msg: "No reports found"
+      when: box_test_result.matched == 0
+
+    - name: "Publishing reports" 
       local_action: shell rebot --output box_unittest.xml --log box_unittest_log.html --report box_unittest_report.html --outputdir ../ *.xml 
       args:
         chdir: roles/box/files/reports
+      when: box_test_result.matched != 0 
 ...

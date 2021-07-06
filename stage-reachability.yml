@@ -1,0 +1,36 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+- name: Start of CI/CD pipeline
+  hosts: netcicd
+  gather_facts: false
+  collections:
+    - cisco.ios
+    - cisco.iosxr
+    - cisco.nxos
+    - ansible.netcommon
+          
+  roles:
+    - reachability
+
+- name: Aggregate test results
+  hosts: localhost
+  tasks:
+    - name: Check if tests are done
+      find:
+        path: roles/reachability/files/reports
+        pattern: "*.xml"
+      register: reachability_test_result
+
+    - debug: 
+        msg: "No reports found"
+      when: reachability_test_result.matched == 0
+
+    - name: "Publishing reports" 
+      local_action: shell rebot --output reachability_unittest.xml --log reachability_unittest_log.html --report reachability_unittest_report.html --outputdir ../ *.xml 
+      args:
+        chdir: roles/reachability/files/reports
+      when: reachability_test_result.matched != 0 
+...

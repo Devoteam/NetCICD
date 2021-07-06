@@ -4,15 +4,15 @@
 
 ---
 - name: Validate bundle
-  local_action: shell behave bundle.feature -D node={{ inventory_hostname }} -D c_lang={{ ansible_network_os }} -D stage={{ stage }} --no-capture -c
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports bundles.robot
   args:
-    chdir: roles/topology/files/features/
+    chdir: roles/topology/files/tests/
   register: test_output
-  listen: bundle
+  listen: iosxr_bundles
   
 - name: Print testresults
   debug: 
     var: test_output.stdout_lines
   failed_when: "'Assertion Failed' in test_output.stdout"
-  listen: bundle
+  listen: iosxr_bundles
 ...
