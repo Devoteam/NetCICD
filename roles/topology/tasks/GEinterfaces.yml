@@ -16,18 +16,19 @@
   when: (ansible_network_os is defined and ansible_network_os == "ios" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - ios_interfaces
+#   - ios_GeInterfaces
 
 - name: "Set IP addresses IOS GE interfaces"
   cisco.ios.ios_l3_interfaces:
     config:
       - name: "{{ item.type }}{{ item.id }}"
-        ipv4: address: "{{ item.ip_address }}/{{ item.prefixlength }}"
+        ipv4: 
+        - address: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
   when: (ansible_network_os is defined and ansible_network_os == "ios" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - ios_interfaces
+#   - ios_GeInterfaces
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -55,18 +56,19 @@
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - nxos_interfaces
+#   - nxos_GeInterfaces
 
 - name: "Set IP addresses NX-OS Interfaces"
   cisco.nxos.nxos_l3_interfaces:
     config:
       - name: "{{ item.type }}{{ item.id }}"
-        ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
+        ipv4:
+        - address: "{{ item.ip_address }}/{{ item.prefixlength }}"
     state: present
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.bundle == 0 and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
-#   - nxos_interfaces
+#   - nxos_GeInterfaces
 
 ####################################################################
 # NETConf specific commands                                        #
@@ -77,7 +79,7 @@
     content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_GEinterface.j2') }}"                                                    
   when: (ansible_connection is defined and ansible_network_os == "iosxr" and ansible_connection == "netconf")                             
 #  notify:                                                                                         
-#    - iosxr_interfaces                                                                                    
+#    - iosxr_GeInterfaces                                                                                    
                                                                         
 ####################################################################
 # Kick off handlers                                                #

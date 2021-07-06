@@ -3,45 +3,35 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-- name: Prepare ping interfaces - prevent initial timeout failure
-  net_ping:
-    dest: "{{ item.remote }}"
-  when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.bundle == 0)
-  loop: "{{ interfaces }}"
-  listen: ios_interfaces
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
 
-- name: ping remote generic interfaces
-  net_ping:
-    dest: "{{ item.remote }}"
-  when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.bundle == 0)
-  loop: "{{ interfaces }}"
-  register: ios_interfaces_output
-  listen: ios_interfaces
+- name: Validate GE interfaces
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports GeInterfacces.robot
+  args:
+    chdir: roles/topology/files/tests/
+  register: test_output
+  listen: ios_GeInterfaces
   
 - name: Print testresults
   debug: 
-    var: ios_interfaces_output.stdout_lines
-  failed_when: "'Failed' in ios_interfaces_output.stdout"
-  listen: ios_interfaces
+    var: test_output.stdout_lines
+  failed_when: "'Assertion Failed' in test_output.stdout"
+  listen: ios_GeInterfaces
+
+####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
 
 ####################################################################
 # IOSXR specific commands                                          #
 ####################################################################
 
-- name: ping remote IOSXR interfaces
-  vars:
-    ansible_connection: network_cli
-  iosxr_command:
-    commands: "ping {{ item.remote }}" 
-  when: (item.node == inventory_hostname and ansible_network_os != "nxos" and ansible_network_os == "iosxr" and item.bundle == 0)
-  loop: "{{ interfaces }}"
-  register: iosxr_interfaces_output
-  listen: iosxr_interfaces
-  
-- name: Print testresults
-  debug: 
-    var: iosxr_interfaces_output.stdout_lines
-  failed_when: "'Failed' in iosxr_interfaces_output.stdout"
-  listen: iosxr_interfaces
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
 
 ...

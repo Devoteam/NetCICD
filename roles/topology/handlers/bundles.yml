@@ -4,7 +4,7 @@
 
 ---
 - name: Validate bundle
-  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --outputdir ../reports bundles.robot
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports bundles.robot
   args:
     chdir: roles/topology/files/tests/
   register: test_output

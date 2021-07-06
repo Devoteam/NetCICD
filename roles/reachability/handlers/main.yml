@@ -3,10 +3,9 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-#- name: Setup IS-IS keychain
-#  import_tasks: isis_keychain.yml
+- name: Setup IS-IS keychain
+  import_tasks: isis_keychain.yml
     
 - name: Setup Integrated IS-IS
   import_tasks: isis.yml
-  listen: reachability_isis
 ...
