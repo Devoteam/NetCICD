@@ -23,7 +23,7 @@
     config:
       - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
         ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
-    state: present
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os != "nxos" and ansible_network_os != "iosxr" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
 #  notify: 
@@ -47,7 +47,7 @@
       - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
         description: "item.description"
         enabled: "{{ item.shutdown }}"
-    state: present
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
 #  notify: 
@@ -58,7 +58,7 @@
     config:
       - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
         ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"
-    state: present
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ subinterfaces }}"
 #  notify: 

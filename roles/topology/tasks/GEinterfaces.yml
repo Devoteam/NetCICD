@@ -52,7 +52,7 @@
       - name: "{{ item.type }}{{ item.id }}"
         description: "item.description"
         enabled: "{{ item.no_shut }}"
-    state: present
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
@@ -64,7 +64,7 @@
       - name: "{{ item.type }}{{ item.id }}"
         ipv4:
         - address: "{{ item.ip_address }}/{{ item.prefixlength }}"
-    state: present
+    state: merged
   when: (ansible_network_os is defined and ansible_network_os == "nxos" and item.bundle == 0 and item.node == inventory_hostname)
   loop: "{{ interfaces }}"
 #  notify: 
