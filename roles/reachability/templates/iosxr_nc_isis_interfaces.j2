@@ -6,7 +6,7 @@
 {######################################################################################}
 <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
 
-{% for net in isis_nets %}
+{% for net in isisnets %}
 {% if net.node == inventory_hostname %}
 
 {####################################################################}
@@ -19,7 +19,7 @@
      <instance-name>{{ net.instance_name }}</instance-name>
      <running/>
      <interfaces>
-{% for int in isis_interfaces %}
+{% for int in isisinterfaces %}
 {% if int.node == inventory_hostname %}
       <interface>
 {% if int.sub == 0 %}
