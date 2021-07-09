@@ -1,7 +1,7 @@
 lab:
   description: LAB specifically created for NetCICD Box testing
   notes: ''
-  timestamp: 1625753553.4654973
+  timestamp: 1625811940.0630617
   title: stage-reachability
   version: 0.0.4
 nodes:
@@ -625,24 +625,15 @@ nodes:
     node_definition: iosxrv
     x: -200
     y: 200
-    configuration: |2-
-
-      Fri Apr  9 06:53:26.092 UTC
-      Building configuration...
-      !! IOS XR Configuration 6.3.1
-      !! Last configuration change at Fri Apr  9 06:53:23 2021 by cisco
-      !
+    configuration: |-
       hostname prov1
-      logging console disable
-      service timestamps log datetime msec
-      service timestamps debug datetime msec
       telnet vrf default ipv4 server max-servers 10
       telnet vrf Mgmt-intf ipv4 server max-servers 10
       domain name netcicd
       domain lookup disable
       username netcicd-pipeline
-        group root-lr
-        secret 0 C!sco123
+       group root-lr
+       secret 0 C!sco123
       !
       line template vty
        timestamp
@@ -668,26 +659,9 @@ nodes:
         !
        !
       !
-      interface Loopback0
-       description to
-       shutdown
-      !
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.111 255.255.255.0
-       no shutdown
-      !
-      interface GigabitEthernet0/0/0/0
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/1
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/2
-       description to
-       shutdown
       !
       netconf agent tty
       !
@@ -827,24 +801,15 @@ nodes:
     node_definition: iosxrv
     x: 100
     y: 200
-    configuration: |2-
-
-      Fri Apr  9 06:53:26.092 UTC
-      Building configuration...
-      !! IOS XR Configuration 6.3.1
-      !! Last configuration change at Fri Apr  9 06:53:23 2021 by cisco
-      !
+    configuration: |-
       hostname prov2
-      logging console disable
-      service timestamps log datetime msec
-      service timestamps debug datetime msec
       telnet vrf default ipv4 server max-servers 10
       telnet vrf Mgmt-intf ipv4 server max-servers 10
       domain name netcicd
       domain lookup disable
       username netcicd-pipeline
-        group root-lr
-        secret 0 C!sco123
+       group root-lr
+       secret 0 C!sco123
       !
       line template vty
        timestamp
@@ -870,26 +835,9 @@ nodes:
         !
        !
       !
-      interface Loopback0
-       description to
-       shutdown
-      !
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.112 255.255.255.0
-       no shutdown
-      !
-      interface GigabitEthernet0/0/0/0
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/1
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/2
-       description to
-       shutdown
       !
       netconf agent tty
       !
@@ -953,24 +901,15 @@ nodes:
     node_definition: iosxrv
     x: -200
     y: 400
-    configuration: |2-
-
-      Fri Apr  9 06:53:26.092 UTC
-      Building configuration...
-      !! IOS XR Configuration 6.3.1
-      !! Last configuration change at Fri Apr  9 06:53:23 2021 by cisco
-      !
+    configuration: |-
       hostname prov3
-      logging console disable
-      service timestamps log datetime msec
-      service timestamps debug datetime msec
       telnet vrf default ipv4 server max-servers 10
       telnet vrf Mgmt-intf ipv4 server max-servers 10
       domain name netcicd
       domain lookup disable
       username netcicd-pipeline
-        group root-lr
-        secret 0 C!sco123
+       group root-lr
+       secret 0 C!sco123
       !
       line template vty
        timestamp
@@ -996,26 +935,9 @@ nodes:
         !
        !
       !
-      interface Loopback0
-       description to
-       shutdown
-      !
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.113 255.255.255.0
-       no shutdown
-      !
-      interface GigabitEthernet0/0/0/0
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/1
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/2
-       description to
-       shutdown
       !
       netconf agent tty
       !
@@ -1079,24 +1001,15 @@ nodes:
     node_definition: iosxrv
     x: 100
     y: 400
-    configuration: |2-
-
-      Fri Apr  9 06:53:26.092 UTC
-      Building configuration...
-      !! IOS XR Configuration 6.3.1
-      !! Last configuration change at Fri Apr  9 06:53:23 2021 by cisco
-      !
+    configuration: |-
       hostname prov4
-      logging console disable
-      service timestamps log datetime msec
-      service timestamps debug datetime msec
       telnet vrf default ipv4 server max-servers 10
       telnet vrf Mgmt-intf ipv4 server max-servers 10
       domain name netcicd
       domain lookup disable
       username netcicd-pipeline
-        group root-lr
-        secret 0 C!sco123
+       group root-lr
+       secret 0 C!sco123
       !
       line template vty
        timestamp
@@ -1122,26 +1035,9 @@ nodes:
         !
        !
       !
-      interface Loopback0
-       description to
-       shutdown
-      !
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.114 255.255.255.0
-       no shutdown
-      !
-      interface GigabitEthernet0/0/0/0
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/1
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/2
-       description to
-       shutdown
       !
       netconf agent tty
       !
