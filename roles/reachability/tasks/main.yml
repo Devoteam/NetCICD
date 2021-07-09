@@ -4,7 +4,7 @@
 
 ---
 - name: Setup IS-IS keychain
-  import_tasks: isis_keychain.yml
+  import_tasks: isis-keychain.yml
     
 - name: Setup Integrated IS-IS
   import_tasks: isis.yml

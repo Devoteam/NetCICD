@@ -1,0 +1,64 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+---
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: Validate ios_isis_keychain
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports isis-keychain.robot
+  args:
+    chdir: roles/reachability/files/tests/
+  register: ios_isis_keychain_output
+  listen: ios_isis_keychain
+  
+- name: Print testresults
+  debug: 
+    var: ios_isis_keychain_output.stdout_lines
+  failed_when: "'Failed' in ios_isis_keychain_output.stdout"
+  listen: ios_isis_keychain
+
+####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: Validate iosxr_isis_keychain
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports isis-keychain.robot
+  args:
+    chdir: roles/reachability/files/tests/
+  register: iosxr_isis_keychain_output
+  listen: iosxr_isis_keychain
+  
+- name: Print testresults
+  debug: 
+    var: iosxr_isis_keychain_output.stdout_lines
+  failed_when: "'Failed' in iosxr_isis_keychain_output.stdout"
+  listen: iosxr_isis_keychain
+
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: Validate nxos_isis_keychain
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports isis-keychain.robot
+  args:
+    chdir: roles/reachability/files/tests/
+  register: nxos_isis_keychain_output
+  listen: nxos_isis_keychain
+  
+- name: Print testresults
+  debug: 
+    var: nxos_isis_keychain_output.stdout_lines
+  failed_when: "'Failed' in nxos_isis_keychain_output.stdout"
+  listen: nxos_isis_keychain
+
+...

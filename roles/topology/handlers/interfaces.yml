@@ -7,18 +7,18 @@
 # Classic IOS specific commands                                    #
 ####################################################################
 
-- name: Validate GE interfaces
-  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports GeInterfacces.robot
+- name: Validate interfaces
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports interfaces.robot
   args:
     chdir: roles/topology/files/tests/
-  register: test_output
-  listen: ios_GeInterfaces
+  register: "{{ ansible_network_os }}_interfaces_output"
+  listen: "{{ ansible_network_os }}_interfaces"
   
 - name: Print testresults
   debug: 
-    var: test_output.stdout_lines
-  failed_when: "'Assertion Failed' in test_output.stdout"
-  listen: ios_GeInterfaces
+    var: "{{ ansible_network_os }}_interfaces_output.stdout_lines"
+  failed_when: "'Assertion Failed' in iosxr_interfaces_output.stdout"
+  listen: "{{ ansible_network_os }}_interfaces"
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -30,8 +30,34 @@
 # IOSXR specific commands                                          #
 ####################################################################
 
+- name: Validate interfaces
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports interfaces.robot
+  args:
+    chdir: roles/topology/files/tests/
+  register: "{{ ansible_network_os }}_interfaces_output"
+  listen: "{{ ansible_network_os }}_interfaces"
+  
+- name: Print testresults
+  debug: 
+    var: "{{ ansible_network_os }}_interfaces_output.stdout_lines"
+  failed_when: "'Assertion Failed' in iosxr_interfaces_output.stdout"
+  listen: "{{ ansible_network_os }}_interfaces"
+
 ####################################################################
 # NXOS specific commands                                           #
 ####################################################################
+
+- name: Validate interfaces
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports interfaces.robot
+  args:
+    chdir: roles/topology/files/tests/
+  register: "{{ ansible_network_os }}_interfaces_output"
+  listen: "{{ ansible_network_os }}_interfaces"
+  
+- name: Print testresults
+  debug: 
+    var: "{{ ansible_network_os }}_interfaces_output.stdout_lines"
+  failed_when: "'Assertion Failed' in iosxr_interfaces_output.stdout"
+  listen: "{{ ansible_network_os }}_interfaces"
 
 ...

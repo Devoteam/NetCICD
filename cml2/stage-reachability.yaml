@@ -1,9 +1,9 @@
 lab:
   description: LAB specifically created for NetCICD Box testing
   notes: ''
-  timestamp: 1620983501.6418314
+  timestamp: 1625753553.4654973
   title: stage-reachability
-  version: 0.0.3
+  version: 0.0.4
 nodes:
   - id: n0
     label: NetCICD_agent
@@ -457,6 +457,10 @@ nodes:
       - id: i14
         slot: 14
         label: port14
+        type: physical
+      - id: i15
+        slot: 15
+        label: port15
         type: physical
   - id: n7
     label: PE3, 133, nxos
@@ -1616,6 +1620,279 @@ nodes:
         slot: 3
         label: GigabitEthernet0/3
         type: physical
+  - id: n17
+    label: ext-conn-1
+    node_definition: external_connector
+    x: -200
+    y: -50
+    configuration: virbr0
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: port
+        type: physical
+  - id: n18
+    label: ubuntu-0
+    node_definition: ubuntu
+    x: -200
+    y: 50
+    configuration: |-
+      #cloud-config
+      password: cisco
+      chpasswd: { expire: False }
+      hostname: NetCICD-agent
+
+      write_files:
+        - path: /etc/netplan/50-cloud-init.yaml
+          owner: root:root
+          permissions: '0644'
+          content: |-
+            network:
+              version: 2
+              renderer: networkd
+              ethernets:
+                ens2:
+                  dhcp4: yes
+                ens3:
+                  dhcp4: no
+                  addresses:
+                    - 10.255.1.2/24
+
+        - path: /etc/docker/deamon.json
+          owner: root:root
+          permissions: '0644'
+          content: |-
+            {
+                "insecure-registries" : ["nexus:8181"],
+                "registry-mirrors": ["http://nexus:8181"]
+            }
+
+        - path: /etc/rc.local
+          owner: root:root
+          permissions: '0755'
+          content: |-
+            #!/bin/sh
+            cd /home/ubuntu
+            if $(curl --output /dev/null --silent --head --fail http://jenkins:8084/whoAmI); then
+              wget http://jenkins:8084/jnlpJars/agent.jar
+              echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
+              agent=1
+              chown ubuntu:ubuntu agent.jar
+              echo jenkins_secret > secret-file
+              chown ubuntu:ubuntu secret-file
+              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
+            else
+              echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
+            fi
+
+            if wget -q --method=HEAD http://gitea:3000/infraautomator/ ; then
+              echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
+              export GIT_URL=http://gitea:3000/infraautomator/ >> /etc/profile
+            else
+              echo "Setting git to Github." >>/home/ubuntu/install-log.txt
+              export GIT_URL=https://github.com/Devoteam/ >> /etc/profile
+            fi
+
+
+            # Setting Ubuntu repo to proxy host to enable curated packages
+            if $(wget http://nexus:8081); then
+              echo "NetCICD Toolbox installed. Setting deb repositories to Nexus." >>/home/ubuntu/install-log.txt
+              echo "To be done"  >>/home/ubuntu/install-log.txt
+            else
+              echo "NetCICD Toolbox not installed. Fetching repositories from Ubuntu." >>/home/ubuntu/install-log.txt
+            fi
+
+        - path: /etc/ssh/ssh_config
+          owner: root:root
+          permissions: '0755'
+          content: |-
+            Host *
+                PasswordAuthentication yes
+                StrictHostKeyChecking no
+                UserKnownHostsFile=/dev/null
+                HostkeyAlgorithms ssh-dss,ssh-rsa
+                KexAlgorithms +diffie-hellman-group14-sha1
+
+        - path: /etc/rsyslog.conf
+          owner: root:root
+          permissions: '0755'
+          content: |-
+            # rsyslogd.conf
+            #
+            # if you experience problems, check:
+            # http://www.rsyslog.com/troubleshoot
+
+            #### MODULES ####
+
+            module(load="imuxsock")    # local system logging support (e.g. via logger command)
+            #module(load="imklog")     # kernel logging support (previously done by rklogd)
+            module(load="immark")      # --MARK-- message support
+            module(load="imudp")       # UDP listener support
+
+
+            input(type="imudp" port="514")
+
+            # Log all kernel messages to the console.
+            # Logging much else clutters up the screen.
+            #kern.*                                                 action(type="omfile" file="/dev/console")
+
+            # Log anything (except mail) of level info or higher.
+            # Don't log private authentication messages!
+            *.info;mail.none;authpriv.none;cron.none                action(type="omfile" file="/var/log/messages")
+
+            # The authpriv file has restricted access.
+            authpriv.*                                              action(type="omfile" file="/var/log/secure")
+
+            # Log all the mail messages in one place.
+            mail.*                                                  action(type="omfile" file="/var/log/maillog")
+
+            # Log cron stuff
+            cron.*                                                  action(type="omfile" file="/var/log/cron")
+
+            # Everybody gets emergency messages
+            *.emerg                                                 action(type="omusrmsg" users="*")
+
+            # Save news errors of level crit and higher in a special file.
+            uucp,news.crit                                          action(type="omfile" file="/var/log/spooler")
+
+            # Save boot messages also to boot.log
+            local7.*                                                action(type="omfile" file="/var/log/boot.log")
+
+            # log every host in its own directory
+            if $fromhost-ip then /var/log/$fromhost-ip/messages
+
+            # Include all .conf files in /etc/rsyslog.d
+            $IncludeConfig /etc/rsyslog.d/*.conf
+            $template GRAYLOGRFC5424,"<%PRI%>%PROTOCOL-VERSION% %TIMESTAMP:::date-rfc3339% %HOSTNAME% %APP-NAME% %PROCID% %MSGID% %STRUCTURED-DATA% %msg%\n"
+            *.info;mail.none;authpriv.none;cron.none;*.* @@graylog:514;GRAYLOGRFC5424 # forward everything to remote server
+
+        - path: /home/ubuntu/.ansible.cfg
+          permissions: '0755'
+          content: |-
+            [defaults]
+            host_key_checking = False
+            nocows = True
+            interpreter_python = auto_silent
+            display_skipped_hosts = no
+
+            # Installs collections into /home/ubuntu/.ansible/collections/namespace/collection_name
+            collections_paths = /home/ubuntu/.ansible/collections
+
+            # Installs roles into /home/ubuntu/.ansible/roles/namespace.rolename
+            roles_path = /home/ubuntu/.ansible/roles
+
+        - path: /home/ubuntu/.profile
+          permissions: '0755'
+          content: |-
+            #!/bin/sh
+            export JAVA_HOME=/usr
+
+            if wget -q --method=HEAD http://gitea:3000/infraautomator/; then
+              echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
+              export GIT_URL=http://gitea:3000/infraautomator/
+            else
+              echo "Setting git to Github." >>/home/ubuntu/install-log.txt
+              export GIT_URL=https://github.com/Devoteam/
+            fi
+
+            if grep -q prepared NetCICD_state; then
+                echo "Lab already prepared"
+            else
+                git config --global user.name "netcicd-pipeline"
+                git config --global user.email "netcicd-pipeline@infraautomator.example.net"
+                git clone ${GIT_URL}NetCICD.git
+                cd NetCICD
+                git status
+                echo '====================== Preparing CML lab ======================'
+                ansible-playbook -i vars/stage-reachability prepare.yml
+                echo '================  Starting stage Box playbook  ================'
+                cd roles/box/vars
+                ln -s stage-reachability.yml main.yml
+                cd ~/NetCICD
+                ansible-playbook -i vars/stage-reachability stage-box.yml -e stage="reachability"
+                echo '============== Starting stage Topology playbook ==============='
+                cd roles/topology/vars
+                ln -s stage-reachability.yml main.yml
+                cd ~/NetCICD
+                git status
+                ansible-playbook -i vars/stage-reachability stage-topology.yml -e stage="reachability"
+                echo '============ Starting stage Reachability playbook ============='
+                ln -s stage-reachability.yml main.yml
+                cd ~/NetCICD
+                git status
+                ansible-playbook -i vars/stage-reachability stage-reachability.yml -e stage="reachability"
+                echo "prepared" > ../NetCICD_state
+            fi
+
+            echo '=================== Ready for modification ===================='
+            echo 'You can now:'
+            echo ' - create a branch with git branch <mybranch>'
+            echo ' - view which files you changed with git status'
+            echo ' - stage your changed files with git add'
+            echo ' - commit with git commit -m "<commit message>"'
+            echo ' - push the changes to the git server with:'
+            echo ''
+            echo ' git push --set-upstream origin <mybranch>'
+            echo ''
+            echo ' you may have to log in with your username/password'
+            echo ''
+            echo '========================= Have Fun! ==========================='
+
+      package_update: true
+      packages:
+        - rsyslog
+        - openjdk-8-jdk
+        - git
+        - libxml2-dev
+        - libxslt-dev
+        - sshpass
+        - python-is-python3
+        - python3-pip
+        - docker.io
+        - curl
+
+      runcmd:
+        - netplan apply
+        - echo " Add Gitea to /etc/hosts" >>/home/ubuntu/install-log.txt
+        - echo "gitea_ip   gitea" >> /etc/hosts
+        - echo " Add Jenkins to /etc/hosts" >>/home/ubuntu/install-log.txt
+        - echo "jenkins_ip   jenkins" >> /etc/hosts
+        - echo " Add Nexus to /etc/hosts" >>/home/ubuntu/install-log.txt
+        - echo "nexus_ip   nexus" >> /etc/hosts
+        - echo "Restarting rsyslog deamon" >>/home/ubuntu/install-log.txt
+        - rc-service rsyslog restart>>/home/ubuntu/install-log.txt
+        - echo "Set Docker repo to proxy host to enable curated packages" >>/home/ubuntu/install-log.txt
+        - echo "routes installed" >>/home/ubuntu/install-log.txt
+        - ip r  >>/home/ubuntu/install-log.txt
+        - ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/ubuntu/install-log.txt
+        - pip install --upgrade paramiko ncclient cffi cmlutils
+        - pip install --upgrade ansible
+        - ansible-galaxy collection install cisco.ios -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
+        - ansible-galaxy collection install cisco.iosxr -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
+        - ansible-galaxy collection install cisco.nxos -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
+        - chown -R ubuntu:ubuntu /home/ubuntu/.ansible
+        - pip install --upgrade pyats[full]
+        - groupadd docker
+        - usermod -aG docker ubuntu
+        - chown ubuntu:ubuntu -R /home/ubuntu
+
+      power_state:
+        mode: reboot
+        message: Rebooting to make all changes active
+        timeout: 5
+        condition: True
+    image_definition: ubuntu-20-04
+    tags: []
+    interfaces:
+      - id: i0
+        slot: 0
+        label: enp0s2
+        type: physical
+      - id: i1
+        slot: 1
+        label: enp0s3
+        type: physical
 links:
   - id: l0
     i1: i0
@@ -1762,20 +2039,10 @@ links:
     n1: n3
     i2: i9
     n2: n10
-  - id: l29
-    i1: i3
-    n1: n7
-    i2: i11
-    n2: n4
   - id: l30
     i1: i4
     n1: n7
     i2: i10
-    n2: n10
-  - id: l31
-    i1: i5
-    n1: n7
-    i2: i11
     n2: n10
   - id: l32
     i1: i3
@@ -1802,20 +2069,10 @@ links:
     n1: n14
     i2: i10
     n2: n8
-  - id: l37
-    i1: i11
-    n1: n8
-    i2: i3
-    n2: n14
   - id: l38
     i1: i4
     n1: n14
     i2: i10
-    n2: n11
-  - id: l39
-    i1: i5
-    n1: n14
-    i2: i11
     n2: n11
   - id: l40
     i1: i1
@@ -1846,4 +2103,14 @@ links:
     i1: i1
     n1: n16
     i2: i14
+    n2: n5
+  - id: l46
+    i1: i0
+    n1: n18
+    i2: i0
+    n2: n17
+  - id: l47
+    i1: i1
+    n1: n18
+    i2: i15
     n2: n5

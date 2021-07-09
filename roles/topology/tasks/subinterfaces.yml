@@ -42,7 +42,7 @@
 ####################################################################
 
 - name: "Configure NX-OS subinterfaces"
-  cisco.nxos.nxos_interface:
+  cisco.nxos.nxos_interfaces:
     config:
       - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
         description: "item.description"
@@ -54,7 +54,7 @@
 #   - nxos_subinterfaces
 
 - name: "Set IP addresses on NX-OS subinterfaces"
-  cisco.nxos.nxos_l3_interface:
+  cisco.nxos.nxos_l3_interfaces:
     config:
       - name: "{{ item.type }}{{ item.id }}.{{ item.sub }}"
         ipv4: "{{ item.ip_address }}/{{ item.prefixlength }}"

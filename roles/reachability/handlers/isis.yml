@@ -3,18 +3,62 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-- name: Generate PyATS testbed file
-  vars:
-    testbed_hosts: "{{ groups['p_routers'] }}"
-  template: src=testbed.j2 dest=~/NetCICD/roles/reachability/files/testbed.yml
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr")
-  listen: reachability_isis
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
 
-# For sake of the demo, the number of neighbors is fixed at 1, no auth. Will be dynamic in next commit
-  
-- name: Start PyATS test of IS-IS neighbor count
-  local_action: shell robot --variable testbed:testbed.yml isis_neighbours.robot
+- name: Validate ios_isis
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports isis.robot
   args:
-    chdir: roles/reachability/files
-  listen: reachability_isis
+    chdir: roles/reachability/files/tests/
+  register: ios_isis_output
+  listen: ios_isis
+  
+- name: Print testresults
+  debug: 
+    var: ios_isis_output.stdout_lines
+  failed_when: "'Failed' in ios_isis_output.stdout"
+  listen: ios_isis
+
+####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: Validate iosxr_isis
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports isis.robot
+  args:
+    chdir: roles/reachability/files/tests/
+  register: iosxr_isis_output
+  listen: iosxr_isis
+  
+- name: Print testresults
+  debug: 
+    var: iosxr_isis_output.stdout_lines
+  failed_when: "'Failed' in iosxr_isis_output.stdout"
+  listen: iosxr_isis
+
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: Validate nxos_isis
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports isis.robot
+  args:
+    chdir: roles/reachability/files/tests/
+  register: nxos_isis_output
+  listen: nxos_isis
+  
+- name: Print testresults
+  debug: 
+    var: nxos_isis_output.stdout_lines
+  failed_when: "'Failed' in nxos_isis_output.stdout"
+  listen: nxos_isis
+
 ...
