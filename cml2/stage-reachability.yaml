@@ -1,7 +1,7 @@
 lab:
   description: LAB specifically created for NetCICD Box testing
   notes: ''
-  timestamp: 1625753157.570962
+  timestamp: 1625753553.4654973
   title: stage-reachability
   version: 0.0.4
 nodes:
@@ -2039,20 +2039,10 @@ links:
     n1: n3
     i2: i9
     n2: n10
-  - id: l29
-    i1: i3
-    n1: n7
-    i2: i11
-    n2: n4
   - id: l30
     i1: i4
     n1: n7
     i2: i10
-    n2: n10
-  - id: l31
-    i1: i5
-    n1: n7
-    i2: i11
     n2: n10
   - id: l32
     i1: i3
@@ -2079,20 +2069,10 @@ links:
     n1: n14
     i2: i10
     n2: n8
-  - id: l37
-    i1: i11
-    n1: n8
-    i2: i3
-    n2: n14
   - id: l38
     i1: i4
     n1: n14
     i2: i10
-    n2: n11
-  - id: l39
-    i1: i5
-    n1: n14
-    i2: i11
     n2: n11
   - id: l40
     i1: i1

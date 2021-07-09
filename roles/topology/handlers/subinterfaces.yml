@@ -3,16 +3,61 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
+####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
 - name: Validate subinterfaces
   local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports subinterfaces.robot
   args:
     chdir: roles/topology/files/tests/
-  register: test_output
-  listen: iosxr_subinterfaces
+  register: "{{ ansible_network_os }}_subinterfaces_output"
+  listen: "{{ ansible_network_os }}_subinterfaces"
   
 - name: Print testresults
   debug: 
-    var: test_output.stdout_lines
-  failed_when: "'Assertion Failed' in test_output.stdout"
-  listen: iosxr_subinterfaces
+    var: "{{ ansible_network_os }}_subinterfaces_output.stdout_lines"
+  failed_when: "'Assertion Failed' in iosxr_subinterfaces_output.stdout"
+  listen: "{{ ansible_network_os }}_subinterfaces"
+
+####################################################################
+# IOSXE specific commands                                          #
+####################################################################
+
+# IOSXE is managed through classic IOS or netconf
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: Validate subinterfaces
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports subinterfaces.robot
+  args:
+    chdir: roles/topology/files/tests/
+  register: "{{ ansible_network_os }}_subinterfaces_output"
+  listen: "{{ ansible_network_os }}_subinterfaces"
+  
+- name: Print testresults
+  debug: 
+    var: "{{ ansible_network_os }}_subinterfaces_output.stdout_lines"
+  failed_when: "'Assertion Failed' in iosxr_subinterfaces_output.stdout"
+  listen: "{{ ansible_network_os }}_subinterfaces"
+
+####################################################################
+# NXOS specific commands                                           #
+####################################################################
+
+- name: Validate subinterfaces
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Hostname_test_{{ inventory_hostname }} --outputdir ../reports subinterfaces.robot
+  args:
+    chdir: roles/topology/files/tests/
+  register: "{{ ansible_network_os }}_subinterfaces_output"
+  listen: "{{ ansible_network_os }}_subinterfaces"
+  
+- name: Print testresults
+  debug: 
+    var: "{{ ansible_network_os }}_subinterfaces_output.stdout_lines"
+  failed_when: "'Assertion Failed' in iosxr_subinterfaces_output.stdout"
+  listen: "{{ ansible_network_os }}_subinterfaces"
+
 ...

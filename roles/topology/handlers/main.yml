@@ -5,14 +5,14 @@
 ---
 - name: Setup topology interfaces
   import_tasks: interfaces.yml
-  when: ( stage is defined and stage == "1")
+  when: ( stage is defined and stage == "topology")
 
 - name: Setup bundles
   import_tasks: bundles.yml
-  when: ( stage is defined and stage == "1")
+  when: ( stage is defined and stage == "topology")
     
 - name: Setup subinterfaces
   import_tasks: subinterfaces.yml
-  when: ( stage is defined and stage == "1")
+  when: ( stage is defined and stage == "topology")
     
 ...
