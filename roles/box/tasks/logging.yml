@@ -59,7 +59,7 @@
 
 - name: "Netconf configure logging"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_logging.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_logging.j2') }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 
 #  notify: 
@@ -67,7 +67,7 @@
 
 - name: "Netconf configure log servers"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_log_servers.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_log_servers.j2') }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
   with_items: "{{ logging }}"
 #  notify: 
