@@ -121,62 +121,62 @@ pipeline {
                 }
             }
         }
-        // stage('stage: Reachability. Device interconnection configuration on OSI L3...') {
-        //     agent { 
-        //         node { 
-        //             label 'master' 
-        //         } 
-        //     }
-        //     stages {
-        //         stage ('Collecting variables') {
-        //             steps {
-        //                 varscollection("platform")
-        //             }
-        //         }
-        //         stage ('Preparing playbook') {
-        //             agent {
-        //                 label agentName
-        //             }
-        //             steps {
-        //                 prepare("${this_stage}", "${gitCommit}")
-        //                 sh "cd roles/box/vars/ && ln -s stage-${this_stage}.yml main.yml"
-        //                 sh "cd roles/topology/vars/ && ln -s stage-${this_stage}.yml main.yml"
-        //                 sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
-        //             }
-        //         }
-        //         stage('Running playbook') {
-        //             agent {
-        //                 label agentName
-        //             }
-        //             steps {
-        //                 echo "Prepare lab ${lab_id}"
-        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+        stage('stage: Reachability. Device interconnection configuration on OSI L3...') {
+            agent { 
+                node { 
+                    label 'master' 
+                } 
+            }
+            stages {
+                stage ('Collecting variables') {
+                    steps {
+                        varscollection("platform")
+                    }
+                }
+                stage ('Preparing playbook') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        prepare("${this_stage}", "${gitCommit}")
+                        sh "cd roles/box/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                        sh "cd roles/topology/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                        sh "cd roles/${this_stage}/vars/ && ln -s stage-${this_stage}.yml main.yml"
+                    }
+                }
+                stage('Running playbook') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        echo "Prepare lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'prepare.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
 
-        //                 echo "Start stage Box playbook on lab ${lab_id}"
-        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+                        echo "Start stage Box playbook on lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-box.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
 
-        //                 echo "Start stage Topology playbook on lab ${lab_id}"
-        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-topology.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+                        echo "Start stage Topology playbook on lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: 'stage-topology.yml', extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
 
-        //                 echo "Start stage ${this_stage} playbook on lab ${lab_id}"
-        //                 ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
-        //             }
-        //         }
-        //         stage ('Testing') {
-        //             agent {
-        //                 label agentName
-        //             }
-        //             steps {
-        //                 teststep ("${this_stage}")
-        //             }
-        //         }
-        //         stage ('Cleaning up') {
-        //             steps {
-        //                 cleanup("${lab_id}", "${this_stage}", "${gitCommit}", "${cml_token}")
-        //             }
-        //         }
-        //     }
-        // }
+                        echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${this_stage}", playbook: "stage-${this_stage}.yml", extraVars: ["stage": "${this_stage}"], extras: '-vvvv'
+                    }
+                }
+                stage ('Testing') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        teststep ("${this_stage}")
+                    }
+                }
+                stage ('Cleaning up') {
+                    steps {
+                        cleanup("${lab_id}", "${this_stage}", "${gitCommit}", "${cml_token}")
+                    }
+                }
+            }
+        }
         // stage('stage: Forwarding. MPLS/SR configuration...') {
         //     agent { 
         //         node { 
