@@ -3,17 +3,17 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-isis-keychain:
+isisKeychain:
  - {id: 1, instance_name: "ISIS-NetCICD", key: "topsecret" , a_sta_hr: 0, a_sta_min: 0, a_sta_sec: 0, a_sta_dt: 1, a_sta_mon: "jan", a_sta_yr: 2019, a_inf: "true", s_sta_hr: 0, s_sta_min: 0, s_sta_sec: 0, s_sta_dt: 1, s_sta_mon: "jan", s_sta_yr: 2019, s_inf: "true" }
  - {id: 2, instance_name: "ISIS-NetCICD", key: "ISIS-KEYCHAIN", a_sta_hr: 0, a_sta_min: 0, a_sta_sec: 0, a_sta_dt: 1, a_sta_mon: "jan", a_sta_yr: 2019, a_inf: "true", s_sta_hr: 0, s_sta_min: 0, s_sta_sec: 0, s_sta_dt: 1, s_sta_mon: "jan", s_sta_yr: 2019, s_inf: "true" }
 
-isis-nets:
+isisNets:
  - { node: RR1, net: "49.0001.0000.0001.1121.00", instance_name: "ISIS-NetCICD" }
  - { node: P1, net: "49.0001.0000.0001.1110.00", instance_name: "ISIS-NetCICD" }
  - { node: PE1, net: "49.0001.0000.0001.1128.00", instance_name: "ISIS-NetCICD" }
  - { node: PE3, net: "49.0001.0000.0001.1130.00", instance_name: "ISIS-NetCICD" }
 
-isis-interfaces:
+isisInterfaces:
  - { node: "P1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "20", sub: 2, key_chain: "" }
  - { node: "PE1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "20", sub: 2, key_chain: "" }
 ...
