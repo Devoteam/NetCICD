@@ -24,7 +24,7 @@
   when: (ansible_connection is defined and ansible_connection == "netconf" and ansible_network_os == "iosxr" )
   with_items: "{{ isisKeychain }}"                             
 #  notify:                                                                                         
-#    - iosxr_isis-keychain                                                                                    
+#    - iosxr_isis_keychain                                                                                    
    
 ####################################################################
 # Kick off handlers                                                #
