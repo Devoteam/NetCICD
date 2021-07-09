@@ -12,13 +12,13 @@
   args:
     chdir: roles/reachability/files/tests/
   register: ios_isis_keychain_output
-  listen: ios_isis_keychain
+  listen: ios_isis-keychain
   
 - name: Print testresults
   debug: 
     var: ios_isis_keychain_output.stdout_lines
   failed_when: "'Failed' in ios_isis_keychain_output.stdout"
-  listen: ios_isis_keychain
+  listen: ios_isis-keychain
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -35,13 +35,13 @@
   args:
     chdir: roles/reachability/files/tests/
   register: iosxr_isis_keychain_output
-  listen: iosxr_isis_keychain
+  listen: iosxr_isis-keychain
   
 - name: Print testresults
   debug: 
     var: iosxr_isis_keychain_output.stdout_lines
   failed_when: "'Failed' in iosxr_isis_keychain_output.stdout"
-  listen: iosxr_isis_keychain
+  listen: iosxr_isis-keychain
 
 
 ####################################################################
@@ -53,12 +53,12 @@
   args:
     chdir: roles/reachability/files/tests/
   register: nxos_isis_keychain_output
-  listen: nxos_isis_keychain
+  listen: nxos_isis-keychain
   
 - name: Print testresults
   debug: 
     var: nxos_isis_keychain_output.stdout_lines
   failed_when: "'Failed' in nxos_isis_keychain_output.stdout"
-  listen: nxos_isis_keychain
+  listen: nxos_isis-keychain
 
 ...
