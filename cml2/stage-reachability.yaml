@@ -1714,6 +1714,7 @@ nodes:
                 git status
                 ansible-playbook -i vars/stage-reachability stage-topology.yml -e stage="reachability"
                 echo '============ Starting stage Reachability playbook ============='
+                cd roles/reachability/vars
                 ln -s stage-reachability.yml main.yml
                 cd ~/NetCICD
                 git status
