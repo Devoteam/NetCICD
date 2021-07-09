@@ -8,12 +8,44 @@ isiskeychain:
  - {id: 2, instance_name: "ISIS-NetCICD", key: "ISIS-KEYCHAIN", a_sta_hr: 0, a_sta_min: 0, a_sta_sec: 0, a_sta_dt: 1, a_sta_mon: "jan", a_sta_yr: 2019, a_inf: "true", s_sta_hr: 0, s_sta_min: 0, s_sta_sec: 0, s_sta_dt: 1, s_sta_mon: "jan", s_sta_yr: 2019, s_inf: "true" }
 
 isisNets:
- - { node: RR1, net: "49.0001.0000.0001.1121.00", instance_name: "ISIS-NetCICD" }
  - { node: P1, net: "49.0001.0000.0001.1110.00", instance_name: "ISIS-NetCICD" }
- - { node: PE1, net: "49.0001.0000.0001.1128.00", instance_name: "ISIS-NetCICD" }
- - { node: PE3, net: "49.0001.0000.0001.1130.00", instance_name: "ISIS-NetCICD" }
+ - { node: P2, net: "49.0001.0000.0001.1120.00", instance_name: "ISIS-NetCICD" }
+ - { node: P3, net: "49.0001.0000.0001.1130.00", instance_name: "ISIS-NetCICD" }
+ - { node: P4, net: "49.0001.0000.0001.1140.00", instance_name: "ISIS-NetCICD" }
+ - { node: RR1, net: "49.0001.0000.0001.1210.00", instance_name: "ISIS-NetCICD" }
+ - { node: RR2, net: "49.0001.0000.0001.1220.00", instance_name: "ISIS-NetCICD" }
+ - { node: PE1, net: "49.0001.0000.0001.1310.00", instance_name: "ISIS-NetCICD" }
+ - { node: PE2, net: "49.0001.0000.0001.1320.00", instance_name: "ISIS-NetCICD" }
+ - { node: PE3, net: "49.0001.0000.0001.1330.00", instance_name: "ISIS-NetCICD" }
+ - { node: PE4, net: "49.0001.0000.0001.1340.00", instance_name: "ISIS-NetCICD" }
 
 isisInterfaces:
- - { node: "P1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "20", sub: 2, key_chain: "" }
- - { node: "PE1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "20", sub: 2, key_chain: "" }
+ - { node: "P1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "1", sub: 2, key_chain: "topsecret" }
+ - { node: "P2", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "1", sub: 2, key_chain: "topsecret" }
+ - { node: "P2", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "2", sub: 2, key_chain: "topsecret" }
+ - { node: "P4", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "2", sub: 2, key_chain: "topsecret" }
+ - { node: "P4", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "4", sub: 2, key_chain: "topsecret" }
+ - { node: "P3", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "4", sub: 2, key_chain: "topsecret" }
+ - { node: "P3", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "3", sub: 2, key_chain: "topsecret" }
+ - { node: "P1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "3", sub: 2, key_chain: "topsecret" }
+ - { node: "P1", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "0/0/0/1", sub: 0, key_chain: "topsecret" }
+ - { node: "RR1", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "1", sub: 0, key_chain: "topsecret" }
+ - { node: "P4", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "0/0/0/1", sub: 0, key_chain: "topsecret" }
+ - { node: "RR2", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "1", sub: 0, key_chain: "topsecret" }
+ - { node: "P1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "11", sub: 2, key_chain: "topsecret" }
+ - { node: "PE1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "11", sub: 2, key_chain: "topsecret" }
+ - { node: "P3", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "31", sub: 2, key_chain: "topsecret" }
+ - { node: "PE1", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "31", sub: 2, key_chain: "topsecret" }
+ - { node: "P2", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "22", sub: 2, key_chain: "topsecret" }
+ - { node: "PE2", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "22", sub: 2, key_chain: "topsecret" }
+ - { node: "P4", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "42", sub: 2, key_chain: "topsecret" }
+ - { node: "PE2", instance_name: "ISIS-NetCICD", type: "Bundle-Ether", id: "42", sub: 2, key_chain: "topsecret" }
+ - { node: "P1", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "0/0/0/8", sub: 0, key_chain: "topsecret" }
+ - { node: "PE3", instance_name: "ISIS-NetCICD", type: "Ethernet", id: "1", sub: 0, key_chain: "topsecret" }
+ - { node: "P3", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "0/0/0/8", sub: 0, key_chain: "topsecret" }
+ - { node: "PE3", instance_name: "ISIS-NetCICD", type: "Ethernet", id: "3", sub: 0, key_chain: "topsecret" }
+ - { node: "P2", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "0/0/0/8", sub: 0, key_chain: "topsecret" }
+ - { node: "PE4", instance_name: "ISIS-NetCICD", type: "Ethernet", id: "1", sub: 0, key_chain: "topsecret" }
+ - { node: "P4", instance_name: "ISIS-NetCICD", type: "GigabitEthernet", id: "0/0/0/8", sub: 0, key_chain: "topsecret" }
+ - { node: "PE4", instance_name: "ISIS-NetCICD", type: "Ethernet", id: "3", sub: 0, key_chain: "topsecret" }
 ...
