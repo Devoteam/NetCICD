@@ -18,11 +18,10 @@
 # Netconf specific commands for IOSXR                              #
 ####################################################################
 
-- name: "Create IS-IS key-chain for IOSXR with Netconf"                                                       
+- name: "Create ISIS keychain for IOSXR with Netconf"                                                       
   ansible.netcommon.netconf_config:                                                                                                                                    
     content: "{{ lookup('template', '{{ ansible_network_os }}_nc_isis_keychain.j2') }}"
-  when: (ansible_connection is defined and ansible_connection == "netconf" and ansible_network_os == "iosxr" )
-  with_items: "{{ isiskeychain }}"                             
+  when: (ansible_connection is defined and ansible_connection == "netconf" and ansible_network_os == "iosxr" )                           
 #  notify:                                                                                         
 #    - iosxr_isis_keychain                                                                                    
    
