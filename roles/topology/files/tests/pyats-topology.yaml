@@ -1,0 +1,174 @@
+testbed:
+  name: stage-topology
+  credentials:
+    default:
+      username: netcicd-pipeline
+      password: C!sco123
+devices:
+  P1:
+    os: iosxr
+    type: router
+    series: iosxrv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 10.255.1.111
+  RR1:
+    os: iosxe
+    type: router
+    series: csr1000v
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 10.255.1.121
+  PE1:
+    os: iosxr
+    type: router
+    series: iosxrv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 10.255.1.131
+  PE3:
+    os: nxos
+    type: switch
+    series: nxosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 10.255.1.133
+  CE1:
+    os: ios
+    type: router
+    series: iosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 10.255.1.141
+  CE3:
+    os: ios
+    type: router
+    series: iosv
+    connections:
+      defaults:
+        class: unicon.Unicon
+      a:
+        protocol: ssh
+        ip: 10.255.1.143
+topology:
+  CE1:
+    interfaces:
+      Loopback0:
+        type: loopback
+      GigabitEthernet0/0:
+        type: ethernet
+      GigabitEthernet0/1:
+        link: l10
+        type: ethernet
+      GigabitEthernet0/2:
+        type: ethernet
+      GigabitEthernet0/3:
+        type: ethernet
+  PE1:
+    interfaces:
+      Loopback0:
+        type: loopback
+      MgmtEth0/0/CPU0/0:
+        type: ethernet
+      GigabitEthernet0/0/0/0:
+        type: ethernet
+      GigabitEthernet0/0/0/1:
+        link: l5
+        type: ethernet
+      GigabitEthernet0/0/0/2:
+        link: l13
+        type: ethernet
+      GigabitEthernet0/0/0/3:
+        type: ethernet
+      GigabitEthernet0/0/0/4:
+        type: ethernet
+      GigabitEthernet0/0/0/5:
+        link: l10
+        type: ethernet
+  PE3:
+    interfaces:
+      Loopback0:
+        type: loopback
+      mgmt0:
+        type: ethernet
+      Ethernet2/1:
+        link: l6
+        type: ethernet
+      Ethernet2/2:
+        type: ethernet
+      Ethernet2/3:
+        type: ethernet
+      Ethernet2/4:
+        type: ethernet
+      Ethernet2/5:
+        link: l11
+        type: ethernet
+  RR1:
+    interfaces:
+      Loopback0:
+        type: loopback
+      GigabitEthernet1:
+        type: ethernet
+      GigabitEthernet2:
+        link: l9
+        type: ethernet
+      GigabitEthernet3:
+        type: ethernet
+      GigabitEthernet4:
+        type: ethernet
+  P1:
+    interfaces:
+      Loopback0:
+        type: loopback
+      MgmtEth0/0/CPU0/0:
+        type: ethernet
+      GigabitEthernet0/0/0/0:
+        type: ethernet
+      GigabitEthernet0/0/0/1:
+        link: l9
+        type: ethernet
+      GigabitEthernet0/0/0/2:
+        type: ethernet
+      GigabitEthernet0/0/0/3:
+        type: ethernet
+      GigabitEthernet0/0/0/4:
+        type: ethernet
+      GigabitEthernet0/0/0/5:
+        type: ethernet
+      GigabitEthernet0/0/0/6:
+        link: l5
+        type: ethernet
+      GigabitEthernet0/0/0/7:
+        link: l13
+        type: ethernet
+      GigabitEthernet0/0/0/8:
+        link: l6
+        type: ethernet
+  CE3:
+    interfaces:
+      Loopback0:
+        type: loopback
+      GigabitEthernet0/0:
+        type: ethernet
+      GigabitEthernet0/1:
+        link: l11
+        type: ethernet
+      GigabitEthernet0/2:
+        type: ethernet
+      GigabitEthernet0/3:
+        type: ethernet
