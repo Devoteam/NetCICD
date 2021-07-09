@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-isisKeychain:
+isiskeychain:
  - {id: 1, instance_name: "ISIS-NetCICD", key: "topsecret" , a_sta_hr: 0, a_sta_min: 0, a_sta_sec: 0, a_sta_dt: 1, a_sta_mon: "jan", a_sta_yr: 2019, a_inf: "true", s_sta_hr: 0, s_sta_min: 0, s_sta_sec: 0, s_sta_dt: 1, s_sta_mon: "jan", s_sta_yr: 2019, s_inf: "true" }
  - {id: 2, instance_name: "ISIS-NetCICD", key: "ISIS-KEYCHAIN", a_sta_hr: 0, a_sta_min: 0, a_sta_sec: 0, a_sta_dt: 1, a_sta_mon: "jan", a_sta_yr: 2019, a_inf: "true", s_sta_hr: 0, s_sta_min: 0, s_sta_sec: 0, s_sta_dt: 1, s_sta_mon: "jan", s_sta_yr: 2019, s_inf: "true" }
 
