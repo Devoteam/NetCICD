@@ -12,10 +12,10 @@ NetCICD takes an industrial automation approach to network development and servi
 ## Use ##
 There are two ways of using NetCICD:
 
-* Within the [NetCICD Developer Toolbox](https://github.com/Devoteam/NetCICD-developer-toolbox)
+* Within the [CICD Toolbox](https://github.com/Devoteam/CICD-toolbox)
 * Locally with CML
 
-### Within the [NetCICD Developer Toolbox](https://github.com/Devoteam/NetCICD-developer-toolbox) ###
+### Within the [CICD Toolbox](https://github.com/Devoteam/CICD-toolbox) ###
 To use NetCICD within the toolbox, just install the toolbox as per the installation instructions and you are good to go.
 
 ### Locally ###
@@ -25,7 +25,7 @@ For more detailed info, see the [wiki](https://github.com/Devoteam/NetCICD/wiki)
 ## Background ##
 The first implementation was made in 2018 and was presented at [Cisco Live 2018 in Barcelona](https://www.ciscolive.com/c/dam/r/ciscolive/emea/docs/2019/pdf/BRKSDN-2158.pdf). The video of the session can be seen after logging in.
 
-Since then, we used the toolchain, but in that process we experienced that maintaining a tool chain supporting NetCICD remains a challenge. As a result, the [NetCICD Developer Toolbox](https://github.com/Devoteam/NetCICD-developer-toolbox) was created, which is being developed by DevOps Engineers within Devoteam. It contains all tools required (git, Jenkins, Nexus and Keycloak for SSO) to make the NetCICD environment run locally (a supported commercial version is available too, contact networkautomation at devoteam.nl for more information). The tools are configured for NetCICD.
+Since then, we used the toolchain, but in that process we experienced that maintaining a tool chain supporting NetCICD remains a challenge. As a result, the [CICD Toolbox](https://github.com/Devoteam/CICD-toolbox) was created, which is being developed by DevOps Engineers within Devoteam. It contains all tools required (git, Jenkins, Nexus and Keycloak for SSO) to make the NetCICD environment run locally (a supported commercial version is available too, contact networkautomation at devoteam.nl for more information). The tools are configured for NetCICD.
 
 We are working to include [Argos](https://www.argosnotary.com/) to include a continuous auditing mechanism so that it becomes possible to prove that the deployment (git commit) you are running operationally is actually the version tested and for which the test report can be found in you local Nexus repo.
 
@@ -38,7 +38,7 @@ This Source Code Form is subject to the terms of the Mozilla Public License, v. 
 (c) Mark Sibering
 
 ## Installation ##
-Installation should be done by installing the [NetCICD Developer Toolbox](https://github.com/Devoteam/NetCICD-developer-toolbox). This repo can be found in the Gitea environment under the organisation Infraautomator. 
+Installation should be done by installing the [CICD Toolbox](https://github.com/Devoteam/CICD-toolbox). This repo can be found in the Gitea environment under the organisation Infraautomator. 
 ## Environment ##
 NetCICD is developed on a Ubuntu 20.04.1 Desktop laptop with CML Personal edition version 2.1. 
 
