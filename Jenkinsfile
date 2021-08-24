@@ -130,7 +130,7 @@ pipeline {
             stages {
                 stage ('Collecting variables') {
                     steps {
-                        varscollection("platform")
+                        varscollection("reachability")
                     }
                 }
                 stage ('Preparing playbook') {
