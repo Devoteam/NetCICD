@@ -18,6 +18,7 @@ pipeline {
         JENKINS_CRED = credentials('jenkins-jenkins')
         CML_CRED = credentials('CML-SIM-CRED')
         NEXUS_CRED = credentials('jenkins-nexus')
+        GIT_REPO_NAME = "NetCICD" 
     }
 
     stages {
@@ -394,28 +395,28 @@ pipeline {
     }
 }
 
-def startagent(stage, build, commit) {
-    echo "Creating Jenkins build node placeholder for stage: ${stage}, build: ${build} (commit:  ${commit})"
-    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -X POST -d \'json={"name":+"stage' + "${stage}" + "-" + "${commit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+stage-'  + "${stage}" + "-"+ "${commit}" + '",+"numExecutors":+"1",+"remoteFS":+"/home/ubuntu",+"labelString":+"slave' + "${stage}" + "-"+ "${commit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="stage-' + "${stage}" + "-" + "${commit}" + '"&type=hudson.slaves.DumbSlave"'
+def startagent(branch, stage, build, commit) {
+    echo "Creating Jenkins build node placeholder for repository: ${GIT_REPO_NAME}, branch: ${branch}, stage: ${stage}, build: ${build} (commit:  ${commit})"
+    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H Content-Type:application/x-www-form-urlencoded -X POST -d \'json={"name":+"' + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "${commit}" + '",+"nodeDescription":+"NetCICD+host+for+commit+is+in+lab:+' + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "${commit}" + '",+"numExecutors":+"1",+"remoteFS":+"/home/ubuntu",+"labelString":+"' + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-"+ "${commit}" + '",+"mode":+"EXCLUSIVE",+"":+["hudson.slaves.JNLPLauncher",+"hudson.slaves.RetentionStrategy$Always"],+"launcher":+{"stapler-class":+"hudson.slaves.JNLPLauncher",+"$class":+"hudson.slaves.JNLPLauncher",+"workDirSettings":+{"disabled":+false,+"workDirPath":+"",+"internalDir":+"remoting",+"failIfWorkDirIsMissing":+false},+"tunnel":+"",+"vmargs":+""},+"retentionStrategy":+{"stapler-class":+"hudson.slaves.RetentionStrategy$Always",+"$class":+"hudson.slaves.RetentionStrategy$Always"},+"nodeProperties":+{"stapler-class-bag":+"true"},+"type":+"hudson.slaves.DumbSlave"}\' "' + "${env.JENKINS_URL}" + 'computer/doCreateItem?name="' + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "${commit}" + '"&type=hudson.slaves.DumbSlave"'
 
     echo 'Retrieving Agent Secret'
     script {
-        agentSecret = jenkins.model.Jenkins.getInstance().getComputer("stage-" + "${stage}" + "-" + "$commit").getJnlpMac()
+        agentSecret = jenkins.model.Jenkins.getInstance().getComputer("${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "$commit").getJnlpMac()
     }
 
     return "${agentSecret}"
 }
 
-def stopagent(stage, build, commit) {
-    echo "Deleting Jenkins build node placeholder for stage: ${stage}, build: ${build} (commit:  ${commit})"
-    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/stage-' + "${stage}" + "-" + "${commit}" + '/doDelete"'
+def stopagent(branch, stage, build, commit) {
+    echo "Deleting Jenkins build node placeholder for repository: ${GIT_REPO_NAME}, branch: ${branch}, stage: ${stage}, build: ${build} (commit:  ${commit})"
+    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/' + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "${commit}" + '/doDelete"'
     
     return null
 }
 
-def startsim(stage, build, commit, secret, token) {
+def startsim(branch, stage, build, commit, secret, token) {
     def lab = ""
-    echo "Starting CML simulation for build ${build}, stage ${stage}"
+    echo "Starting CML simulation for repository: ${GIT_REPO_NAME}, branch: ${branch}, stage: ${stage}, build: ${build} (commit:  ${commit})"
     echo "Agent secret: ${secret}"
 
     // Insert the agent_secret into the yaml file
@@ -423,7 +424,7 @@ def startsim(stage, build, commit, secret, token) {
     sh "sed -i 's/jenkins_secret/" + "${secret}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
    
     echo "Inserting agent name in agent configuration"
-    sh "sed -i 's/jenkins_agent/stage-" + "${stage}" + "-" + "${commit}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
+    sh "sed -i 's/jenkins_agent/" + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "${commit}" + "/g' cml2/stage-" + "${stage}" + ".yaml"
     
     // Inserting tool IP addresses in the lab
     echo "Inserting gitea IP address in jumphost configuration"
@@ -438,12 +439,12 @@ def startsim(stage, build, commit, secret, token) {
 
     //we need to collect the lab_id in order to be able to stop the lab.
     script {
-        response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=stage-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/stage-' + "${stage}" + '.yaml').trim()
+        response = sh(returnStdout: true, script: 'curl -k -X POST ' + "${env.CML_URL}" + '/api/v0/import?title=' + "${GIT_REPO_NAME}" + '-' + "${branch}" + '-' + "${stage}" + '-' + "${commit}" + ' -H  "accept: application/json" -H  "Authorization: Bearer ' + "${token}" + '" -H  "Content-Type: application/json" --data-binary @cml2/stage-' + "${stage}" + '.yaml').trim()
         def jsonSlurper = new JsonSlurper()
         def alllab = jsonSlurper.parseText("${response}")
         lab = "${alllab.id}"
     }
-    echo "The lab stage-${stage}-${commit} imported with id ${lab}. Starting the simulation."
+    echo "The lab ${GIT_REPO_NAME}-${branch}-${stage}-${commit} imported with id ${lab}. Starting the simulation."
     script {
         response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/start" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()
         echo "Lab started ${response}"
@@ -481,8 +482,8 @@ def startsim(stage, build, commit, secret, token) {
     return "${lab}"
 }
 
-def stopsim(stage, build, commit, lab, token) {
-    echo "Stopping CML simulation for build ${build}, stage ${stage}"
+def stopsim(branch, stage, build, commit, lab, token) {
+    echo "Stopping CML simulation for repository: ${GIT_REPO_NAME}, branch: ${branch}, stage: ${stage}, build: ${build} (commit:  ${commit})"
     script {
         response = sh(returnStdout: true, script: 'curl -k -X PUT "' + "${env.CML_URL}" + '/api/v0/labs/' + "${lab}" + '/stop" -H "accept: application/json" -H "Authorization: Bearer ' + "${token}" + '"').trim()        
         echo "${response}" 
@@ -524,15 +525,15 @@ def varscollection(stage) {
     echo "The commit is on branch ${env.JOB_NAME}, with short ID: ${gitCommit}"
     echo 'Creating Jenkins Agent'
     script {
-        thisSecret = startagent("${stage}","${env.BUILD_tag}","${gitCommit}")
+        thisSecret = startagent("${env.BRANCH_NAME}","${stage}","${env.BUILD_tag}","${gitCommit}")
     }
     echo 'Starting CML simulation'
     script {
-        lab_id = startsim("${stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
+        lab_id = startsim("${env.BRANCH_NAME}","${stage}","${env.BUILD_NUMBER}", "${gitCommit}", "${thisSecret}", "${cml_token}")
     }
     echo "Lab ${lab_id} is operational."
     script {
-        agentName = "stage-${this_stage}-${gitCommit}"
+        agentName = "${GIT_REPO_NAME}-${env.BRANCH_NAME}-${this_stage}-${gitCommit}"
     }
     echo "The next stage agent is: ${agentName}"
 
@@ -540,7 +541,7 @@ def varscollection(stage) {
 }
 
 def prepare(stage, commit) {
-    echo "Switched to jenkins agent: stage-${stage}-${commit}"
+    echo "Switched to jenkins agent: ${GIT_REPO_NAME}-${env.BRANCH_NAME}-${stage}-${commit}"
     checkout scm
     echo "Set stage ${stage} variables"
 
@@ -567,9 +568,9 @@ def teststep(stage) {
 def cleanup(lab, stage, commit, token) {
     echo "Switched to jenkins agent: master"
     echo "Stopping CML simulation on lab ${lab}"
-    stopsim("${stage}", "${env.BUILD_tag}", "${commit}", "${lab}", "${token}")   
+    stopsim("${env.BRANCH_NAME}","${stage}", "${env.BUILD_tag}", "${commit}", "${lab}", "${token}")   
     echo 'Removing Jenkins Agent'
-    stopagent("${stage}","${env.BUILD_tag}","${commit}")
+    stopagent("${env.BRANCH_NAME}","${stage}","${env.BUILD_tag}","${commit}")
     deleteDir() /* clean up our workspace */
 
     return null
