@@ -662,6 +662,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.111 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
@@ -838,6 +839,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.112 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
@@ -938,6 +940,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.113 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
@@ -1038,6 +1041,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.114 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
