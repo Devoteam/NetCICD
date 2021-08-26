@@ -357,6 +357,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -672,6 +673,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -849,6 +851,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -950,6 +953,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -1051,6 +1055,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -1220,6 +1225,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
