@@ -100,35 +100,35 @@
 
 - name: "NC Set clock and timezone"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_clock_timezone.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_clock_timezone.j2') }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - iosxr_time
 
 - name: "NC Set summertime"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_clock_summertime.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_clock_summertime.j2') }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - iosxr_summertime
 
 - name: "NC Configure ntp"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_ntp.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_ntp.j2') }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - iosxr_ntp
 
 - name: "NC Configure ntp key"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_ntp_key.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_ntp_key.j2') }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - iosxr_ntp_key
 
 - name: "NC Configure ntp servers"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_ntp_servers.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_ntp_servers.j2') }}"
   with_items: "{{ ntp }}"
   when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 

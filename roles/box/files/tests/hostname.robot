@@ -26,29 +26,27 @@ Validate hostname
 
 *** Keywords ***
 Show arguments
-    Log To Console    \n
-    Log To Console    The node name is: ${NODE}
-    Log To Console    The node CLI language is: ${LANG}
-    Log To Console    The stage is: ${STAGE}
-    Log To Console    \n
+    Log    The node name is: ${NODE}    console=yes
+    Log    The node CLI language is: ${LANG}    console=yes
+    Log    The stage is: ${STAGE}    console=yes
 
 Use PyATS to connect to the router
     use testbed "${testbed}"
     connect to device    ${NODE}
-    Log to Console    Connecting to ${NODE}
+    Log    Connecting to ${NODE}    console=yes
 
 Use PyATS to retrieve the hostname
     Run Keyword If    '${LANG}'=='ios'      Get IOS prameters
     Run Keyword If    '${LANG}'=='iosxr'    Get IOSXR prameters
     Run Keyword If    '${LANG}'=='nxos'     Get NXOS prameters
-    Log To Console    The configured node name is: ${host}
+    Log    The configured node name is: ${host}    console=yes
 
 Compare configured name to given name
     Should Be Equal     ${host}    ${NODE}
 
 Get IOS prameters
     ${response}=      parse "show version" on device "${NODE}"
-    Log To Console    ${response}
+    Log    ${response}    console=yes
     Set Suite Variable    ${host}    ${response['version']['hostname']}
 
 Get IOSXR prameters
@@ -57,5 +55,5 @@ Get IOSXR prameters
 
 Get NXOS prameters
     ${response}=      parse "show version" on device "${NODE}"
-    Log To Console    ${response}
+    Log    ${response}    console=yes
     Set Suite Variable    ${host}    ${response['platform']['hardware']['device_name']}

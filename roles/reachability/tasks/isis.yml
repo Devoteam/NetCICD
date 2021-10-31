@@ -20,14 +20,14 @@
 
 - name: "Netconf configure IS-IS for IOSXR"
   ansible.netcommon.netconf_config:                                                                                                                                    
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_isis_generic.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_isis_generic.j2') }}"
   when: (ansible_connection is defined and ansible_connection == "netconf" and ansible_network_os == "iosxr" )                             
 #  notify:                                                                                         
 #    - iosxr_isis                                                                                    
 
 - name: "Netconf configure IS-IS interfaces for IOSXR"
   ansible.netcommon.netconf_config:                                                                                                                                    
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_isis_interfaces.j2') }}"
+    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_isis_interfaces.j2') }}"
   when: (ansible_connection is defined and ansible_connection == "netconf" and ansible_network_os == "iosxr" )                             
 #  notify:                                                                                         
 #    - iosxr_isis                                                                                    

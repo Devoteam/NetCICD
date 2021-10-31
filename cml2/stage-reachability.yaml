@@ -357,6 +357,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -662,6 +663,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.111 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
@@ -671,6 +673,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -838,6 +841,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.112 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
@@ -847,6 +851,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -938,6 +943,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.113 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
@@ -947,6 +953,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -1038,6 +1045,7 @@ nodes:
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.114 255.255.255.0
+       no shutdown
       !
       netconf agent tty
       !
@@ -1047,6 +1055,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -1216,6 +1225,7 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -1714,6 +1724,7 @@ nodes:
                 git status
                 ansible-playbook -i vars/stage-reachability stage-topology.yml -e stage="reachability"
                 echo '============ Starting stage Reachability playbook ============='
+                cd roles/reachability/vars
                 ln -s stage-reachability.yml main.yml
                 cd ~/NetCICD
                 git status
