@@ -1,195 +1,10 @@
 lab:
-  description: LAB specifically created for NetCICD Box testing
+  description: LAB specifically created for NetCICD Topology testing
   notes: ''
-  timestamp: 1625485467.2854257
+  timestamp: 1636197534.5757933
   title: stage-topology
   version: 0.0.4
 nodes:
-  - id: n0
-    label: NetCICD_agent
-    node_definition: desktop
-    x: -450
-    y: 0
-    configuration: |-
-      # this is a shell script which will be sourced at boot
-      # This Source Code Form is subject to the terms of the Mozilla Public
-      # License, v. 2.0. If a copy of the MPL was not distributed with this
-      # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-      hostname NetCICD_agent
-
-      # Making sure Toolbox hosts are reachable by name
-      echo "127.0.0.1   NetCICD_agent" >>/etc/hosts
-
-      if grep -q "gitea" /etc/hosts; then
-        echo " Gitea exists in /etc/hosts" >>/home/cisco/install-log.txt
-      else
-        echo " Add Gitea to /etc/hosts" >>/home/cisco/install-log.txt
-        sudo echo "gitea_ip   gitea" >> /etc/hosts
-      fi
-
-      if grep -q "jenkins" /etc/hosts; then
-        echo " Jenkins exists in /etc/hosts" >>/home/cisco/install-log.txt
-      else
-        echo " Add Jenkins to /etc/hosts" >>/home/cisco/install-log.txt
-        sudo echo "jenkins_ip   jenkins" >> /etc/hosts
-      fi
-
-      if grep -q "nexus" /etc/hosts; then
-        echo " Nexus exists in /etc/hosts" >>/home/cisco/install-log.txt
-      else
-        echo " Add Nexus to /etc/hosts" >>/home/cisco/install-log.txt
-        sudo echo "nexus_ip   nexus" >> /etc/hosts
-      fi
-
-      # Setting Alpine repo to proxy host to enable curated packages
-      if $(wget http://nexus:8081); then
-        echo "NetCICD Toolbox installed. Setting APK repositories to Nexus." >>/home/cisco/install-log.txt
-        echo "http://nexus:8081/repository/apk-main-proxy/" > /etc/apk/repositories
-        echo "http://nexus:8081/repository/apk-community-proxy/" >> /etc/apk/repositories
-        echo "http://nexus:8081/repository/apk-testing-proxy/" >> /etc/apk/repositories
-      else
-        echo "NetCICD Toolbox not installed. Fetching repositories from Alpine." >>/home/cisco/install-log.txt
-        echo "http://dl-cdn.alpinelinux.org/alpine/v3.12/community" >> /etc/apk/repositories
-        echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
-      fi
-
-      # Configuring rsyslog host for testing log configuration on devices
-      cd /etc
-      rm rsyslog.conf
-      if wget http://gitea:3000/NetCICD/raw/branch/master/Docker/Syslog/rsyslog.conf; then
-        echo "NetCICD Toolbox installed. Retrieved rsyslog.conf from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
-      else
-        echo "NetCICD Toolbox not installed. Retrieving rsyslog.conf from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/Docker/Syslog/rsyslog.conf
-      fi
-      rc-service rsyslog restart >>/home/cisco/install-log.txt
-
-      # Installing required packages
-      apk update >>/home/cisco/install-log.txt
-      apk add --update --no-cache openjdk8 git openssh openssh-keygen openssl libxml2-dev libxslt-dev sshpass python3 py3-pip rsyslog maven ansible curl py3-lxml py3-six py3-paramiko py3-ncclient docker mousepad
-      addgroup cisco docker >>/home/cisco/install-log.txt
-      rc-update add docker boot >>/home/cisco/install-log.txt
-
-      # Setting Docker repo to proxy host to enable curated packages
-      echo "Installing docker daemon.json." >>/home/cisco/install-log.txt
-      wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/daemon.json
-      sudo mkdir /etc/docker
-      sudo mv daemon.json /etc/docker/daemon.json
-      sudo chmod 644 /etc/docker/daemon.json
-      sudo chown root:root /etc/docker/daemon.json
-
-      # Preparing Docker run permissions
-      cd /etc/init.d
-      echo "Installing docker cgroups-patch." >>/home/cisco/install-log.txt
-      wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/cgroups-patch
-      chmod +x cgroups-patch
-      rc-update add cgroups-patch boot
-
-      echo "Installing ncclient." >>/home/cisco/install-log.txt
-      pip install ncclient
-
-      # Preparing interface to lab
-      echo "Installing additional eth interface" >>/home/cisco/install-log.txt
-      echo "auto eth1" >> /etc/network/interfaces
-      echo "iface eth1 inet static" >> /etc/network/interfaces
-      echo "        address 10.255.1.1" >> /etc/network/interfaces
-      echo "        netmask 255.255.255.0" >> /etc/network/interfaces
-      /etc/init.d/networking restart
-
-      ip r  >>/home/cisco/install-log.txt
-
-      # Preparing ssh
-      echo -e """\
-      \n\
-      Host *\n\
-          PasswordAuthentication yes\n\
-          StrictHostKeyChecking no\n\
-          UserKnownHostsFile=/dev/null\n\
-          HostkeyAlgorithms ssh-dss,ssh-rsa\n\
-          KexAlgorithms +diffie-hellman-group14-sha1\n\
-      """ >> /etc/ssh/ssh_config
-
-      # Prepare Ansible
-      echo "Preparing Ansible setup." >>/home/cisco/install-log.txt
-      echo "[defaults]" > /home/cisco/.ansible.cfg
-      echo "host_key_checking = False" >> /home/cisco/.ansible.cfg
-      echo "nocows = True" >> /home/cisco/.ansible.cfg
-      echo "interpreter_python = auto_silent" >> /home/cisco/.ansible.cfg
-      echo "stdout_callback = full_skip" >> /home/cisco/.ansible.cfg
-      echo "" >> /home/cisco/.ansible.cfg
-      echo "# Installs collections into /home/cisco/.ansible/collections/namespace/collection_name" >> /home/cisco/.ansible.cfg
-      echo "collections_paths = /home/cisco/.ansible/collections" >> /home/cisco/.ansible.cfg
-      echo "" >> /home/cisco/.ansible.cfg
-      echo "# Installs roles into /home/cisco/.ansible/roles/namespace.rolename" >> /home/cisco/.ansible.cfg
-      echo "roles_path = /home/cisco/.ansible/roles" >> /home/cisco/.ansible.cfg
-      chown cisco:cisco /home/cisco/.ansible.cfg
-      sudo mkdir /home/cisco/.ansible/roles
-      ansible-galaxy collection install cisco.ios -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
-      ansible-galaxy collection install cisco.iosxr -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
-      ansible-galaxy collection install cisco.nxos -p /home/cisco/.ansible/collections/ >>/home/cisco/install-log.txt
-      chown cisco:cisco -R /home/cisco/.ansible
-
-      # set vars
-      if wget ${GIT_URL}; then
-        echo "Setting git to Gitea." >>/home/cisco/install-log.txt
-        echo 'export GIT_URL=http://gitea:3000/infraautomator/' >> /etc/profile
-      else
-        echo "Setting git to Github." >>/home/cisco/install-log.txt
-        echo 'export GIT_URL=https://github.com/Devoteam/' >> /etc/profile
-      fi
-
-      echo "export JAVA_HOME=/usr" >> /etc/profile
-
-      # Installing .profile script to prepare for Ansible playbook run
-      if wget ${GIT_URL}/NetCICD/raw/branch/master/cml2/stage-topology.profile; then
-        echo "NetCICD Toolbox installed. Retrieved stage-topology.profile from NetCICD-Developer-Toolbox." >>/home/cisco/install-log.txt
-      else
-        echo "NetCICD Toolbox not installed. Retrieving stage-topology.profile from github." >>/home/cisco/install-log.txt
-        wget https://raw.githubusercontent.com/Devoteam/NetCICD/master/cml2/stage-topology.profile
-      fi
-      mv /home/cisco/stage-topology.runonce /home/cisco/.profile
-
-      echo "Creating SSH keys." >>/home/cisco/install-log.txt
-      mkdir /home/cisco/.ssh
-      chown cisco:cisco /home/cisco/.ssh
-      chown cisco:cisco /home/cisco/.ssh/*
-      ssh-keygen -t rsa -N "" -f /home/cisco/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/cisco/install-log.txt
-
-      echo "Starting Docker." >>/home/cisco/install-log.txt
-      sudo service docker start  >>/home/cisco/install-log.txt
-      sudo chmod 666 /var/run/docker.sock
-    ram: 4096
-    cpus: 2
-    tags: []
-    interfaces:
-      - id: i0
-        slot: 0
-        label: eth0
-        type: physical
-      - id: i1
-        slot: 1
-        label: eth1
-        type: physical
-      - id: i2
-        slot: 2
-        label: eth2
-        type: physical
-      - id: i3
-        slot: 3
-        label: eth3
-        type: physical
-  - id: n1
-    label: ext-conn-0
-    node_definition: external_connector
-    x: -450
-    y: -100
-    configuration: virbr0
-    tags: []
-    interfaces:
-      - id: i0
-        slot: 0
-        label: port
-        type: physical
   - id: n2
     label: CE1,141, ios
     node_definition: iosv
@@ -1039,18 +854,13 @@ nodes:
     interfaces:
       - id: i0
         slot: 0
-        label: enp0s2
+        label: ens3
         type: physical
       - id: i1
         slot: 1
-        label: enp0s3
+        label: ens4
         type: physical
 links:
-  - id: l0
-    i1: i0
-    n1: n1
-    i2: i0
-    n2: n0
   - id: l1
     i1: i1
     n1: n2
@@ -1061,11 +871,6 @@ links:
     n1: n3
     i2: i2
     n2: n5
-  - id: l4
-    i1: i3
-    n1: n5
-    i2: i1
-    n2: n0
   - id: l2
     i1: i1
     n1: n7
