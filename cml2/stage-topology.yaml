@@ -642,21 +642,21 @@ nodes:
           content: |-
             #!/bin/sh
             cd /home/ubuntu
-            if $(curl --output /dev/null --silent --head --fail http://jenkins:8084/whoAmI); then
-              wget http://jenkins:8084/jnlpJars/agent.jar
+            if $(curl --output /dev/null --silent --head --fail http://jenkins.tooling.test:8084/whoAmI); then
+              wget http://jenkins.tooling.test:8084/jnlpJars/agent.jar
               echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
               agent=1
               chown ubuntu:ubuntu agent.jar
               echo jenkins_secret > secret-file
               chown ubuntu:ubuntu secret-file
-              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
+              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins.tooling.test:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
             else
               echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
             fi
 
-            if wget -q --method=HEAD http://gitea:3000/infraautomator/ ; then
+            if wget -q --method=HEAD http://gitea.tooling.test:3000/infraautomator/ ; then
               echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
-              export GIT_URL=http://gitea:3000/infraautomator/ >> /etc/profile
+              export GIT_URL=http://gitea.tooling.test:3000/infraautomator/ >> /etc/profile
             else
               echo "Setting git to Github." >>/home/ubuntu/install-log.txt
               export GIT_URL=https://github.com/Devoteam/ >> /etc/profile
@@ -756,9 +756,9 @@ nodes:
             #!/bin/sh
             export JAVA_HOME=/usr
 
-            if wget -q --method=HEAD http://gitea:3000/infraautomator/; then
+            if wget -q --method=HEAD http://gitea.tooling.test:3000/infraautomator/; then
               echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
-              export GIT_URL=http://gitea:3000/infraautomator/
+              export GIT_URL=http://gitea.tooling.test:3000/infraautomator/
             else
               echo "Setting git to Github." >>/home/ubuntu/install-log.txt
               export GIT_URL=https://github.com/Devoteam/
@@ -822,9 +822,9 @@ nodes:
       runcmd:
         - netplan apply
         - echo " Add Gitea to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "gitea_ip   gitea" >> /etc/hosts
+        - echo "gitea_ip   gitea.tooling.test" >> /etc/hosts
         - echo " Add Jenkins to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "jenkins_ip   jenkins" >> /etc/hosts
+        - echo "jenkins_ip   jenkins.tooling.test" >> /etc/hosts
         - echo " Add Nexus to /etc/hosts" >>/home/ubuntu/install-log.txt
         - echo "nexus_ip   nexus" >> /etc/hosts
         - echo "Restarting rsyslog deamon" >>/home/ubuntu/install-log.txt
