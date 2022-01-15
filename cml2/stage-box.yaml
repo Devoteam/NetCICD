@@ -536,6 +536,14 @@ nodes:
             # Installs roles into /home/ubuntu/.ansible/roles/namespace.rolename
             roles_path = /home/ubuntu/.ansible/roles
 
+            [ssh_connection]
+            retries=5
+            ssh_args = -o ControlMaster=no
+
+            [persistent_connection ]
+            connect_timeout = 60
+            command_timeout = 30
+
         - path: /home/ubuntu/.profile
           permissions: '0755'
           content: |-
@@ -612,6 +620,7 @@ nodes:
         - ip r  >>/home/ubuntu/install-log.txt
         - ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/ubuntu/install-log.txt
         - pip install --upgrade paramiko ncclient cffi cmlutils
+        - pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
         - pip install --upgrade ansible
         - ansible-galaxy collection install cisco.ios -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.iosxr -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
