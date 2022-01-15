@@ -538,6 +538,11 @@ nodes:
 
             [ssh_connection]
             retries=5
+            ssh_args = -o ControlMaster=no
+
+            [persistent_connection ]
+            connect_timeout = 60
+            command_timeout = 30
 
         - path: /home/ubuntu/.profile
           permissions: '0755'
