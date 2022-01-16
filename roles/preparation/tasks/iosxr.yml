@@ -41,4 +41,9 @@
   cisco.iosxr.iosxr_config:
     lines:
       - no telnet ipv4 server max-servers 10
+      
+- name: enable netconf service on port 830
+  cisco.iosxr.iosxr_netconf:
+    listens_on: 830
+    state: present
 ...

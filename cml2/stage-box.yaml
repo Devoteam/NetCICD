@@ -159,6 +159,8 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
+    cpus: 2
     tags: []
     interfaces:
       - id: i0
@@ -593,6 +595,8 @@ nodes:
             echo '========================= Have Fun! ==========================='
 
       package_update: true
+      package_upgrade: true
+      package_reboot_if_required: true
       packages:
         - rsyslog
         - openjdk-8-jdk
@@ -604,6 +608,9 @@ nodes:
         - python3-pip
         - docker.io
         - curl
+
+      ntp: 
+        enabled: true
 
       runcmd:
         - netplan apply
@@ -619,17 +626,16 @@ nodes:
         - echo "routes installed" >>/home/ubuntu/install-log.txt
         - ip r  >>/home/ubuntu/install-log.txt
         - ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/ubuntu/install-log.txt
-        - pip install --upgrade paramiko ncclient cffi cmlutils
-        - pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
-        - pip install --upgrade ansible
+        - pip install --upgrade paramiko ncclient cffi cmlutils >>/home/ubuntu/install-log.txt
+        - pip install --upgrade ansible >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.ios -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.iosxr -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.nxos -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
-        - chown -R ubuntu:ubuntu /home/ubuntu/.ansible
-        - pip install --upgrade pyats[full]
-        - groupadd docker
-        - usermod -aG docker ubuntu
-        - chown ubuntu:ubuntu -R /home/ubuntu
+        - chown -R ubuntu:ubuntu /home/ubuntu/.ansible >>/home/ubuntu/install-log.txt
+        - pip install --upgrade pyats[full] >>/home/ubuntu/install-log.txt
+        - groupadd docker >>/home/ubuntu/install-log.txt
+        - usermod -aG docker ubuntu >>/home/ubuntu/install-log.txt
+        - chown ubuntu:ubuntu -R /home/ubuntu >>/home/ubuntu/install-log.txt
 
       power_state:
         mode: reboot
