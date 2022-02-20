@@ -10,6 +10,7 @@ cml_token = "12345"
 thisSecret = "verysecret"
 lab_id = "1"
 agentName = ""
+nexus_url = "https://nexus.tooling.test:8443"
 
 pipeline {
     agent none
@@ -553,9 +554,9 @@ def teststep(stage) {
     if (fileExists("roles/${stage}/files/${stage}_unittest.xml")) {
         robot outputPath: "roles/${stage}/files", logFileName: "${stage}_unittest_log.html", outputFileName: "${stage}_unittest.xml", reportFileName: "${stage}_unittest_report.html", passThreshold: 100, unstableThreshold: 75.0
         script { 
-            nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest.xml http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
-            nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest_log.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
-            nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest_report.html http://nexus:8081/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
+            nexus_test_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest.xml ' + "${nexus_url}" + '/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest.xml').trim()
+            nexus_log_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest_log.html ' + "${nexus_url}" + '/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_log.html').trim()
+            nexus_report_upload = sh(returnStdout: true, script: 'curl -v -u ' + "${NEXUS_CRED}" + ' --upload-file roles/' + "${stage}" + '/files/' + "${stage}" + '_unittest_report.html ' + "${nexus_url}" + '/repository/NetCICD-reports/' + "${gitCommit}" + '/' + "${this_stage}" + '_unittest_report.html').trim()
         }
         echo "Test uploaded: ${nexus_test_upload}"
         echo "Test log uploaded: ${nexus_log_upload}"
