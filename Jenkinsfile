@@ -527,6 +527,59 @@ def stopsim(branch, stage, build, commit, lab, token) {
     return null
 }
 
+def generatestage(stage, node, comment) {
+    return {
+        stage("stage: "${stage}". "${comment}) {
+            agent { 
+                node { 
+                    label "${node}" 
+                } 
+            }
+            stages {
+                stage ('Collecting variables') {
+                    steps {
+                        varscollection("${stage}")
+                    }
+                }
+                stage ('Preparing playbook') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        prepare("${stage}", "${gitCommit}")
+                        sh "cd roles/${stage}/vars/ && ln -s stage-${stage}.yml main.yml"
+                    }
+                }
+                stage('Running playbook') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        echo "Prepare lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${stage}", playbook: 'prepare.yml', extraVars: ["stage": "${stage}"], extras: '-vvvv'
+
+                        echo "Start stage ${this_stage} playbook on lab ${lab_id}"
+                        ansiblePlaybook installation: 'ansible', inventory: "vars/stage-${stage}", playbook: "stage-${stage}.yml", extraVars: ["stage": "${stage}"], extras: '-vvvv'
+                    }
+                }
+                stage ('Testing') {
+                    agent {
+                        label agentName
+                    }
+                    steps {
+                        teststep ("${stage}")
+                    }
+                }
+                stage ('Cleaning up') {
+                    steps {
+                        cleanup("${lab_id}", "${stage}", "${gitCommit}", "${cml_token}")
+                    }
+                }
+            }
+        }
+    }
+}
+
 def varscollection(stage) {
     script {
         // Set global variables
