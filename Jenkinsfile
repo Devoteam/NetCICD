@@ -25,7 +25,7 @@ pipeline {
         stage('stage: Box. Device local configuration...') {
             agent { 
                 node { 
-                    label 'master' 
+                    label 'Dev' 
                 } 
             }
             stages {
@@ -73,7 +73,7 @@ pipeline {
         stage('stage: Topology. Device interconnection configuration on OSI L2...') {
             agent { 
                 node { 
-                    label 'master' 
+                    label 'Dev' 
                 } 
             }
             stages {
@@ -125,7 +125,7 @@ pipeline {
         stage('stage: Reachability. Device interconnection configuration on OSI L3...') {
             agent { 
                 node { 
-                    label 'master' 
+                    label 'Dev' 
                 } 
             }
             stages {
@@ -181,7 +181,7 @@ pipeline {
         // stage('stage: Forwarding. MPLS/SR configuration...') {
         //     agent { 
         //         node { 
-        //             label 'master' 
+        //             label 'Dev' 
         //         } 
         //     }
         //     stages {
@@ -241,7 +241,7 @@ pipeline {
         // stage('stage: Platform. MPLS/VPN platform configuration...') {
         //     agent { 
         //         node { 
-        //             label 'master' 
+        //             label 'Dev' 
         //         } 
         //     }
         //     stages {
@@ -305,7 +305,7 @@ pipeline {
         // stage('stage: User domain. Customer VRF configuration...') {
         //     agent { 
         //         node { 
-        //             label 'master' 
+        //             label 'Dev' 
         //         } 
         //     }
         //     stages {
@@ -566,7 +566,7 @@ def teststep(stage) {
 }
 
 def cleanup(lab, stage, commit, token) {
-    echo "Switched to jenkins agent: master"
+    echo "Switched to jenkins agent: Dev"
     echo "Stopping CML simulation on lab ${lab}"
     stopsim("${env.BRANCH_NAME}","${stage}", "${env.BUILD_tag}", "${commit}", "${lab}", "${token}")   
     echo 'Removing Jenkins Agent'
