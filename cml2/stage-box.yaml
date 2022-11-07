@@ -430,8 +430,8 @@ nodes:
           content: |-
             #!/bin/sh
             cd /home/ubuntu
-            if $(curl --output /dev/null --silent --head --fail https://jenkins.tooling.provider.test:8084/whoAmI); then
-              wget https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
+            if $(curl --output /dev/null --silent --head --insecure --fail https://jenkins.tooling.provider.test:8084/whoAmI); then
+              wget--no-check-certificate https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
               echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
               agent=1
               chown ubuntu:ubuntu agent.jar
@@ -442,7 +442,7 @@ nodes:
               echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
             fi
 
-            if wget -q --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/ ; then
+            if wget -q --no-check-certificate --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/ ; then
               echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
               export GIT_URL=https://gitea.tooling.provider.test:3000/infraautomator/ >> /etc/profile
             else
@@ -450,9 +450,8 @@ nodes:
               export GIT_URL=https://github.com/Devoteam/ >> /etc/profile
             fi
 
-
             # Setting Ubuntu repo to proxy host to enable curated packages
-            if $(wget https://nexus.tooling.provider.test:8081); then
+            if $(wget --no-check-certificate https://nexus.tooling.provider.test:8081); then
               echo "NetCICD Toolbox installed. Setting deb repositories to Nexus." >>/home/ubuntu/install-log.txt
               echo "To be done"  >>/home/ubuntu/install-log.txt
             else
@@ -544,7 +543,7 @@ nodes:
             #!/bin/sh
             export JAVA_HOME=/usr
 
-            if wget -q --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/; then
+            if wget -q --no-check-certificate --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/; then
               echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
               export GIT_URL=https://gitea.tooling.provider.test:3000/infraautomator/
             else
