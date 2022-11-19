@@ -159,6 +159,8 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
+    ram: 4096
+    cpus: 2
     tags: []
     interfaces:
       - id: i0
@@ -397,6 +399,11 @@ nodes:
       chpasswd: { expire: False }
       hostname: NetCICD-agent
 
+      ca-certs:
+        trusted:
+        - |
+         infraautomator_ca_crt
+
       write_files:
         - path: /etc/netplan/50-cloud-init.yaml
           owner: root:root
@@ -418,8 +425,8 @@ nodes:
           permissions: '0644'
           content: |-
             {
-                "insecure-registries" : ["nexus.tooling.test:8181"],
-                "registry-mirrors": ["http://nexus.tooling.test:8181"]
+                "insecure-registries" : ["nexus.tooling.provider.test:8181"],
+                "registry-mirrors": ["https://nexus.tooling.provider.test:8181"]
             }
 
         - path: /etc/rc.local
@@ -428,29 +435,28 @@ nodes:
           content: |-
             #!/bin/sh
             cd /home/ubuntu
-            if $(curl --output /dev/null --silent --head --fail http://jenkins.tooling.test:8084/whoAmI); then
-              wget http://jenkins.tooling.test:8084/jnlpJars/agent.jar
+            if $(curl --output /dev/null --silent --head --insecure --fail https://jenkins.tooling.provider.test:8084/whoAmI); then
+              wget --no-check-certificate https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
               echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
               agent=1
               chown ubuntu:ubuntu agent.jar
               echo jenkins_secret > secret-file
               chown ubuntu:ubuntu secret-file
-              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins.tooling.test:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
+              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl https://jenkins.tooling.provider.test:8084/manage/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" -noCertificateCheck &
             else
               echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
             fi
 
-            if wget -q --method=HEAD http://gitea.tooling.test:3000/infraautomator/ ; then
+            if wget -q --no-check-certificate --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/ ; then
               echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
-              export GIT_URL=http://gitea.tooling.test:3000/infraautomator/ >> /etc/profile
+              export GIT_URL=https://gitea.tooling.provider.test:3000/infraautomator/ >> /etc/profile
             else
               echo "Setting git to Github." >>/home/ubuntu/install-log.txt
               export GIT_URL=https://github.com/Devoteam/ >> /etc/profile
             fi
 
-
             # Setting Ubuntu repo to proxy host to enable curated packages
-            if $(wget http://nexus.tooling.test:8081); then
+            if $(wget --no-check-certificate https://nexus.tooling.provider.test:8081); then
               echo "NetCICD Toolbox installed. Setting deb repositories to Nexus." >>/home/ubuntu/install-log.txt
               echo "To be done"  >>/home/ubuntu/install-log.txt
             else
@@ -536,23 +542,15 @@ nodes:
             # Installs roles into /home/ubuntu/.ansible/roles/namespace.rolename
             roles_path = /home/ubuntu/.ansible/roles
 
-            [ssh_connection]
-            retries=5
-            ssh_args = -o ControlMaster=no
-
-            [persistent_connection ]
-            connect_timeout = 60
-            command_timeout = 30
-
         - path: /home/ubuntu/.profile
           permissions: '0755'
           content: |-
             #!/bin/sh
             export JAVA_HOME=/usr
 
-            if wget -q --method=HEAD http://gitea.tooling.test:3000/infraautomator/; then
+            if wget -q --no-check-certificate --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/; then
               echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
-              export GIT_URL=http://gitea.tooling.test:3000/infraautomator/
+              export GIT_URL=https://gitea.tooling.provider.test:3000/infraautomator/
             else
               echo "Setting git to Github." >>/home/ubuntu/install-log.txt
               export GIT_URL=https://github.com/Devoteam/
@@ -593,9 +591,11 @@ nodes:
             echo '========================= Have Fun! ==========================='
 
       package_update: true
+      package_upgrade: true
+      package_reboot_if_required: true
       packages:
         - rsyslog
-        - openjdk-8-jdk
+        - openjdk-11-jdk
         - git
         - libxml2-dev
         - libxslt-dev
@@ -605,31 +605,33 @@ nodes:
         - docker.io
         - curl
 
+      ntp: 
+        enabled: true
+
       runcmd:
         - netplan apply
         - echo " Add Gitea to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "gitea_ip   gitea.tooling.test" >> /etc/hosts
+        - echo "gitea_ip   gitea.tooling.provider.test" >> /etc/hosts
         - echo " Add Jenkins to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "jenkins_ip   jenkins.tooling.test" >> /etc/hosts
+        - echo "jenkins_ip   jenkins.tooling.provider.test" >> /etc/hosts
         - echo " Add Nexus to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "nexus_ip   nexus.tooling.test" >> /etc/hosts
+        - echo "nexus_ip   nexus.tooling.provider.test" >> /etc/hosts
         - echo "Restarting rsyslog deamon" >>/home/ubuntu/install-log.txt
         - rc-service rsyslog restart>>/home/ubuntu/install-log.txt
         - echo "Set Docker repo to proxy host to enable curated packages" >>/home/ubuntu/install-log.txt
         - echo "routes installed" >>/home/ubuntu/install-log.txt
         - ip r  >>/home/ubuntu/install-log.txt
-        - ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.example.com  >>/home/ubuntu/install-log.txt
-        - pip install --upgrade paramiko ncclient cffi cmlutils
-        - pip list --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U
-        - pip install --upgrade ansible
+        - ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.provider.test  >>/home/ubuntu/install-log.txt
+        - pip install --upgrade paramiko ncclient cffi cmlutils >>/home/ubuntu/install-log.txt
+        - pip install --upgrade ansible >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.ios -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.iosxr -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
         - ansible-galaxy collection install cisco.nxos -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
-        - chown -R ubuntu:ubuntu /home/ubuntu/.ansible
-        - pip install --upgrade pyats[full]
-        - groupadd docker
-        - usermod -aG docker ubuntu
-        - chown ubuntu:ubuntu -R /home/ubuntu
+        - chown -R ubuntu:ubuntu /home/ubuntu/.ansible >>/home/ubuntu/install-log.txt
+        - pip install --upgrade pyats[full] >>/home/ubuntu/install-log.txt
+        - groupadd docker >>/home/ubuntu/install-log.txt
+        - usermod -aG docker ubuntu >>/home/ubuntu/install-log.txt
+        - chown ubuntu:ubuntu -R /home/ubuntu >>/home/ubuntu/install-log.txt
 
       power_state:
         mode: reboot
