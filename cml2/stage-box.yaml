@@ -431,7 +431,7 @@ nodes:
             #!/bin/sh
             cd /home/ubuntu
             if $(curl --output /dev/null --silent --head --insecure --fail https://jenkins.tooling.provider.test:8084/whoAmI); then
-              wget--no-check-certificate https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
+              wget --no-check-certificate https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
               echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
               agent=1
               chown ubuntu:ubuntu agent.jar
