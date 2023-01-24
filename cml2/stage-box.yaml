@@ -590,7 +590,7 @@ nodes:
       package_reboot_if_required: true
       packages:
         - rsyslog
-        - openjdk-8-jdk
+        - openjdk-11-jdk
         - git
         - libxml2-dev
         - libxslt-dev
