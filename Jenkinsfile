@@ -409,7 +409,7 @@ def startagent(branch, stage, build, commit) {
 
 def stopagent(branch, stage, build, commit) {
     echo "Deleting Jenkins build node placeholder for repository: ${GIT_REPO_NAME}, branch: ${branch}, stage: ${stage}, build: ${build} (commit:  ${commit})"
-    sh 'curl -L -s -o /dev/null -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/' + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "${commit}" + '/doDelete"'
+    sh 'curl -L -s -o /dev/null -k -u ' + "${JENKINS_CRED}" + ' -H "Content-Type:application/x-www-form-urlencoded" -X POST "' + "${env.JENKINS_URL}" + 'computer/' + "${GIT_REPO_NAME}" + "-" + "${branch}" + "-" + "${stage}" + "-" + "${commit}" + '/doDelete"'
     
     return null
 }
