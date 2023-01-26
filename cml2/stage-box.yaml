@@ -84,7 +84,7 @@ nodes:
         type: physical
   - id: n3
     label: PE1, 131, XRv
-    node_definition: iosxrv
+    node_definition: iosxrv9000
     x: -500
     y: 100
     configuration: |2-
@@ -224,7 +224,7 @@ nodes:
         type: physical
   - id: n7
     label: PE3, 133, nxos
-    node_definition: nxosv
+    node_definition: nxosv9000
     x: -350
     y: 0
     configuration: |-
@@ -556,7 +556,7 @@ nodes:
             else
                 git config --global user.name "netcicd-pipeline"
                 git config --global user.email "netcicd-pipeline@infraautomator.example.net"
-                git clone ${GIT_URL}NetCICD.git
+                git -c http.sslVerify=false clone ${GIT_URL}NetCICD.git
                 cd NetCICD
                 git status
                 echo '====================== Preparing CML lab ======================'

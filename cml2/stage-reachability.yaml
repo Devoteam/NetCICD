@@ -84,7 +84,7 @@ nodes:
         type: physical
   - id: n3
     label: PE1, 131, XRv
-    node_definition: iosxrv
+    node_definition: iosxrv9000
     x: -400
     y: 200
     configuration: |2-
@@ -267,7 +267,7 @@ nodes:
         type: physical
   - id: n7
     label: PE3, 133, nxos
-    node_definition: nxosv
+    node_definition: nxosv9000
     x: -400
     y: 400
     configuration: |-
@@ -425,7 +425,7 @@ nodes:
         type: physical
   - id: n4
     label: P1, 111, XRv
-    node_definition: iosxrv
+    node_definition: iosxrv9000
     x: -200
     y: 200
     configuration: |-
@@ -603,7 +603,7 @@ nodes:
         type: physical
   - id: n8
     label: P2, 112 XRv
-    node_definition: iosxrv
+    node_definition: iosxrv9000
     x: 100
     y: 200
     configuration: |-
@@ -705,7 +705,7 @@ nodes:
         type: physical
   - id: n10
     label: P3, 113, XRv
-    node_definition: iosxrv
+    node_definition: iosxrv9000
     x: -200
     y: 400
     configuration: |-
@@ -807,7 +807,7 @@ nodes:
         type: physical
   - id: n11
     label: P4, 114, XRv
-    node_definition: iosxrv
+    node_definition: iosxrv9000
     x: 100
     y: 400
     configuration: |-
@@ -952,7 +952,7 @@ nodes:
         type: physical
   - id: n13
     label: PE2, 132, XRv
-    node_definition: iosxrv
+    node_definition: iosxrv9000
     x: 300
     y: 200
     configuration: |2-
@@ -1063,7 +1063,7 @@ nodes:
         type: physical
   - id: n14
     label: PE4, 134, nxos
-    node_definition: nxosv
+    node_definition: nxosv9000
     x: 300
     y: 400
     configuration: |-
