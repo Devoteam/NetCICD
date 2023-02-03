@@ -1,15 +1,71 @@
 lab:
   description: LAB specifically created for NetCICD Box testing
   notes: ''
-  timestamp: 1636197164.9959486
   title: stage-box.yaml
-  version: 0.0.4
+  version: 0.1.0
+links:
+  - id: l0
+    n1: n0
+    n2: n2
+    i1: i1
+    i2: i0
+    label: CE1,141, ios-GigabitEthernet0/0<->Management VLAN-port0
+  - id: l1
+    n1: n1
+    n2: n2
+    i1: i1
+    i2: i2
+    label: PE1, 131, XRv-MgmtEth0/0/CPU0/0<->Management VLAN-port2
+  - id: l2
+    n1: n3
+    n2: n2
+    i1: i1
+    i2: i1
+    label: PE3, 133, nxos-mgmt0<->Management VLAN-port1
+  - id: l3
+    n1: n4
+    n2: n2
+    i1: i1
+    i2: i5
+    label: RR1, 121, xe-GigabitEthernet1<->Management VLAN-port5
+  - id: l4
+    n1: n5
+    n2: n6
+    i1: i0
+    i2: i0
+    label: ext-conn-1-port<->NetCICD-Agent-ens2
+  - id: l5
+    n1: n6
+    n2: n2
+    i1: i1
+    i2: i4
+    label: NetCICD-Agent-ens3<->Management VLAN-port4
+  - id: l6
+    n1: n8
+    n2: n7
+    i1: i0
+    i2: i0
+    label: coreos-0-eth0<->ext-conn-0-port
+  - id: l7
+    n1: n8
+    n2: n2
+    i1: i1
+    i2: i3
+    label: coreos-0-eth1<->Management VLAN-port3
+  - id: l8
+    n1: n9
+    n2: n10
+    i1: i0
+    i2: i0
+    label: coreos-0_0-eth0<->ext-conn-2-port
+  - id: l9
+    n1: n9
+    n2: n2
+    i1: i1
+    i2: i6
+    label: coreos-0_0-eth1<->Management VLAN-port6
 nodes:
-  - id: n2
-    label: CE1,141, ios
-    node_definition: iosv
-    x: -650
-    y: 0
+  - boot_disk_size: 0
     configuration: |-
       aaa new-model
       !
@@ -60,33 +116,39 @@ nodes:
        transport input telnet ssh
       !
       end
+    cpu_limit: 100
+    cpus: 0
+    data_volume: 0
+    hide_links: false
+    id: n0
+    label: CE1,141, ios
+    node_definition: iosv
+    ram: 0
     tags:
       - CE1
+    x: -650
+    y: 0
     interfaces:
       - id: i0
         label: Loopback0
         type: loopback
       - id: i1
-        slot: 0
         label: GigabitEthernet0/0
+        slot: 0
         type: physical
       - id: i2
-        slot: 1
         label: GigabitEthernet0/1
+        slot: 1
         type: physical
       - id: i3
-        slot: 2
         label: GigabitEthernet0/2
+        slot: 2
         type: physical
       - id: i4
-        slot: 3
         label: GigabitEthernet0/3
+        slot: 3
         type: physical
-  - id: n3
-    label: PE1, 131, XRv
-    node_definition: iosxrv9000
-    x: -500
-    y: 100
+  - boot_disk_size: 0
     configuration: |2-
 
       Fri Apr  9 06:53:26.092 UTC
@@ -159,74 +221,84 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
+    cpu_limit: 100
     cpus: 2
+    data_volume: 0
+    hide_links: false
+    id: n1
+    label: PE1, 131, XRv
+    node_definition: iosxrv9000
+    ram: 4096
     tags: []
+    x: -500
+    y: 100
     interfaces:
       - id: i0
         label: Loopback0
         type: loopback
       - id: i1
-        slot: 0
         label: MgmtEth0/0/CPU0/0
+        slot: 0
         type: physical
       - id: i2
-        slot: 1
         label: GigabitEthernet0/0/0/0
+        slot: 1
         type: physical
       - id: i3
-        slot: 2
         label: GigabitEthernet0/0/0/1
+        slot: 2
         type: physical
       - id: i4
-        slot: 3
         label: GigabitEthernet0/0/0/2
+        slot: 3
         type: physical
-  - id: n5
-    label: unmanaged-switch-0
+  - boot_disk_size: 0
+    configuration: ums-c5c8cae1-ce
+    cpu_limit: 100
+    cpus: 0
+    data_volume: 0
+    hide_links: false
+    id: n2
+    label: Management VLAN
     node_definition: unmanaged_switch
+    ram: 0
+    tags: []
     x: -500
     y: 0
-    configuration: ''
-    tags: []
     interfaces:
       - id: i0
-        slot: 0
         label: port0
+        slot: 0
         type: physical
       - id: i1
-        slot: 1
         label: port1
+        slot: 1
         type: physical
       - id: i2
-        slot: 2
         label: port2
+        slot: 2
         type: physical
       - id: i3
-        slot: 3
         label: port3
+        slot: 3
         type: physical
       - id: i4
-        slot: 4
         label: port4
+        slot: 4
         type: physical
       - id: i5
-        slot: 5
         label: port5
+        slot: 5
         type: physical
       - id: i6
-        slot: 6
         label: port6
+        slot: 6
         type: physical
       - id: i7
-        slot: 7
         label: port7
+        slot: 7
         type: physical
-  - id: n7
-    label: PE3, 133, nxos
-    node_definition: nxosv9000
-    x: -350
-    y: 0
+  - boot_disk_size: 0
     configuration: |-
       !
       license grace-period
@@ -308,32 +380,38 @@ nodes:
 
       line console
       line vty
+    cpu_limit: 100
+    cpus: 0
+    data_volume: 0
+    hide_links: false
+    id: n3
+    label: PE3, 133, nxos
+    node_definition: nxosv9000
+    ram: 0
     tags: []
+    x: -350
+    y: 0
     interfaces:
       - id: i0
         label: Loopback0
         type: loopback
       - id: i1
-        slot: 0
         label: mgmt0
+        slot: 0
         type: physical
       - id: i2
-        slot: 1
         label: Ethernet2/1
+        slot: 1
         type: physical
       - id: i3
-        slot: 2
         label: Ethernet2/2
+        slot: 2
         type: physical
       - id: i4
-        slot: 3
         label: Ethernet2/3
+        slot: 3
         type: physical
-  - id: n9
-    label: RR1, 121, xe
-    node_definition: csr1000v
-    x: -650
-    y: 100
+  - boot_disk_size: 0
     configuration: |-
       hostname reflector
       !
@@ -355,175 +433,282 @@ nodes:
       !
       crypto key gen rsa mod 2048
       !
+    cpu_limit: 100
+    cpus: 0
+    data_volume: 0
+    hide_links: false
+    id: n4
+    label: RR1, 121, xe
+    node_definition: csr1000v
+    ram: 0
     tags: []
+    x: -650
+    y: 100
     interfaces:
       - id: i0
         label: Loopback0
         type: loopback
       - id: i1
-        slot: 0
         label: GigabitEthernet1
+        slot: 0
         type: physical
       - id: i2
-        slot: 1
         label: GigabitEthernet2
+        slot: 1
         type: physical
       - id: i3
-        slot: 2
         label: GigabitEthernet3
+        slot: 2
         type: physical
       - id: i4
-        slot: 3
         label: GigabitEthernet4
+        slot: 3
         type: physical
-  - id: n4
+  - boot_disk_size: 0
+    configuration: virbr0
+    cpu_limit: 100
+    cpus: 0
+    data_volume: 0
+    hide_links: false
+    id: n5
     label: ext-conn-1
     node_definition: external_connector
+    ram: 0
+    tags: []
     x: -650
     y: -200
-    configuration: virbr0
-    tags: []
     interfaces:
       - id: i0
-        slot: 0
         label: port
+        slot: 0
         type: physical
-  - id: n6
-    label: NetCICD-Agent
-    node_definition: ubuntu
-    x: -650
-    y: -100
+  - boot_disk_size: 64
     configuration: |-
       #cloud-config
+      hostname: NetCICD-agent
+      manage_etc_hosts: True
+      system_info:
+        default_user:
+          name: cisco
       password: cisco
       chpasswd: { expire: False }
-      hostname: NetCICD-agent
+      ssh_pwauth: True
+    cpu_limit: 100
+    cpus: 1
+    data_volume: 0
+    hide_links: false
+    id: n6
+    image_definition: ubuntu-20-04-20210927
+    label: NetCICD-Agent
+    node_definition: ubuntu
+    ram: 2048
+    tags: []
+    x: -650
+    y: -100
+    interfaces:
+      - id: i0
+        label: ens2
+        slot: 0
+        type: physical
+      - id: i1
+        label: ens3
+        slot: 1
+        type: physical
+  - boot_disk_size: 0
+    configuration: virbr0
+    cpu_limit: 100
+    cpus: 0
+    data_volume: 0
+    hide_links: false
+    id: n7
+    label: ext-conn-0
+    node_definition: external_connector
+    ram: 0
+    tags: []
+    x: -496
+    y: -216
+    interfaces:
+      - id: i0
+        label: port
+        slot: 0
+        type: physical
+  - boot_disk_size: 64
+    configuration: |-
+      #cloud-config
+      hostname: netcicd-agent
+      coreos:
+        units:
+          - name: static.network
+            content: |
+              [Match]
+              Name=eth1
+              [Network]
+              Address=10.255.1.3/24
+          - name: runcmd.service
+            command: start
+            content: |
+              [Unit]
+              Description=Start container
+              [Service]
+              Type=oneshot
+              ExecStart=/bin/sh -c "docker run -d netarch/netcicd:netcicd-4.0;"
 
+
+      users:
+      - gecos: "user configured for console login via cisco/cisco"
+        groups:
+        - sudo
+        - docker
+        - wheel
+        name: cisco
+        # password hash is "cisco" (MD5-based password "mkpasswd -5")
+        passwd: "$1$ZmGq.4za$8JZnpj4SkcF9v3AJQaOX//"
+        # this key will be added to the user "cisco"
+        ssh_authorized_keys:
+        - your-ssh-pubkey-line-for-user-cisco-goes-here
+      # this key will be added to the user "core"
+      ssh_authorized_keys:
+      - your-ssh-pubkey-line-for-user-core-goes-here
+    cpu_limit: 100
+    cpus: 2
+    data_volume: 0
+    hide_links: false
+    id: n8
+    label: coreos-0
+    node_definition: coreos
+    ram: 2048
+    tags: []
+    x: -498
+    y: -96
+    interfaces:
+      - id: i0
+        label: eth0
+        slot: 0
+        type: physical
+      - id: i1
+        label: eth1
+        slot: 1
+        type: physical
+  - boot_disk_size: 64
+    configuration: |-
+      #cloud-config
+      hostname: netcicd-agent
+      coreos:
+        units:
+          - name: static.network
+            content: |
+              [Match]
+              Name=eth1
+              [Network]
+              Address=10.255.1.3/24
+          - name: runcmd.service
+            command: start
+            content: |
+              [Unit]
+              Description=Start container
+              [Service]
+              Type=oneshot
+              ExecStart=/bin/sh -c "docker run -d netarch/netcicd:netcicd-4.0;"
       write_files:
-        - path: /etc/netplan/50-cloud-init.yaml
+        - path: /etc/hosts
           owner: root:root
           permissions: '0644'
           content: |-
-            network:
-              version: 2
-              renderer: networkd
-              ethernets:
-                ens2:
-                  dhcp4: yes
-                ens3:
-                  dhcp4: no
-                  addresses:
-                    - 10.255.1.2/24
-
-        - path: /etc/docker/deamon.json
-          owner: root:root
-          permissions: '0644'
-          content: |-
-            {
-                "insecure-registries" : ["nexus.tooling.provider.test:8181"],
-                "registry-mirrors": ["https://nexus.tooling.provider.test:8181"]
-            }
-
-        - path: /etc/rc.local
-          owner: root:root
-          permissions: '0755'
-          content: |-
-            #!/bin/sh
-            cd /home/ubuntu
-            if $(curl --output /dev/null --silent --head --insecure --fail https://jenkins.tooling.provider.test:8084/whoAmI); then
-              wget --no-check-certificate https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
-              echo "NetCICD Toolbox installed. Retrieved agent.jar from NetCICD-Developer-Toolbox."  >>/home/ubuntu/install-log.txt
-              agent=1
-              chown ubuntu:ubuntu agent.jar
-              echo jenkins_secret > secret-file
-              chown ubuntu:ubuntu secret-file
-              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl https://jenkins.tooling.provider.test:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
-            else
-              echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
-            fi
-
-            if wget -q --no-check-certificate --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/ ; then
-              echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
-              export GIT_URL=https://gitea.tooling.provider.test:3000/infraautomator/ >> /etc/profile
-            else
-              echo "Setting git to Github." >>/home/ubuntu/install-log.txt
-              export GIT_URL=https://github.com/Devoteam/ >> /etc/profile
-            fi
-
-            # Setting Ubuntu repo to proxy host to enable curated packages
-            if $(wget --no-check-certificate https://nexus.tooling.provider.test:8081); then
-              echo "NetCICD Toolbox installed. Setting deb repositories to Nexus." >>/home/ubuntu/install-log.txt
-              echo "To be done"  >>/home/ubuntu/install-log.txt
-            else
-              echo "NetCICD Toolbox not installed. Fetching repositories from Ubuntu." >>/home/ubuntu/install-log.txt
-            fi
-
-        - path: /etc/ssh/ssh_config
-          owner: root:root
-          permissions: '0755'
-          content: |-
-            Host *
-                PasswordAuthentication yes
-                StrictHostKeyChecking no
-                UserKnownHostsFile=/dev/null
-                HostkeyAlgorithms ssh-dss,ssh-rsa
-                KexAlgorithms +diffie-hellman-group14-sha1
-
-        - path: /etc/rsyslog.conf
-          owner: root:root
-          permissions: '0755'
-          content: |-
-            # rsyslogd.conf
+            # /etc/hosts: Local Host Database
             #
-            # if you experience problems, check:
-            # http://www.rsyslog.com/troubleshoot
+            # IPv4 and IPv6 localhost aliases
+            127.0.0.1       localhost
+            ::1             localhost
+            172.16.11.3     gitea.tooling.provider.test
+            172.16.11.8     jenkins.tooling.provider.test
+            172.16.11.9     nexus.tooling.provider.test
 
-            #### MODULES ####
+        - path: /home/cisco/Dockerfile
+          owner: cisco:cisco
+          permissions: '0644'
+          content: |-
+            FROM ciscotestautomation/pyats:latest-alpine
+            ENV JAVA_HOME "/usr"
+            RUN apk add --update \
+              openjdk11 \
+              git \
+              openssh \
+              openssh-keygen \
+              openssl \
+              libxml2-dev \
+              libxslt-dev \
+              sshpass \
+              curl \
+              wget
+            RUN pip3 install --upgrade pip
+            RUN apk --update add --virtual \
+              .build-deps \
+              gcc \
+              libffi-dev \
+              openssl-dev \
+              build-base \
+            && apk del \
+              .build-deps \
+            && rm -rf /var/cache/apk/*
+            ADD ssh_config /etc/ssh/ssh_config
+            ADD requirements.txt /pyats/requirements.txt
+            ADD workspace.init /pyats/workspace.init
 
-            module(load="imuxsock")    # local system logging support (e.g. via logger command)
-            #module(load="imklog")     # kernel logging support (previously done by rklogd)
-            module(load="immark")      # --MARK-- message support
-            module(load="imudp")       # UDP listener support
+            RUN echo "export JAVA_HOME=/usr" >> /etc/profile
 
+            RUN adduser -D jenkins && (echo "jenkins:jenkins" | chpasswd) && (echo "root:root" | chpasswd)
+            RUN curl -sO --insecure https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
+            RUN echo "[defaults]" > /home/jenkins/.ansible.cfg
+            RUN echo "host_key_checking = False" >> /home/jenkins/.ansible.cfg
+            RUN chown jenkins:jenkins /home/jenkins/.ansible.cfg
+            RUN chown -R jenkins:jenkins /home/jenkins
 
-            input(type="imudp" port="514")
+            USER jenkins
+            ADD .profile /home/jenkins/.profile
+            ADD .ansible.cfg /home/jenkins/.ansible.cfg
+            USER root
+            ADD docker-entrypoint.sh /usr/local/bin
+            RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+            RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key
+            EXPOSE 22
+            ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+            CMD ["/usr/sbin/sshd", "-D"]
 
-            # Log all kernel messages to the console.
-            # Logging much else clutters up the screen.
-            #kern.*                                                 action(type="omfile" file="/dev/console")
+        - path: /home/cisco/requirements.txt
+          owner: cisco:cisco
+          permissions: '0644'
+          content: |-
+              cffi
+              ncclient
+              paramiko
+              cmlutils
+              pyats[full]
+              robotframework
+              ansible
 
-            # Log anything (except mail) of level info or higher.
-            # Don't log private authentication messages!
-            *.info;mail.none;authpriv.none;cron.none                action(type="omfile" file="/var/log/messages")
+        - path: /home/cisco/workspace.init
+          owner: cisco:cisco
+          permissions: '0644'
+          content: |-
+              #!/bin/bash
 
-            # The authpriv file has restricted access.
-            authpriv.*                                              action(type="omfile" file="/var/log/secure")
+              # This is an example workspace.init file that you can volume mount in docker
+              # into your pyATS container's workspace. Inside here you can perform various
+              # setups (outside of pip requirements.txt), such as:
+              #   - adding known ssh hosts into known_hosts using ssh-keyscan
+              #   - cloning git repositories
+              #   - setting up python packages/source code into development mode
+              #   - etc
 
-            # Log all the mail messages in one place.
-            mail.*                                                  action(type="omfile" file="/var/log/maillog")
+              set -e
 
-            # Log cron stuff
-            cron.*                                                  action(type="omfile" file="/var/log/cron")
+              # trust & store gitea's ssh key
+              ssh-keyscan gitea.tooling.provider.test:3000 >> ~/.ssh/known_hosts 2> /dev/null
+              git clone https://gitea.tooling.provider.test:3000/infraautomator/NetCICD.git
 
-            # Everybody gets emergency messages
-            *.emerg                                                 action(type="omusrmsg" users="*")
-
-            # Save news errors of level crit and higher in a special file.
-            uucp,news.crit                                          action(type="omfile" file="/var/log/spooler")
-
-            # Save boot messages also to boot.log
-            local7.*                                                action(type="omfile" file="/var/log/boot.log")
-
-            # log every host in its own directory
-            if $fromhost-ip then /var/log/$fromhost-ip/messages
-
-            # Include all .conf files in /etc/rsyslog.d
-            $IncludeConfig /etc/rsyslog.d/*.conf
-            $template GRAYLOGRFC5424,"<%PRI%>%PROTOCOL-VERSION% %TIMESTAMP:::date-rfc3339% %HOSTNAME% %APP-NAME% %PROCID% %MSGID% %STRUCTURED-DATA% %msg%\n"
-            *.info;mail.none;authpriv.none;cron.none;*.* @@graylog:514;GRAYLOGRFC5424 # forward everything to remote server
-
-        - path: /home/ubuntu/.ansible.cfg
-          permissions: '0755'
+        - path: /home/cisco/.ansible.cfg
+          owner: cisco:cisco
+          permissions: '0644'
           content: |-
             [defaults]
             host_key_checking = False
@@ -537,8 +722,9 @@ nodes:
             # Installs roles into /home/ubuntu/.ansible/roles/namespace.rolename
             roles_path = /home/ubuntu/.ansible/roles
 
-        - path: /home/ubuntu/.profile
-          permissions: '0755'
+        - path: /home/cisco/.profile
+          owner: cisco:cisco
+          permissions: '0644'
           content: |-
             #!/bin/sh
             export JAVA_HOME=/usr
@@ -585,92 +771,68 @@ nodes:
             echo ''
             echo '========================= Have Fun! ==========================='
 
-      package_update: true
-      package_upgrade: true
-      package_reboot_if_required: true
-      packages:
-        - rsyslog
-        - openjdk-11-jdk
-        - git
-        - libxml2-dev
-        - libxslt-dev
-        - sshpass
-        - python-is-python3
-        - python3-pip
-        - docker.io
-        - curl
+        - path: /etc/ssh/ssh_config
+          owner: root:root
+          permissions: '0644'
+          content: |-
+            Host *
+                PasswordAuthentication yes
+                StrictHostKeyChecking no
+                UserKnownHostsFile=/dev/null
+                HostkeyAlgorithms ssh-dss,ssh-rsa
+                KexAlgorithms +diffie-hellman-group14-sha1
 
-      ntp: 
-        enabled: true
 
-      runcmd:
-        - netplan apply
-        - echo " Add Gitea to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "gitea_ip   gitea.tooling.provider.test" >> /etc/hosts
-        - echo " Add Jenkins to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "jenkins_ip   jenkins.tooling.provider.test" >> /etc/hosts
-        - echo " Add Nexus to /etc/hosts" >>/home/ubuntu/install-log.txt
-        - echo "nexus_ip   nexus.tooling.provider.test" >> /etc/hosts
-        - echo "Restarting rsyslog deamon" >>/home/ubuntu/install-log.txt
-        - rc-service rsyslog restart>>/home/ubuntu/install-log.txt
-        - echo "Set Docker repo to proxy host to enable curated packages" >>/home/ubuntu/install-log.txt
-        - echo "routes installed" >>/home/ubuntu/install-log.txt
-        - ip r  >>/home/ubuntu/install-log.txt
-        - ssh-keygen -t rsa -N "" -f /home/ubuntu/.ssh/id_rsa -C netcicd-pipeline@infraautomator.provider.test  >>/home/ubuntu/install-log.txt
-        - pip install --upgrade paramiko ncclient cffi cmlutils >>/home/ubuntu/install-log.txt
-        - pip install --upgrade ansible >>/home/ubuntu/install-log.txt
-        - ansible-galaxy collection install cisco.ios -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
-        - ansible-galaxy collection install cisco.iosxr -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
-        - ansible-galaxy collection install cisco.nxos -p /home/ubuntu/.ansible/collections/ >>/home/ubuntu/install-log.txt
-        - chown -R ubuntu:ubuntu /home/ubuntu/.ansible >>/home/ubuntu/install-log.txt
-        - pip install --upgrade pyats[full] >>/home/ubuntu/install-log.txt
-        - groupadd docker >>/home/ubuntu/install-log.txt
-        - usermod -aG docker ubuntu >>/home/ubuntu/install-log.txt
-        - chown ubuntu:ubuntu -R /home/ubuntu >>/home/ubuntu/install-log.txt
-
-      power_state:
-        mode: reboot
-        message: Rebooting to make all changes active
-        timeout: 5
-        condition: True
+      users:
+      - gecos: "user configured for console login via cisco/cisco"
+        groups:
+        - sudo
+        - docker
+        - wheel
+        name: cisco
+        # password hash is "cisco" (MD5-based password "mkpasswd -5")
+        passwd: "$1$ZmGq.4za$8JZnpj4SkcF9v3AJQaOX//"
+        # this key will be added to the user "cisco"
+        ssh_authorized_keys:
+        - your-ssh-pubkey-line-for-user-cisco-goes-here
+      # this key will be added to the user "core"
+      ssh_authorized_keys:
+      - your-ssh-pubkey-line-for-user-core-goes-here
+    cpu_limit: 100
+    cpus: 2
+    data_volume: 0
+    hide_links: false
+    id: n9
+    label: coreos-0_0
+    node_definition: coreos
+    ram: 2048
     tags: []
+    x: -390
+    y: -94
     interfaces:
       - id: i0
+        label: eth0
         slot: 0
-        label: ens3
         type: physical
       - id: i1
+        label: eth1
         slot: 1
-        label: ens4
         type: physical
-links:
-  - id: l1
-    i1: i1
-    n1: n2
-    i2: i0
-    n2: n5
-  - id: l3
-    i1: i1
-    n1: n3
-    i2: i2
-    n2: n5
-  - id: l2
-    i1: i1
-    n1: n7
-    i2: i1
-    n2: n5
-  - id: l7
-    i1: i1
-    n1: n9
-    i2: i5
-    n2: n5
-  - id: l5
-    i1: i0
-    n1: n4
-    i2: i0
-    n2: n6
-  - id: l6
-    i1: i1
-    n1: n6
-    i2: i4
-    n2: n5
+  - boot_disk_size: 0
+    configuration: virbr0
+    cpu_limit: 100
+    cpus: 0
+    data_volume: 0
+    hide_links: false
+    id: n10
+    label: ext-conn-2
+    node_definition: external_connector
+    ram: 0
+    tags: []
+    x: -390
+    y: -203
+    interfaces:
+      - id: i0
+        label: port
+        slot: 0
+        type: physical
