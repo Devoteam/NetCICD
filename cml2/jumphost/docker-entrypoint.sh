@@ -53,7 +53,7 @@ else
   export GIT_URL=https://github.com/Devoteam/
 fi
 
-chown -R jenkins:jenkins .
+chown -R jenkins:jenkins /home/jenkins
 
 if grep -q prepared NetCICD_state; then
     echo "Lab already prepared"
