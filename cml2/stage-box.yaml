@@ -33,33 +33,9 @@ links:
     n2: n6
     i1: i0
     i2: i0
-    label: ext-conn-1-port<->NetCICD-Agent-ens2
-  - id: l5
-    n1: n6
-    n2: n2
-    i1: i1
-    i2: i4
-    label: NetCICD-Agent-ens3<->Management VLAN-port4
-  - id: l6
-    n1: n8
-    n2: n7
-    i1: i0
-    i2: i0
-    label: coreos-0-eth0<->ext-conn-0-port
-  - id: l7
-    n1: n8
-    n2: n2
-    i1: i1
-    i2: i3
-    label: coreos-0-eth1<->Management VLAN-port3
-  - id: l8
-    n1: n9
-    n2: n10
-    i1: i0
-    i2: i0
     label: coreos-0_0-eth0<->ext-conn-2-port
-  - id: l9
-    n1: n9
+  - id: l5
+    n1: n5
     n2: n2
     i1: i1
     i2: i6
@@ -117,13 +93,13 @@ nodes:
       !
       end
     cpu_limit: 100
-    cpus: 0
+    cpus: 1
     data_volume: 0
     hide_links: false
     id: n0
     label: CE1,141, ios
     node_definition: iosv
-    ram: 0
+    ram: 512
     tags:
       - CE1
     x: -650
@@ -228,7 +204,7 @@ nodes:
     id: n1
     label: PE1, 131, XRv
     node_definition: iosxrv9000
-    ram: 4096
+    ram: 8192
     tags: []
     x: -500
     y: 100
@@ -300,6 +276,22 @@ nodes:
         type: physical
   - boot_disk_size: 0
     configuration: |-
+      # workaround for booting to loader> prompt
+      echo 'from cli import cli' > set_boot.py
+      echo 'import json' >> set_boot.py
+      echo 'import os' >> set_boot.py
+      echo 'import time' >> set_boot.py
+      echo 'bootimage = json.loads(cli("show version | json"))["kick_file_name"]' >> set_boot.py
+      echo 'set_boot = cli("conf t ; boot nxos {} ; no event manager applet BOOTCONFIG".format(bootimage))' >> set_boot.py
+      echo 'i = 0' >> set_boot.py
+      echo 'while i < 10:' >> set_boot.py
+      echo '    try:' >> set_boot.py
+      echo '        save_config = cli("copy running-config startup-config")' >> set_boot.py
+      echo '        break' >> set_boot.py
+      echo '    except Exception:' >> set_boot.py
+      echo '        i += 1' >> set_boot.py
+      echo '        time.sleep(1)' >> set_boot.py
+      echo 'os.remove("/bootflash/set_boot.py")' >> set_boot.py
       !
       license grace-period
       !
@@ -381,13 +373,13 @@ nodes:
       line console
       line vty
     cpu_limit: 100
-    cpus: 0
+    cpus: 2
     data_volume: 0
     hide_links: false
     id: n3
     label: PE3, 133, nxos
     node_definition: nxosv9000
-    ram: 0
+    ram: 8192
     tags: []
     x: -350
     y: 0
@@ -434,13 +426,13 @@ nodes:
       crypto key gen rsa mod 2048
       !
     cpu_limit: 100
-    cpus: 0
+    cpus: 1
     data_volume: 0
     hide_links: false
     id: n4
     label: RR1, 121, xe
     node_definition: csr1000v
-    ram: 0
+    ram: 3072
     tags: []
     x: -650
     y: 100
@@ -464,74 +456,6 @@ nodes:
         label: GigabitEthernet4
         slot: 3
         type: physical
-  - boot_disk_size: 0
-    configuration: virbr0
-    cpu_limit: 100
-    cpus: 0
-    data_volume: 0
-    hide_links: false
-    id: n5
-    label: ext-conn-1
-    node_definition: external_connector
-    ram: 0
-    tags: []
-    x: -650
-    y: -200
-    interfaces:
-      - id: i0
-        label: port
-        slot: 0
-        type: physical
-  - boot_disk_size: 64
-    configuration: |-
-      #cloud-config
-      hostname: NetCICD-agent
-      manage_etc_hosts: True
-      system_info:
-        default_user:
-          name: cisco
-      password: cisco
-      chpasswd: { expire: False }
-      ssh_pwauth: True
-    cpu_limit: 100
-    cpus: 1
-    data_volume: 0
-    hide_links: false
-    id: n6
-    image_definition: ubuntu-20-04-20210927
-    label: NetCICD-Agent
-    node_definition: ubuntu
-    ram: 2048
-    tags: []
-    x: -650
-    y: -100
-    interfaces:
-      - id: i0
-        label: ens2
-        slot: 0
-        type: physical
-      - id: i1
-        label: ens3
-        slot: 1
-        type: physical
-  - boot_disk_size: 0
-    configuration: virbr0
-    cpu_limit: 100
-    cpus: 0
-    data_volume: 0
-    hide_links: false
-    id: n7
-    label: ext-conn-0
-    node_definition: external_connector
-    ram: 0
-    tags: []
-    x: -496
-    y: -216
-    interfaces:
-      - id: i0
-        label: port
-        slot: 0
-        type: physical
   - boot_disk_size: 64
     configuration: |-
       #cloud-config
@@ -551,143 +475,23 @@ nodes:
               Description=Start container
               [Service]
               Type=oneshot
-              ExecStart=/bin/sh -c "docker run -d netarch/netcicd:netcicd-4.0;"
-
-
-      users:
-      - gecos: "user configured for console login via cisco/cisco"
-        groups:
-        - sudo
-        - docker
-        - wheel
-        name: cisco
-        # password hash is "cisco" (MD5-based password "mkpasswd -5")
-        passwd: "$1$ZmGq.4za$8JZnpj4SkcF9v3AJQaOX//"
-        # this key will be added to the user "cisco"
-        ssh_authorized_keys:
-        - your-ssh-pubkey-line-for-user-cisco-goes-here
-      # this key will be added to the user "core"
-      ssh_authorized_keys:
-      - your-ssh-pubkey-line-for-user-core-goes-here
-    cpu_limit: 100
-    cpus: 2
-    data_volume: 0
-    hide_links: false
-    id: n8
-    label: coreos-0
-    node_definition: coreos
-    ram: 2048
-    tags: []
-    x: -498
-    y: -96
-    interfaces:
-      - id: i0
-        label: eth0
-        slot: 0
-        type: physical
-      - id: i1
-        label: eth1
-        slot: 1
-        type: physical
-  - boot_disk_size: 64
-    configuration: |-
-      #cloud-config
-      hostname: netcicd-agent
-      coreos:
-        units:
-          - name: static.network
-            content: |
-              [Match]
-              Name=eth1
-              [Network]
-              Address=10.255.1.3/24
-          - name: runcmd.service
-            command: start
-            content: |
-              [Unit]
-              Description=Start container
-              [Service]
-              Type=oneshot
-              ExecStart=/bin/sh -c "docker run -d netarch/netcicd:netcicd-4.1;"
+              ExecStart=/bin/sh -c "docker run --name netcicd \
+                --add-host=gitea.tooling.provider.test:172.16.11.3 \
+                --add-host=jenkins.tooling.provider.test:172.16.11.8 \
+                --add-host=nexus.tooling.provider.test:172.16.11.9 \
+                --env J_SECRET=jenkins_secret \
+                -d netarch/netcicd:netcicd-4.1;"
       write_files:
-        - path: /etc/hosts
+        - path: /etc/docker/daemon.json
           owner: root:root
           permissions: '0644'
           content: |-
-            # /etc/hosts: Local Host Database
-            #
-            # IPv4 and IPv6 localhost aliases
-            127.0.0.1       localhost
-            ::1             localhost
-            gitea_ip     gitea.tooling.provider.test
-            jenkins_ip     jenkins.tooling.provider.test
-            nexus_ip     nexus.tooling.provider.test
-
-        - path: /home/cisco/Dockerfile
-          owner: cisco:cisco
-          permissions: '0644'
-          content: |-
-            FROM ciscotestautomation/pyats:latest-alpine
-            ENV JAVA_HOME "/usr"
-            RUN apk add --update \
-              openjdk11 \
-              git \
-              openssh \
-              openssh-keygen \
-              openssl \
-              libxml2-dev \
-              libxslt-dev \
-              sshpass \
-              curl \
-              wget
-            RUN pip3 install --upgrade pip
-            RUN apk --update add --virtual \
-              .build-deps \
-              gcc \
-              libffi-dev \
-              openssl-dev \
-              build-base \
-            && apk del \
-              .build-deps \
-            && rm -rf /var/cache/apk/*
-            ADD ssh_config /etc/ssh/ssh_config
-            ADD requirements.txt /pyats/requirements.txt
-            ADD workspace.init /pyats/workspace.init
-
-            RUN echo "export JAVA_HOME=/usr" >> /etc/profile
-
-            RUN adduser -D jenkins && (echo "jenkins:jenkins" | chpasswd) && (echo "root:root" | chpasswd)
-            RUN curl -sO --insecure https://jenkins.tooling.provider.test:8084/jnlpJars/agent.jar
-            RUN echo "[defaults]" > /home/jenkins/.ansible.cfg
-            RUN echo "host_key_checking = False" >> /home/jenkins/.ansible.cfg
-            RUN chown jenkins:jenkins /home/jenkins/.ansible.cfg
-            RUN chown -R jenkins:jenkins /home/jenkins
-            RUN echo "gitea_ip   gitea.tooling.provider.test" >> /etc/hosts
-            RUN echo "jenkins_ip   jenkins.tooling.provider.test" >> /etc/hosts
-            RUN echo "nexus_ip   nexus.tooling.provider.test" >> /etc/hosts
-
-            USER jenkins
-            ADD .profile /home/jenkins/.profile
-            ADD .ansible.cfg /home/jenkins/.ansible.cfg
-            USER root
-            ADD docker-entrypoint.sh /usr/local/bin
-            RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-            RUN rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key
-            EXPOSE 22
-            ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-            CMD ["/usr/sbin/sshd", "-D"]
-
-        - path: /home/cisco/requirements.txt
-          owner: cisco:cisco
-          permissions: '0644'
-          content: |-
-              cffi
-              ncclient
-              paramiko
-              cmlutils
-              pyats[full]
-              robotframework
-              ansible
+            {
+                "insecure-registries" : ["nexus.tooling.provider.test:8181"],
+                "insecure-registries" : ["nexus.tooling.provider.test:8182"],
+                "registry-mirrors": ["http://nexus.tooling.provider.test:8181"],
+                "registry-mirrors": ["http://nexus.tooling.provider.test:8182"]
+            }
 
         - path: /home/cisco/workspace.init
           owner: cisco:cisco
@@ -707,84 +511,7 @@ nodes:
 
               # trust & store gitea's ssh key
               ssh-keyscan gitea.tooling.provider.test:3000 >> ~/.ssh/known_hosts 2> /dev/null
-              git clone https://gitea.tooling.provider.test:3000/infraautomator/NetCICD.git
-
-        - path: /home/cisco/.ansible.cfg
-          owner: cisco:cisco
-          permissions: '0644'
-          content: |-
-            [defaults]
-            host_key_checking = False
-            nocows = True
-            interpreter_python = auto_silent
-            display_skipped_hosts = no
-
-            # Installs collections into /home/ubuntu/.ansible/collections/namespace/collection_name
-            collections_paths = /home/ubuntu/.ansible/collections
-
-            # Installs roles into /home/ubuntu/.ansible/roles/namespace.rolename
-            roles_path = /home/ubuntu/.ansible/roles
-
-        - path: /home/cisco/.profile
-          owner: cisco:cisco
-          permissions: '0644'
-          content: |-
-            #!/bin/sh
-            export JAVA_HOME=/usr
-
-            if wget -q --no-check-certificate --method=HEAD https://gitea.tooling.provider.test:3000/infraautomator/; then
-              echo "Setting git to Gitea." >>/home/ubuntu/install-log.txt
-              export GIT_URL=https://gitea.tooling.provider.test:3000/infraautomator/
-            else
-              echo "Setting git to Github." >>/home/ubuntu/install-log.txt
-              export GIT_URL=https://github.com/Devoteam/
-            fi
-
-            if grep -q prepared NetCICD_state; then
-                echo "Lab already prepared"
-            else
-                git config --global user.name "netcicd-pipeline"
-                git config --global user.email "netcicd-pipeline@infraautomator.example.net"
-                git -c http.sslVerify=false clone ${GIT_URL}NetCICD.git
-                cd NetCICD
-                git status
-                echo '====================== Preparing CML lab ======================'
-                cd roles/box/vars
-                ln -s stage-box.yml main.yml
-                cd ~/NetCICD
-                ansible-playbook -i vars/stage-box prepare.yml -e stage="box"
-                echo "prepared" > ../NetCICD_state
-            fi
-
-            echo '=================== Ready for modification ===================='
-            echo 'You can now:'
-            echo ' - create a branch with git branch <mybranch>'
-            echo ' - view which files you changed with git status'
-            echo ' - stage your changed files with git add'
-            echo ' - commit with git commit -m "<commit message>"'
-            echo ' - push the changes to the git server with:'
-            echo ''
-            echo ' git push --set-upstream origin <mybranch>'
-            echo ''
-            echo ' you may have to log in with your username/password'
-            echo ''
-            echo 'If you want to configure box-level: '
-            echo ''
-            echo ' ansible-playbook -i vars/stage-box stage-box.yml -e stage="box"'
-            echo ''
-            echo '========================= Have Fun! ==========================='
-
-        - path: /etc/ssh/ssh_config
-          owner: root:root
-          permissions: '0644'
-          content: |-
-            Host *
-                PasswordAuthentication yes
-                StrictHostKeyChecking no
-                UserKnownHostsFile=/dev/null
-                HostkeyAlgorithms ssh-dss,ssh-rsa
-                KexAlgorithms +diffie-hellman-group14-sha1
-
+              git clone -c http.sslVerify=false https://gitea.tooling.provider.test:3000/infraautomator/NetCICD.git
 
       users:
       - gecos: "user configured for console login via cisco/cisco"
@@ -805,13 +532,13 @@ nodes:
     cpus: 2
     data_volume: 0
     hide_links: false
-    id: n9
+    id: n5
     label: coreos-0_0
     node_definition: coreos
     ram: 2048
     tags: []
-    x: -390
-    y: -94
+    x: -500
+    y: -99
     interfaces:
       - id: i0
         label: eth0
@@ -827,13 +554,13 @@ nodes:
     cpus: 0
     data_volume: 0
     hide_links: false
-    id: n10
+    id: n6
     label: ext-conn-2
     node_definition: external_connector
     ram: 0
     tags: []
-    x: -390
-    y: -203
+    x: -501
+    y: -200
     interfaces:
       - id: i0
         label: port
