@@ -608,7 +608,7 @@ nodes:
               Description=Start container
               [Service]
               Type=oneshot
-              ExecStart=/bin/sh -c "docker run -d netarch/netcicd:netcicd-4.0;"
+              ExecStart=/bin/sh -c "docker run -d netarch/netcicd:netcicd-4.1;"
       write_files:
         - path: /etc/hosts
           owner: root:root
@@ -619,9 +619,9 @@ nodes:
             # IPv4 and IPv6 localhost aliases
             127.0.0.1       localhost
             ::1             localhost
-            172.16.11.3     gitea.tooling.provider.test
-            172.16.11.8     jenkins.tooling.provider.test
-            172.16.11.9     nexus.tooling.provider.test
+            gitea_ip     gitea.tooling.provider.test
+            jenkins_ip     jenkins.tooling.provider.test
+            nexus_ip     nexus.tooling.provider.test
 
         - path: /home/cisco/Dockerfile
           owner: cisco:cisco
@@ -662,6 +662,9 @@ nodes:
             RUN echo "host_key_checking = False" >> /home/jenkins/.ansible.cfg
             RUN chown jenkins:jenkins /home/jenkins/.ansible.cfg
             RUN chown -R jenkins:jenkins /home/jenkins
+            RUN echo "gitea_ip   gitea.tooling.provider.test" >> /etc/hosts
+            RUN echo "jenkins_ip   jenkins.tooling.provider.test" >> /etc/hosts
+            RUN echo "nexus_ip   nexus.tooling.provider.test" >> /etc/hosts
 
             USER jenkins
             ADD .profile /home/jenkins/.profile
