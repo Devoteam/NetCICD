@@ -126,16 +126,7 @@ nodes:
         type: physical
   - boot_disk_size: 0
     configuration: |2-
-
-      Fri Apr  9 06:53:26.092 UTC
-      Building configuration...
-      !! IOS XR Configuration 6.3.1
-      !! Last configuration change at Fri Apr  9 06:53:23 2021 by cisco
-      !
       hostname provedge2
-      logging console disable
-      service timestamps log datetime msec
-      service timestamps debug datetime msec
       telnet vrf default ipv4 server max-servers 10
       telnet vrf Mgmt-intf ipv4 server max-servers 10
       domain name netcicd
@@ -144,50 +135,25 @@ nodes:
         group root-lr
         secret 0 C!sco123
       !
-      line template vty
-       timestamp
-       exec-timeout 720 0
+      username cisco
+      group root-lr
+      group cisco-support
+      password cisco
       !
-      line console
-       exec-timeout 0 0
-       absolute-timeout 0
-       session-timeout 0
+      username admin
+      group root-lr
+      group cisco-support
+      password admin
       !
-      line default
-       exec-timeout 0 0
-       absolute-timeout 0
-       session-timeout 0
-      !
-      vty-pool default 0 50
-      control-plane
-       management-plane
-        inband
-         interface all
-          allow all
-         !
-        !
-       !
-      !
-      interface Loopback0
-       description to
-       shutdown
+      username lab
+      group root-lr
+      group cisco-support
+      password lab
       !
       interface MgmtEth0/0/CPU0/0
        description *** management ***
        ipv4 address 10.255.1.131 255.255.255.0
        no shutdown
-      !
-      interface GigabitEthernet0/0/0/0
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/1
-       description to
-       shutdown
-      !
-      interface GigabitEthernet0/0/0/2
-       description to
-       shutdown
       !
       netconf agent tty
       !
@@ -198,13 +164,13 @@ nodes:
       ssh server netconf vrf default
       end
     cpu_limit: 100
-    cpus: 2
+    cpus: 0
     data_volume: 0
     hide_links: false
     id: n1
     label: PE1, 131, XRv
     node_definition: iosxrv9000
-    ram: 8192
+    ram: 0
     tags: []
     x: -500
     y: 100
@@ -292,94 +258,42 @@ nodes:
       echo '        i += 1' >> set_boot.py
       echo '        time.sleep(1)' >> set_boot.py
       echo 'os.remove("/bootflash/set_boot.py")' >> set_boot.py
+      event manager applet BOOTCONFIG
+       event syslog pattern "Configured from vty"
+       action 1.0 cli python bootflash:set_boot.py
+      # minimum needed config to login
+      no password strength-check
+      username admin role network-admin
+      username admin password cisco role network-admin
+      username cisco role network-admin
+      username cisco password cisco role network-admin
+      username netcicd-pipeline password C!sco123 role network-operator
+      username netcicd-pipeline role network-admin
       !
       license grace-period
       !
       hostname PE3
-      vdc nxos-0 id 1
-        allocate interface Ethernet2/1-48
-        allocate interface Ethernet3/1-48
-        limit-resource vlan minimum 16 maximum 4094
-        limit-resource vrf minimum 2 maximum 4096
-        limit-resource port-channel minimum 0 maximum 768
-        limit-resource u4route-mem minimum 96 maximum 96
-        limit-resource u6route-mem minimum 24 maximum 24
-        limit-resource m4route-mem minimum 58 maximum 58
-        limit-resource m6route-mem minimum 8 maximum 8
-
+      !
       feature telnet
       feature privilege
       feature scp
       feature ssh
-
-      username adminbackup password 5 ! role network-operator
-      username admin password C!sco123 role network-admin
-      username netcicd-pipeline password C!sco123 role network-operator
-      username netcicd-pipeline role network-admin
-
-      no password strength-check
-      ip domain-lookup
-      copp profile strict
-
-      rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
-      rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
-      rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
-      rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
-      rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
-
-      vlan 1
-
-      hardware forwarding unicast trace
-
-      vrf context management
-      hardware forwarding unicast trace
-
-      interface Loopback0
-          description PE3-Loopback
-          ip address 192.168.0.133/32
-          duplex auto
-          no shut
-
+      !
       interface mgmt0
           description OOB Management
           ip address 10.255.1.133 255.255.255.0
           duplex auto
           no shut
-
-      interface Ethernet2/1
-          description to
-          no ip address
-          duplex full
-          shutdown
-
-      interface Ethernet2/2
-          description to
-          no ip address
-          duplex full
-          shutdown
-
-      interface Ethernet2/3
-          description to
-          no ip address
-          duplex full
-          shutdown
-
       !
       ssh key rsa 2048
-      !
-      xml server max-session 8
-      xml server timeout 1200
-
-      line console
-      line vty
     cpu_limit: 100
-    cpus: 2
+    cpus: 0
     data_volume: 0
     hide_links: false
     id: n3
     label: PE3, 133, nxos
     node_definition: nxosv9000
-    ram: 8192
+    ram: 0
     tags: []
     x: -350
     y: 0
@@ -426,13 +340,13 @@ nodes:
       crypto key gen rsa mod 2048
       !
     cpu_limit: 100
-    cpus: 1
+    cpus: 0
     data_volume: 0
     hide_links: false
     id: n4
     label: RR1, 121, xe
     node_definition: csr1000v
-    ram: 3072
+    ram: 0
     tags: []
     x: -650
     y: 100
