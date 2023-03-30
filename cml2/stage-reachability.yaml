@@ -159,7 +159,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -475,7 +474,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -653,7 +651,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -755,7 +752,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -857,7 +853,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -1027,7 +1022,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
     tags: []
     interfaces:
       - id: i0
@@ -1389,7 +1383,7 @@ nodes:
               chown ubuntu:ubuntu agent.jar
               echo jenkins_secret > secret-file
               chown ubuntu:ubuntu secret-file
-              sudo -H -u ubuntu java -jar agent.jar -jnlpUrl http://jenkins.tooling.test:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
+              sudo -H -u ubuntu java -jar agent.jar -noCertificateCheck -jnlpUrl http://jenkins.tooling.test:8084/computer/jenkins_agent/jenkins-agent.jnlp -secret @secret-file -workDir "/home/ubuntu" &
             else
               echo "NetCICD Toolbox not installed. Skipping Jenkins agent start." >>/home/ubuntu/install-log.txt
             fi
