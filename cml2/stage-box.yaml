@@ -159,8 +159,6 @@ nodes:
       ssh server v2
       ssh server netconf vrf default
       end
-    ram: 4096
-    cpus: 2
     tags: []
     interfaces:
       - id: i0
