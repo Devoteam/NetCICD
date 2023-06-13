@@ -35,7 +35,6 @@
   cisco.nxos.nxos_hostname:
     config:
       hostname: "{{ inventory_hostname }}"
-    save_when: modified
   when: "'nxos' in group_names"
   notify: 
     - nxos_hostname
@@ -46,7 +45,7 @@
 
 - name: "Netconf set hostname"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '{{ ansible_network_os }}_nc_hostname.j2') }}"
+    content: "{{ lookup('template', 'iosxr_nc_hostname.j2') }}"
   when: "'iosxr' in group_names"
   notify: 
     - iosxr_hostname
