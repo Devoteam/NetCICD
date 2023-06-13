@@ -11,7 +11,7 @@
     banner: login
     text: "{{ lookup('file', 'templates/banner_login.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_login_banner
 
@@ -20,7 +20,7 @@
     banner: exec
     text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_exec_banners
 
@@ -29,7 +29,7 @@
     banner: motd
     text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_motd_banners
 
@@ -48,7 +48,7 @@
     banner: login
     text: "{{ lookup('file', 'templates/banner_login.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - iosxr_login_banner
 
@@ -57,7 +57,7 @@
     banner: exec
     text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - iosxr_exec_banners
 
@@ -66,7 +66,7 @@
     banner: motd
     text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - iosxr_motd_banners
 

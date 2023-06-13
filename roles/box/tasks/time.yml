@@ -8,37 +8,37 @@
 
 - name: "IOS Set timezone"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_clock_timezone.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_clock_timezone.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify:
 #    - ios_timezone
 
 - name: "IOS Set summertime"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_clock_summertime.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_clock_summertime.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify:
 #    - ios_summertime
 
 - name: "IOS Configure ntp key"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_ntp_key.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_ntp_key.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify:
 #    - ios_ntp_key
 
 - name: "IOS Configure ntp"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_ntp.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_ntp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify:
 #    - ios_ntp
 
 - name: "IOS Configure ntp servers"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_ntp_servers.j2"
+    src: "ios_cli_ntp_servers.j2"
   with_items: "{{ ntp }}"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify:
 #    - ios_ntp_servers
 

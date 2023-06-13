@@ -8,36 +8,36 @@
 
 - name: "IOS Disable unused services"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_disable_services.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_disable_services.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_hardening_disable_unused_services
 
 - name: "IOS enable required services"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_enable_services.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_enable_services.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_hardening_required_services
 
 - name: "IOS Disable source routing"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_disable_source_routing.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_disable_source_routing.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_hardening_disable_source_routing
 
 - name: "IOS Disable http/https servers"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_disable_http.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_disable_http.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_hardening_disable_webservers
 
 - name: "IOS Disable CDP globally"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_disable_cdp.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+    src: "ios_cli_disable_cdp.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_hardening_disable_cdp
 

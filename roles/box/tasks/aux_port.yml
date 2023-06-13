@@ -10,7 +10,7 @@
   ios_config:
     authorize: yes
     src: "{{ ansible_network_os }}_cli_aux.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - console
 

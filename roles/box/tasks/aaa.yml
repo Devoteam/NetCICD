@@ -3,6 +3,25 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ####################################################################
+# Classic IOS specific commands                                    #
+####################################################################
+
+- name: "RADIUS based AAA"
+  cisco.ios.ios_config:
+    src: "ios_aaa.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
+  
+- name: "Add RADIUS servers"
+  cisco.ios.ios_config:
+    src: "ios_aaa_RADIUS_servers.j2"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
+  notify: 
+    - ios_aaa
+    
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
+
+####################################################################
 # IOSXR Netconf specific commands                                  #
 ####################################################################
 

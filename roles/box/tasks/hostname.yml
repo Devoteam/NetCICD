@@ -7,9 +7,11 @@
 ####################################################################
 
 - name: "IOS set hostname"
-  cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_hostname.j2"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  cisco.ios.ios_hostname:
+    config:
+      hostname: "{{ inventory_hostname }}"
+    state: replaced
+  when: "'ios' in group_names"
   notify: 
     - ios_hostname
 
@@ -30,10 +32,11 @@
 ####################################################################
 
 - name: "NX-OS set hostname"
-  cisco.nxos.nxos_config:
-    src: "{{ ansible_network_os }}_cli_hostname.j2"
+  cisco.nxos.nxos_hostname:
+    config:
+      hostname: "{{ inventory_hostname }}"
     save_when: modified
-  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: "'nxos' in group_names"
   notify: 
     - nxos_hostname
 
@@ -44,7 +47,7 @@
 - name: "Netconf set hostname"
   ansible.netcommon.netconf_config:
     content: "{{ lookup('template', '{{ ansible_network_os }}_nc_hostname.j2') }}"
-  when: (ansible_network_os is defined and ansible_network_os == "iosxr" and ansible_connection is defined and ansible_connection == "netconf")
+  when: "'iosxr' in group_names"
   notify: 
     - iosxr_hostname
     

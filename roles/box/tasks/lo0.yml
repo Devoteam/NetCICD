@@ -8,15 +8,15 @@
 
 - name: "IOS Global table loopback address"
   cisco.ios.ios_config:
-    src: "{{ ansible_network_os }}_cli_lo0.j2"
+    src: "ios_cli_lo0.j2"
   register: ioslo
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "network_cli")
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
 #  notify: 
 #    - ios_lo0
 
 - name: "IOS No shut on global table loopback address"
-  ios_config:
-    src: "{{ ansible_network_os }}_cli_lo0_no_shut.j2"
+  cisco.ios.ios_config:
+    src: "ios_cli_lo0_no_shut.j2"
   when: ioslo.changed
 
 ####################################################################
@@ -25,8 +25,8 @@
 
 - name: "IOSXE NC create global table loopback address in no-shut state"
   ansible.netcommon.netconf_config:
-    content: "{{ lookup('template', '../templates/{{ ansible_network_os }}_nc_loopback.j2') }}"
-  when: (ansible_network_os is defined and ansible_network_os == "ios" and ansible_connection is defined and ansible_connection == "netconf")
+    content: "{{ lookup('template', '../templates/iosxe_nc_loopback.j2') }}"
+  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.iosxe" and ansible_connection is defined and ansible_connection == "netconf")
 #  notify: 
 #    - iosxe_lo0
 

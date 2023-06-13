@@ -3,6 +3,31 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ####################################################################
+# Classic IOS specific commands                                    #
+#                                                                  #
+# be aware, in IOSXE, transports may be allowed by default.        #
+# Disable for security                                             #
+#                                                                  #
+####################################################################
+
+- name: "IOS add ssh key"
+  cisco.ios.ios_config:
+    src: "ios_cli_sshkey.j2"
+  when: (cli is defined and cli == "cisco.ios.ios")
+
+- name: "Classic IOS CLI disable outbound transport and disable incoming telnet transport"
+  cisco.ios.ios_config:
+    lines:
+      - no transport input telnet
+      - transport output none
+  when: (cli is defined and cli == "cisco.ios.ios")
+  notify: 
+    - sshsettings
+        
+- name: force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
+
+####################################################################
 # Netconf specific commands                                        #
 #                                                                  #
 # matches IOSXR, IOSXE and NXOS                                    #
@@ -56,32 +81,3 @@
   notify: 
     - sshsettings
 
-####################################################################
-# Classic IOS specific commands                                    #
-#                                                                  #
-# be aware, in IOSXE, transports may be allowed by default.        #
-# Disable for security                                             #
-#                                                                  #
-####################################################################
-
-- name: "IOS add ssh key"
-  ios_config:
-    host: "{{ ansible_host }}"
-    username: "{{ creds['username'] }}"
-    password: "{{ creds['password'] }}"
-    src: "ios_cli_sshkey.j2"
-  when: (cli is defined and cli == "ios")
-
-- name: "Classic IOS CLI disable outbound transport and disable incoming telnet transport"
-  ios_config:
-    provider: "{{ provider }}"
-    authorize: yes
-    lines:
-      - no transport input telnet
-      - transport output none
-  when: (cli is defined and cli == "ios")
-  notify: 
-    - sshsettings
-        
-- name: force all notified handlers to run at this point, not waiting for normal sync points
-  meta: flush_handlers
