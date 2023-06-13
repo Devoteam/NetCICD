@@ -19,7 +19,14 @@
 # IOSXE specific commands                                          #
 ####################################################################
 
-# IOSXE is managed through classic IOS or netconf
+- name: "IOS set hostname"
+  cisco.ios.ios_hostname:
+    config:
+      hostname: "{{ inventory_hostname }}"
+    state: replaced
+  when: "'iosxe' in group_names"
+  notify: 
+    - ios_hostname
 
 ####################################################################
 # IOSXR specific commands                                          #
