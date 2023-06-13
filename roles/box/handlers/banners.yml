@@ -3,12 +3,33 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 ---
-- name: Validate banners
-  local_action: shell behave banners.feature -D node={{ inventory_hostname }} -D c_lang={{ ansible_network_os }} -D stage={{ stage }} -D lbanner={{ lookup('file', '../templates/banner_login.j2') }} mbanner={{ lookup('file', '../templates/banner_motd.j2') }} ebanner={{ lookup('file', '../templates/banner_exec.j2') }}  --no-capture -c
+- name: Validate exec banner
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Banner_exec_test_{{ inventory_hostname }} --outputdir ../reports banner_exec.robot
   args:
-    chdir: roles/box/files/features/
-  register: test_output
-  listen: banners
+    chdir: roles/box/files/tests/
+  register: banner_output
+  listen: exec_banner
+  
+- name: Validate login banner
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Banner_login_test_{{ inventory_hostname }} --outputdir ../reports banner_login.robot
+  args:
+    chdir: roles/box/files/tests/
+  register: banner_output
+  listen: exec_banner
+  
+- name: Validate motd banner
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Banner_motd_test_{{ inventory_hostname }} --outputdir ../reports banner_motd.robot
+  args:
+    chdir: roles/box/files/tests/
+  register: banner_output
+  listen: exec_banner
+  
+- name: Validate incoming banner
+  local_action: shell robot -T --variable NODE:{{ inventory_hostname }} --variable LANG:{{ ansible_network_os }} --variable STAGE:{{ stage }} --name Banner_incoming_test_{{ inventory_hostname }} --outputdir ../reports banner_incoming.robot
+  args:
+    chdir: roles/box/files/tests/
+  register: banner_output
+  listen: exec_banner
   
 - name: Print testresults
   debug: 

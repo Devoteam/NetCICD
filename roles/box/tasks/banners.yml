@@ -13,7 +13,7 @@
     state: present
   when: "'ios' in group_names"
   notify: 
-    - ios_login_banner
+    - login_banner
 
 - name: "Set exec banner on IOS"
   cisco.ios.ios_banner:
@@ -22,7 +22,7 @@
     state: present
   when: "'ios' in group_names"
   notify: 
-    - ios_exec_banner
+    - exec_banner
 
 - name: "Set motd banner on IOS"
   cisco.ios.ios_banner:
@@ -31,7 +31,7 @@
     state: present
   when: "'ios' in group_names"
   notify: 
-    - ios_motd_banner
+    - motd_banner
 
 ####################################################################
 # IOSXE specific commands                                          #
@@ -44,7 +44,7 @@
     state: present
   when: "'iosxe' in group_names"
   notify: 
-    - ios_login_banner
+    - login_banner
 
 - name: "Set exec banner on IOS"
   cisco.ios.ios_banner:
@@ -53,7 +53,7 @@
     state: present
   when: "'iosxe' in group_names"
   notify: 
-    - ios_exec_banner
+    - exec_banner
 
 - name: "Set motd banner on IOS"
   cisco.ios.ios_banner:
@@ -62,7 +62,7 @@
     state: present
   when: "'iosxe' in group_names"
   notify: 
-    - ios_motd_banner
+    - motd_banner
 
 ####################################################################
 # IOSXR specific commands                                          #
@@ -75,7 +75,7 @@
     state: present
   when: "'iosxr' in group_names"
   notify: 
-    - iosxr_login_banner
+    - login_banner
 
 - name: "Set exec banner on IOS"
   cisco.iosxr.iosxr_banner:
@@ -84,7 +84,7 @@
     state: present
   when: "'iosxr' in group_names"
   notify: 
-    - iosxr_exec_banner
+    - exec_banner
 
 - name: "Set motd banner on IOS"
   cisco.iosxr.iosxr_banner:
@@ -93,7 +93,7 @@
     state: present
   when: "'iosxr' in group_names"
   notify: 
-    - iosxr_motd_banner
+    - motd_banner
 
 
 ####################################################################
@@ -107,7 +107,7 @@
     state: present
   when: "'nxos' in group_names"
   notify: 
-    - nxos_exec_banner
+    - exec_banner
 
 - name: "Set motd banner on IOS"
   cisco.nxos.nxos_banner:
@@ -116,7 +116,7 @@
     state: present
   when: "'nxos' in group_names"
   notify: 
-    - nxos_motd_banner
+    - motd_banner
 
 ####################################################################
 # Kick off handlers for unit testing                               #
