@@ -6,27 +6,27 @@
 - name: Define hostname
   import_tasks: hostname.yml
     
-- name: Setup banners
-  import_tasks: banners.yml
+# - name: Setup banners
+#   import_tasks: banners.yml
     
-- name: Setup loopback0
-  import_tasks: lo0.yml
+# - name: Setup loopback0
+#   import_tasks: lo0.yml
 
-- name: Setup logging
-  import_tasks: logging.yml
+# - name: Setup logging
+#   import_tasks: logging.yml
     
-- name: Setup time and clock
-  import_tasks: time.yml
+# - name: Setup time and clock
+#   import_tasks: time.yml
     
-- name: Setup snmp
-  import_tasks: snmp.yml
+# - name: Setup snmp
+#   import_tasks: snmp.yml
     
-# Aux port config disabled due to inexplicable config errors
-#- name: Close aux port
-#  import_tasks: aux_port.yml   
+# # Aux port config disabled due to inexplicable config errors
+# #- name: Close aux port
+# #  import_tasks: aux_port.yml   
     
-- name: Setup box hardening
-  import_tasks: hardening.yml
+# - name: Setup box hardening
+#   import_tasks: hardening.yml
     
 #- name: Setup aaa
 #  import_tasks: aaa.yml
