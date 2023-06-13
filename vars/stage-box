@@ -1,8 +1,10 @@
 ---
 netcicd:
   children:
+
     pe_routers:
       hosts:
+        PE1:
         PE3:
     route_reflectors:
       hosts:
@@ -16,7 +18,14 @@ netcicd:
     iosxe:
       hosts:
         RR1:
+
     nxos:
       hosts:
         PE3:
 ...
+    p_routers:
+      hosts:
+        PE1:
+    iosxr:
+      hosts:
+        PE1:

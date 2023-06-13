@@ -25,7 +25,7 @@
       - sh crypto key my rsa
 
 - name: Copy b64 pubkey to the IOSXR router
-  local_action: shell sshpass -p {{ ansible_ssh_pass }} scp -q ~/.ssh/id_rsa_pub.b64 netcicd-pipeline@{{ ansible_host }}:/disk0:/id_rsa_pub.b64
+  local_action: shell sshpass -p "C!sco123" scp -q ~/.ssh/id_rsa_pub.b64 netcicd-pipeline@10.255.1.131:/disk0:/id_rsa_pub.b64
 
 - name: Import SSH key to IOSXR node
   vars:
