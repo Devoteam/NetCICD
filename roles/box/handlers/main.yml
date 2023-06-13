@@ -7,9 +7,9 @@
   import_tasks: hostname.yml
   when: ( stage is defined and stage == "box")
     
-# - name: Setup banners
-#   import_tasks: banners.yml
-#   when: ( stage is defined and stage == "box")
+- name: Setup banners
+  import_tasks: banners.yml
+  when: ( stage is defined and stage == "box")
     
 #- name: Setup logging
 #  import_tasks: logging.yml

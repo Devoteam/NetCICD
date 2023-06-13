@@ -11,36 +11,30 @@
     banner: login
     text: "{{ lookup('file', 'templates/banner_login.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
-#  notify: 
-#    - ios_login_banner
+  when: "'ios' in group_names"
+  notify: 
+    - ios_login_banner
 
 - name: "Set exec banner on IOS"
   cisco.ios.ios_banner:
     banner: exec
     text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
-#  notify: 
-#    - ios_exec_banners
+  when: "'ios' in group_names"
+  notify: 
+    - ios_exec_banner
 
 - name: "Set motd banner on IOS"
   cisco.ios.ios_banner:
     banner: motd
     text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
-#  notify: 
-#    - ios_motd_banners
+  when: "'ios' in group_names"
+  notify: 
+    - ios_motd_banner
 
 ####################################################################
 # IOSXE specific commands                                          #
-####################################################################
-
-# IOSXE is managed through classic IOS or netconf
-
-####################################################################
-# IOSXR specific commands                                          #
 ####################################################################
 
 - name: "Set login banner on IOS"
@@ -48,27 +42,58 @@
     banner: login
     text: "{{ lookup('file', 'templates/banner_login.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
-#  notify: 
-#    - iosxr_login_banner
+  when: "'iosxe' in group_names"
+  notify: 
+    - ios_login_banner
 
 - name: "Set exec banner on IOS"
   cisco.ios.ios_banner:
     banner: exec
     text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
-#  notify: 
-#    - iosxr_exec_banners
+  when: "'iosxe' in group_names"
+  notify: 
+    - ios_exec_banner
 
 - name: "Set motd banner on IOS"
   cisco.ios.ios_banner:
     banner: motd
     text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "cisco.ios.ios" and ansible_connection is defined and ansible_connection == "ansible.netcommon.network_cli")
-#  notify: 
-#    - iosxr_motd_banners
+  when: "'iosxe' in group_names"
+  notify: 
+    - ios_motd_banner
+
+####################################################################
+# IOSXR specific commands                                          #
+####################################################################
+
+- name: "Set login banner on IOS"
+  cisco.iosxr.iosxr_banner:
+    banner: login
+    text: "{{ lookup('file', 'templates/banner_login.j2') }}"
+    state: present
+  when: "'iosxr' in group_names"
+  notify: 
+    - iosxr_login_banner
+
+- name: "Set exec banner on IOS"
+  cisco.iosxr.iosxr_banner:
+    banner: exec
+    text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
+    state: present
+  when: "'iosxr' in group_names"
+  notify: 
+    - iosxr_exec_banner
+
+- name: "Set motd banner on IOS"
+  cisco.iosxr.iosxr_banner:
+    banner: motd
+    text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
+    state: present
+  when: "'iosxr' in group_names"
+  notify: 
+    - iosxr_motd_banner
 
 
 ####################################################################
@@ -80,31 +105,18 @@
     banner: exec
     text: "{{ lookup('file', 'templates/banner_exec.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - banners
+  when: "'nxos' in group_names"
+  notify: 
+    - nxos_exec_banner
 
 - name: "Set motd banner on IOS"
   cisco.nxos.nxos_banner:
     banner: motd
     text: "{{ lookup('file', '../templates/banner_motd.j2') }}"
     state: present
-  when: (ansible_network_os is defined and ansible_network_os == "nxos" and ansible_connection is defined and ansible_connection == "network_cli")
-#  notify: 
-#    - banners
-
-####################################################################
-# Netconf specific commands                                        #
-####################################################################
-
-####################################################################
-# Banners supported by generic Ansible module                      #
-# nxos has exec banner                                             #
-####################################################################
-
-####################################################################
-# MOTD banner has Ansible net_module, regardless of network_os     #
-####################################################################
+  when: "'nxos' in group_names"
+  notify: 
+    - nxos_motd_banner
 
 ####################################################################
 # Kick off handlers for unit testing                               #
